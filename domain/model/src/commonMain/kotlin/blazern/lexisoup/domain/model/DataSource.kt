@@ -5,6 +5,7 @@ import lexisoup.core.ui.strings.generated.resources.general_data_source_chatgpt
 import lexisoup.core.ui.strings.generated.resources.general_data_source_kaikki
 import lexisoup.core.ui.strings.generated.resources.general_data_source_panlex
 import lexisoup.core.ui.strings.generated.resources.general_data_source_tatoeba
+import lexisoup.core.ui.strings.generated.resources.general_data_source_unknown
 import lexisoup.core.ui.strings.generated.resources.general_data_source_wortschatz_leipzig
 import org.jetbrains.compose.resources.StringResource
 
@@ -14,6 +15,7 @@ enum class DataSource {
     KAIKKI,
     PANLEX,
     WORTSCHATZ_LEIPZIG,
+    UNKNOWN,
 }
 
 val DataSource.strRsc: StringResource
@@ -24,5 +26,6 @@ val DataSource.strRsc: StringResource
             DataSource.KAIKKI -> Res.string.general_data_source_kaikki
             DataSource.PANLEX -> Res.string.general_data_source_panlex
             DataSource.WORTSCHATZ_LEIPZIG -> Res.string.general_data_source_wortschatz_leipzig
+            DataSource.UNKNOWN -> Res.string.general_data_source_unknown
         }
     }

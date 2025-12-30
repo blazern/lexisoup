@@ -2,23 +2,33 @@ package blazern.lexisoup.feature.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import blazern.lexisoup.core.logging.Log
+import blazern.lexisoup.data.suggestions.SuggestionsProvider
 import blazern.lexisoup.domain.backend_address.BackendAddressProvider
 import blazern.lexisoup.domain.model.Lang
+import blazern.lexisoup.domain.model.Suggestion
 import blazern.lexisoup.domain.settings.SettingsRepository
 import blazern.lexisoup.feature.home.model.HomeScreenState
 import blazern.lexisoup.utils.KotlinPlatform
 import blazern.lexisoup.utils.getKotlinPlatform
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 internal class HomeScreenViewModel(
     query: String,
     private val settings: SettingsRepository,
     private val backendAddressProvider: BackendAddressProvider,
+    private val suggestionsProvider: SuggestionsProvider,
 ) : ViewModel() {
     private val localhostAllowed = getKotlinPlatform() == KotlinPlatform.JS
 
@@ -27,7 +37,9 @@ internal class HomeScreenViewModel(
         langTo = null,
         query = query,
         canSearch = canSearch(query),
-        isLocalhost = if (localhostAllowed) false else null
+        suggestions = emptyList(),
+        suggestionsTarget = "",
+        isLocalhost = if (localhostAllowed) false else null,
     ))
     val state: StateFlow<HomeScreenState> = _state
 
@@ -40,6 +52,43 @@ internal class HomeScreenViewModel(
             _state.update { it.copy(langTo = langTo) }
         }.launchIn(viewModelScope)
 
+        @OptIn(ExperimentalCoroutinesApi::class)
+        _state
+            .map { Triple(it.query, it.langFrom, it.langTo) }
+            .distinctUntilChanged()
+            .transformLatest { (query, langFrom, langTo) ->
+                val canRequest = state.value.canSearch
+                        && langFrom != null
+                        && langTo != null
+
+                if (!canRequest) {
+                    emit(emptyList<Suggestion>() to "")
+                    return@transformLatest
+                }
+
+                // if query changes, the call after the [delay] gets cancelled
+                delay(DELAY_BEFORE_SUGGESTION_REQUEST)
+
+                val suggestions = suggestionsProvider
+                    .suggestionsFor(query, langFrom, langTo)
+                    .fold(
+                        {
+                            Log.e(TAG, it.e) { "Error while retrieving suggestions" }
+                            emptyList()
+                        },
+                        { it }
+                    )
+
+                emit(suggestions to query)
+            }.onEach { (suggestions, query) ->
+                _state.update {
+                    it.copy(
+                        suggestions = suggestions,
+                        suggestionsTarget = query,
+                    )
+                }
+            }.launchIn(viewModelScope)
+
         if (localhostAllowed) {
             backendAddressProvider.isLocalhost.onEach { isLocalhost ->
                 _state.update { it.copy(isLocalhost = isLocalhost) }
@@ -48,10 +97,12 @@ internal class HomeScreenViewModel(
     }
 
     fun onQueryChange(value: String) {
-        _state.value = state.value.copy(
-            query = value,
-            canSearch = canSearch(value),
-        )
+        _state.update {
+            it.copy(
+                query = value,
+                canSearch = canSearch(value),
+            )
+        }
     }
 
     fun onLangsChange(langFrom: Lang, langTo: Lang) {
@@ -76,5 +127,10 @@ internal class HomeScreenViewModel(
 
     private fun canSearch(query: String): Boolean {
         return 2 <= query.trim().length
+    }
+
+    private companion object {
+        const val TAG = "HomeScreenViewModel"
+        val DELAY_BEFORE_SUGGESTION_REQUEST = 300.milliseconds
     }
 }

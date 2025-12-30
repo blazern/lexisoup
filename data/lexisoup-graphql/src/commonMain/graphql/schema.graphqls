@@ -39,6 +39,8 @@ type Query {
   llm(query: String!, langFromIso3: String!, langToIso3: String!): [LexicalItemDetail!]!
 
   panlex(query: String!, langFromIso3: String!, langToIso3: String!): [LexicalItemDetail!]!
+
+  suggestions(query: String!, langFromIso3: String!, langToIso3: String!): [Suggestion!]!
 }
 
 type Sentence {
@@ -55,6 +57,16 @@ character sequences. The String type is most often used by GraphQL to
 represent free-form human-readable text.
 """
 scalar String
+
+type Suggestion {
+  text: String!
+
+  langIso3: String!
+
+  source: String!
+
+  translations: [Sentence!]!
+}
 
 type Synonyms {
   translationsSet: TranslationsSet!

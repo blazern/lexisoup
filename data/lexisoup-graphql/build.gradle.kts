@@ -16,6 +16,7 @@ kotlin {
                 implementation(libs.apollo.engine.ktor)
                 implementation(project(":core:ktor"))
                 implementation(project(":domain:backend-address"))
+                implementation(project(":domain:model"))
             }
         }
     }
@@ -24,5 +25,12 @@ kotlin {
 apollo {
     service("lexisoup") {
         packageName.set("blazern.lexisoup.graphql.model")
+
+        // ./gradlew :data:lexisoup-graphql:downloadLexisoupApolloSchemaFromIntrospection
+        // ./gradlew :data:lexisoup-graphql:generateApolloSources
+        introspection {
+            endpointUrl.set("http://localhost:8888/graphql")
+            schemaFile.set(file("src/commonMain/graphql/schema.graphqls"))
+        }
     }
 }

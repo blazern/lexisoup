@@ -10,6 +10,7 @@ fun homeScreenModule() = module {
             query = query,
             settings = get(),
             backendAddressProvider = get(),
+            suggestionsProvider = get(),
         )
     }
 }

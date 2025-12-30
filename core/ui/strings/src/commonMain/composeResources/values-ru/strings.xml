@@ -4,6 +4,7 @@
     <string name="home_input_hint">Поисковый запрос</string>
     <string name="home_cd_clear_search_query">Очистить поисковый запрос</string>
     <string name="home_cd_switch_langs">Сменить язык</string>
+    <string name="home_search_for_raw_input">Искать «%1$s»</string>
 
     <string name="search_results_title">Поиск:</string>
     <string name="general_copied_to_clipboard">Скопировано</string>
@@ -16,6 +17,7 @@
     <string name="general_data_source_kaikki">kaikki (Wiktionary)</string>
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
+    <string name="general_data_source_unknown">неизвестно</string>
 
     <string name="general_lexical_item_detail_type_forms">Формы</string>
     <string name="general_lexical_item_detail_type_word_translations">Переводы</string>

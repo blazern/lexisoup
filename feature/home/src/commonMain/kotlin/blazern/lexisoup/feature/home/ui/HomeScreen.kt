@@ -1,6 +1,9 @@
 package blazern.lexisoup.feature.home.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,34 +14,50 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import blazern.lexisoup.core.ui.components.ClearSearchFocusOnBack
 import blazern.lexisoup.core.ui.components.SearchBar
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import blazern.lexisoup.core.ui.theme.LinkColor
+import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
+import blazern.lexisoup.domain.model.Sentence
+import blazern.lexisoup.domain.model.Suggestion
 import blazern.lexisoup.feature.home.SearchFn
 import blazern.lexisoup.feature.home.model.HomeScreenState
-import lexisoup.core.ui.strings.generated.resources.home_btn_search
 import lexisoup.core.ui.strings.generated.resources.home_cd_clear_search_query
 import lexisoup.core.ui.strings.generated.resources.home_cd_switch_langs
 import lexisoup.core.ui.strings.generated.resources.home_input_hint
+import lexisoup.core.ui.strings.generated.resources.home_search_for_raw_input
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import lexisoup.core.ui.strings.generated.resources.Res as ResStr
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("LongParameterList")
 @Composable
 internal fun HomeScreen(
@@ -49,55 +68,115 @@ internal fun HomeScreen(
     onLocalhostToggled: (Boolean)->Unit,
     onPrivacyPolicyClick: ()->Unit,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isSearchFocused by interactionSource.collectIsFocusedAsState()
+    ClearSearchFocusOnBack(
+        enabled = isSearchFocused || state.query.isNotEmpty(),
+        onFocusCleared = {
+            onQueryChange("")
+        }
+    )
+
+    val onSearchWrapper = { query: String ->
+        if (state.canSearch && state.langFrom != null && state.langTo != null) {
+            onSearch(
+                query.trim(),
+                state.langFrom,
+                state.langTo,
+            )
+        }
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(32.dp)
-                    .fillMaxSize()
+            val biasY by animateFloatAsState(
+                targetValue = if (isSearchFocused || state.query.isNotEmpty()) -1f else 0f,
+            )
+            Box(
+                contentAlignment = BiasAlignment(horizontalBias = 0f, verticalBias = biasY),
+                modifier = Modifier.fillMaxSize(),
             ) {
-                if (state.langFrom != null && state.langTo != null) {
-                    LangsSelector(state.langFrom, state.langTo, onLangsChange)
-                }
-                val onSearchWrapper = { query: String ->
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(32.dp)
+                ) {
+                    var langsSelectorHeight by remember { mutableStateOf(0) }
                     if (state.langFrom != null && state.langTo != null) {
-                        onSearch(
-                            query.trim(),
+                        LangsSelector(
                             state.langFrom,
                             state.langTo,
+                            onLangsChange,
+                            modifier = Modifier.onGloballyPositioned { coords ->
+                                langsSelectorHeight = coords.size.height
+                            }
                         )
                     }
-                }
-                SearchBar(
-                    state.query,
-                    onQueryChange = { onQueryChange(it) },
-                    onSearch = { onSearchWrapper(state.query) },
-                    placeholder = { Text(stringResource(ResStr.string.home_input_hint)) },
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            onQueryChange("")
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = stringResource(ResStr.string.home_cd_clear_search_query),
-                            )
+
+                    SearchBar(
+                        state.query,
+                        onQueryChange = { onQueryChange(it) },
+                        onSearch = { onSearchWrapper(state.query) },
+                        placeholder = { Text(stringResource(ResStr.string.home_input_hint)) },
+                        leadingIcon = {
+                            SearchIcon()
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                onQueryChange("")
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = stringResource(ResStr.string.home_cd_clear_search_query),
+                                )
+                            }
+                        },
+                        interactionSource = interactionSource,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Box {
+                        val langsSelectorHeightDp =
+                            with(LocalDensity.current) { langsSelectorHeight.toDp() }
+                        Spacer(Modifier.height(langsSelectorHeightDp))
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                        ) {
+                            val suggestions = state.suggestions
+                            suggestions.forEach { suggestion ->
+                                SuggestionItem(
+                                    suggestion.text,
+                                    suggestion.translations.map { it.text },
+                                    Modifier.clickable {
+                                        onSearchWrapper(suggestion.text)
+                                    }
+                                )
+                            }
+                            val suggestionsTarget = state.suggestionsTarget
+                            if (state.canSearch
+                                && suggestions.firstOrNull()?.text != suggestionsTarget
+                                && suggestionsTarget.isNotBlank()
+                            ) {
+                                SuggestionItem(
+                                    stringResource(
+                                        ResStr.string.home_search_for_raw_input,
+                                        suggestionsTarget,
+                                        preview = "Search for \"Hund\"",
+                                    ),
+                                    emptyList(),
+                                    Modifier.clickable {
+                                        onSearchWrapper(suggestionsTarget)
+                                    }
+                                )
+                            }
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(Modifier.height(16.dp))
-                Button(
-                    onClick = { onSearchWrapper(state.query) },
-                    enabled = state.canSearch,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(ResStr.string.home_btn_search))
+                    }
                 }
             }
 
@@ -131,12 +210,43 @@ internal fun HomeScreen(
 }
 
 @Composable
+private fun SuggestionItem(
+    text: String,
+    details: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(Modifier.padding(vertical = 6.dp)) {
+            Text(if (details.isEmpty()) text else "$text: ")
+            Text(
+                details.joinToString(", ") { it },
+                color = LocalContentColor.current.copy(alpha = 0.6f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchIcon() {
+    Icon(
+        Icons.Default.Search,
+        tint = LocalContentColor.current.copy(alpha = 0.4f),
+        contentDescription = "",
+    )
+}
+
+@Composable
 private fun LangsSelector(
     langFrom: Lang,
     langTo: Lang,
     onLangsChange: (Lang, Lang) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         val langWidth = 100.dp
         LangDropdown(
             langFrom,
@@ -169,6 +279,42 @@ private fun Preview() {
         langTo = Lang.EN,
         query = "Hund",
         canSearch = true,
+        suggestions = emptyList(),
+        suggestionsTarget = "Hund",
+        isLocalhost = false,
+    )
+    LexisoupTheme {
+        HomeScreen(
+            state = state,
+            onQueryChange = {},
+            onLangsChange = { _, _ -> },
+            onSearch = { _, _, _ -> },
+            onLocalhostToggled = {},
+            onPrivacyPolicyClick = {},
+        )
+    }
+}
+
+@Preview(name = "400x500", heightDp = 400, widthDp = 500)
+@Composable
+private fun PreviewSuggestions() {
+    val state = HomeScreenState(
+        langFrom = Lang.DE,
+        langTo = Lang.EN,
+        query = "Hund",
+        canSearch = true,
+        suggestions = listOf(
+            Suggestion("Hunde", listOf(
+                Sentence("Dog", Lang.EN, DataSource.PANLEX),
+                Sentence("Mutt", Lang.EN, DataSource.PANLEX),
+                Sentence("Hound", Lang.EN, DataSource.PANLEX),
+            )),
+            Suggestion("Hündin", listOf(
+                Sentence("Dog", Lang.EN, DataSource.PANLEX),
+                Sentence("Bitch", Lang.EN, DataSource.PANLEX),
+            )),
+        ),
+        suggestionsTarget = "Hund",
         isLocalhost = false,
     )
     LexisoupTheme {

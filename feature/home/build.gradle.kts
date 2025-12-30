@@ -9,6 +9,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":data:suggestions"))
             implementation(project(":domain:backend-address"))
             implementation(project(":domain:model"))
             implementation(project(":domain:settings"))

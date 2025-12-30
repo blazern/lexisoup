@@ -4,6 +4,7 @@
     <string name="home_input_hint">Suchbegriff</string>
     <string name="home_cd_clear_search_query">Suchbegriff löschen</string>
     <string name="home_cd_switch_langs">Sprachen wechseln</string>
+    <string name="home_search_for_raw_input">Nach „%1$s“ suchen</string>
 
     <string name="search_results_title">Suche:</string>
 
@@ -17,6 +18,7 @@
     <string name="general_data_source_kaikki">kaikki (Wiktionary)</string>
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
+    <string name="general_data_source_unknown">unbekannt</string>
 
     <string name="general_lexical_item_detail_type_forms">Formen</string>
     <string name="general_lexical_item_detail_type_word_translations">Übersetzungen</string>

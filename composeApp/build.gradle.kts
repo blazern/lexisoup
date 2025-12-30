@@ -54,6 +54,8 @@ kotlin {
             implementation(project(":domain:backend-address"))
             implementation(project(":domain:model"))
             implementation(project(":domain:settings"))
+            implementation(project(":data:lexisoup-graphql"))
+            implementation(project(":data:suggestions"))
             implementation(project(":data:lexical-item-details-source:aggregation"))
 
             implementation(project(":feature:home"))

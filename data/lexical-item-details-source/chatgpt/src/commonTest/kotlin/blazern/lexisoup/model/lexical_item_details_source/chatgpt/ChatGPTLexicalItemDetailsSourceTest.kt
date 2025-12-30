@@ -8,7 +8,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
-import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
+import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_BASIC
 import blazern.lexisoup.graphql.model.LexicalItemsFromLLMQuery
 import blazern.lexisoup.test_utils.FakeApolloClientHolder
 import blazern.lexisoup.utils.FlowIterator
@@ -209,7 +209,7 @@ class ChatGPTLexicalItemDetailsSourceTest {
                         Sentence("dog", Lang.EN, CHATGPT),
                         Sentence("hound", Lang.EN, CHATGPT),
                     ),
-                    listOf(QUALITY_MAX, QUALITY_MAX),
+                    listOf(QUALITY_BASIC, QUALITY_BASIC),
                 ),
                 CHATGPT,
             ),
@@ -227,7 +227,7 @@ class ChatGPTLexicalItemDetailsSourceTest {
                         Sentence("Hündin", Lang.DE, CHATGPT),
                         Sentence("Köter", Lang.DE, CHATGPT),
                     ),
-                    listOf(QUALITY_MAX, QUALITY_MAX),
+                    listOf(QUALITY_BASIC, QUALITY_BASIC),
                 ),
                 CHATGPT,
             ),
@@ -240,12 +240,12 @@ class ChatGPTLexicalItemDetailsSourceTest {
             TranslationsSet(
                 Sentence("Dog", Lang.EN, CHATGPT),
                 listOf(Sentence("Hund", Lang.DE, CHATGPT)),
-                listOf(QUALITY_MAX),
+                listOf(QUALITY_BASIC),
             ),
             TranslationsSet(
                 Sentence("My dog", Lang.EN, CHATGPT),
                 listOf(Sentence("Mein Hund", Lang.DE, CHATGPT)),
-                listOf(QUALITY_MAX),
+                listOf(QUALITY_BASIC),
             ),
         )
         val expectedExamples = expectedSets.map {
