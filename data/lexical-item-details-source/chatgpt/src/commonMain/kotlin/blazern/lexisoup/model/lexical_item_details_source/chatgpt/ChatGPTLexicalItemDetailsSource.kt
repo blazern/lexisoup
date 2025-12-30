@@ -4,24 +4,22 @@ import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import arrow.core.getOrElse
-import blazern.lexisoup.graphql.model.LexicalItemsFromLLMQuery
-import blazern.lexisoup.graphql.model.fragment.SentenceFields
-import blazern.lexisoup.graphql.model.fragment.TranslationsSetFields
-import blazern.lexisoup.data.lexisoup.graphql.LexisoupApolloClientHolder
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItemDetailsSourceCacher
+import blazern.lexisoup.data.lexisoup.graphql.LexisoupApolloClientHolder
+import blazern.lexisoup.data.lexisoup.graphql.err
+import blazern.lexisoup.data.lexisoup.graphql.mapSource
+import blazern.lexisoup.data.lexisoup.graphql.toDomain
 import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
-import blazern.lexisoup.domain.model.Sentence
-import blazern.lexisoup.domain.model.TranslationsSet
+import blazern.lexisoup.graphql.model.LexicalItemsFromLLMQuery
 import com.apollographql.apollo.ApolloClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.io.IOException
 
 class ChatGPTLexicalItemDetailsSource(
     private val apolloClientHolder: LexisoupApolloClientHolder,
@@ -55,7 +53,7 @@ class ChatGPTLexicalItemDetailsSource(
         while (true) {
             val result = apolloRequest(query, langFrom, langTo)
             result.fold(
-                { emit(Item.Failure(Err.from(it))) },
+                { emit(Item.Failure(it)) },
                 {
                     emit(Item.Page(
                         details = it,
@@ -71,7 +69,7 @@ class ChatGPTLexicalItemDetailsSource(
         query: String,
         langFrom: Lang,
         langTo: Lang,
-    ): Either<Exception, List<LexicalItemDetail>> {
+    ): Either<Err, List<LexicalItemDetail>> {
         val result = apollo.first().query(
             LexicalItemsFromLLMQuery(
                 query,
@@ -80,19 +78,12 @@ class ChatGPTLexicalItemDetailsSource(
             )
         ).execute()
 
-        result.exception?.let {
-            return Left(it)
-        }
-
-        if (!result.errors.isNullOrEmpty()) {
-            val msg = result.errors!!.joinToString("; ") { it.message }
-            return Left(IOException(msg))
-        }
+        result.err?.let { return Left(it) }
 
         val data = result.data ?: return Right(emptyList())
 
         val items = data.llm.mapNotNull {
-            it.toDomain().getOrElse { return Left(it) }
+            it.toDomain().getOrElse { return Left(Err.from(it)) }
         }
         return Right(items)
     }
@@ -135,33 +126,3 @@ private fun LexicalItemsFromLLMQuery.Llm.toDomain(): Either<IllegalArgumentExcep
     // New field in a newer version of the backend was added apparently
     return Right(null)
 }
-
-private fun TranslationsSetFields.toDomain(): Either<IllegalArgumentException, TranslationsSet> {
-    return Right(TranslationsSet(
-        original = original.toDomain()
-            .getOrElse { return Left(it) },
-        translations = translations.map {
-            it.toDomain().getOrElse { return Left(it) }
-        },
-        translationsQualities = translations.map { TranslationsSet.QUALITY_MAX },
-    ))
-}
-
-private fun TranslationsSetFields.Original.toDomain():
-        Either<IllegalArgumentException, Sentence> = this.sentenceFields.toDomain()
-
-private fun TranslationsSetFields.Translation.toDomain():
-        Either<IllegalArgumentException, Sentence> = this.sentenceFields.toDomain()
-
-private fun SentenceFields.toDomain(): Either<IllegalArgumentException, Sentence> {
-    val lang = Lang.fromIso3(langIso3)
-        ?: return Left(IllegalArgumentException("Lang $langIso3 not supported"))
-    return Right(Sentence(
-        text = text,
-        lang = lang,
-        source = mapSource(source),
-    ))
-}
-
-@Suppress("UnusedParameter")
-private fun mapSource(remoteSource: String) = DataSource.CHATGPT

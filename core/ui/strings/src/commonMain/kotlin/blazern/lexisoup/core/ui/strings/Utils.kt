@@ -14,15 +14,16 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun stringResource(
     resource: StringResource,
+    vararg formatArgs: String,
     preview: String = "Lorem ipsum",
 ): String {
     if (!LocalInspectionMode.current) {
-        return stringResource(resource)
+        return stringResource(resource, *formatArgs)
     }
 
     var text by remember(resource) { mutableStateOf<String?>(null) }
     LaunchedEffect(resource) {
-        text = try { getString(resource) } catch (_: Throwable) { preview }
+        text = try { getString(resource, *formatArgs) } catch (_: Throwable) { preview }
     }
     return text ?: preview
 }

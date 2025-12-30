@@ -1,5 +1,7 @@
 package blazern.lexisoup.core.ui.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -9,6 +11,8 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
@@ -29,6 +33,7 @@ fun SearchBar(
         )
     },
     trailingIcon: @Composable (() -> Unit)? = null,
+    interactionSource: MutableInteractionSource? = null,
 ) {
     SearchBar(
         inputField = {
@@ -42,7 +47,8 @@ fun SearchBar(
                 onExpandedChange = {},
                 placeholder = placeholder,
                 leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon
+                trailingIcon = trailingIcon,
+                interactionSource = interactionSource,
             )
         },
         expanded = false,

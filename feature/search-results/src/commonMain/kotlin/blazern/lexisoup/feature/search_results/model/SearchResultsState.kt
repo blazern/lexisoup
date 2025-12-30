@@ -105,6 +105,7 @@ internal val DataSource.priority: Int
             DataSource.CHATGPT -> 2
             DataSource.KAIKKI -> 3
             DataSource.WORTSCHATZ_LEIPZIG -> 4
+            DataSource.UNKNOWN -> 100
         }
     }
 
