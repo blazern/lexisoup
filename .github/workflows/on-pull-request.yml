@@ -2,10 +2,55 @@ name: on-pull-request
 
 on:
   pull_request:
-  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  update-yarn-lock-for-dependabot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      pushed: ${{ steps.push.outputs.pushed }}
+    steps:
+      - uses: actions/checkout@v5
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Setup Gradle
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - name: Update yarn lock
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        run: ./gradlew kotlinUpgradeYarnLock
+
+      - name: Make and push a commit if any diff
+        id: push
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add kotlin-js-store/yarn.lock
+          git commit -m "dependabot: update Kotlin yarn.lock"
+          git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # At least 1 step that does at least something, just in case the entire
+      # job is considered as skipped because all steps were skipped
+      - run: echo "noop"
+
   build-and-test:
+    needs: update-yarn-lock-for-dependabot
+    # We rely on Github restarting this workflow on any pushes
+    if: needs.update-yarn-lock-for-dependabot.outputs.pushed != 'true'
     runs-on: ubuntu-latest
 
     steps:
