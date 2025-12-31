@@ -1,19 +1,25 @@
 package blazern.lexisoup.core.ui.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -34,28 +40,48 @@ fun SearchBar(
     },
     trailingIcon: @Composable (() -> Unit)? = null,
     interactionSource: MutableInteractionSource? = null,
+    keyboardOptions: KeyboardOptions? = null,
 ) {
-    SearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                query = query,
-                onQueryChange = onQueryChange,
-                onSearch = {
-                    onSearch(query)
-                },
-                expanded = false,
-                onExpandedChange = {},
-                placeholder = placeholder,
-                leadingIcon = leadingIcon,
-                trailingIcon = trailingIcon,
-                interactionSource = interactionSource,
-            )
+    val shape = RoundedCornerShape(percent = 50)
+
+    TextField(
+        value = query,
+        onValueChange = onQueryChange,
+        modifier = modifier
+            .height(56.dp)
+            .fillMaxWidth(),
+        singleLine = true,
+        shape = shape,
+        interactionSource = interactionSource,
+        placeholder = placeholder,
+        leadingIcon = {
+            leadingIcon?.let {
+                Box(Modifier.padding(start = 6.dp)) {
+                    it.invoke()
+                }
+            }
         },
-        expanded = false,
-        onExpandedChange = {},
-        content = {},
-        windowInsets = WindowInsets(0.dp),
-        modifier = modifier,
+        trailingIcon = {
+            trailingIcon?.let {
+                Box(Modifier.padding(end = 4.dp)) {
+                    it.invoke()
+                }
+            }
+        },
+        keyboardOptions = keyboardOptions ?: KeyboardOptions(
+            imeAction = ImeAction.Search,
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = { onSearch(query) }
+        ),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+        ),
     )
 }
 
