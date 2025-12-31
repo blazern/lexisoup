@@ -11,9 +11,12 @@ jobs:
   update-yarn-lock-for-dependabot:
     runs-on: ubuntu-latest
     permissions:
+      # To make & push a commit
       contents: write
+      # To post a comment to the PR
+      pull-requests: write
     outputs:
-      pushed: ${{ steps.push.outputs.pushed }}
+      sha: ${{ steps.push.outputs.sha }}
     steps:
       - uses: actions/checkout@v5
         if: github.event.pull_request.user.login == 'dependabot[bot]'
@@ -41,7 +44,26 @@ jobs:
           git add kotlin-js-store/yarn.lock
           git commit -m "dependabot: update Kotlin yarn.lock"
           git push
-          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          NEW_SHA="$(git rev-parse HEAD)"
+          echo "sha=$NEW_SHA" >> "$GITHUB_OUTPUT"
+
+      # The PR will not get new checks started because the new commit was pushed with ${{ github.token }},
+      # and this is by (Github's) design: we want to avoid workflows starting other workflows indefinitelly,
+      # even if the possibility of such a bug is tiny.
+      - name: Comment on PR with run link
+        if: github.event.pull_request.user.login == 'dependabot[bot]' && steps.push.outputs.sha != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh pr comment "${{ github.event.pull_request.number }}" --body "$(cat <<EOF
+          ‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️
+          ## **Updated \`kotlin-js-store/yarn.lock\` and pushed a commit.**
+          # This PR will no longer show checks, but they are here:
+          ${RUN_URL}
+          ‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️
+          EOF
+          )"
 
       # At least 1 step that does at least something, just in case the entire
       # job is considered as skipped because all steps were skipped
@@ -49,12 +71,17 @@ jobs:
 
   build-and-test:
     needs: update-yarn-lock-for-dependabot
-    # We rely on Github restarting this workflow on any pushes
-    if: needs.update-yarn-lock-for-dependabot.outputs.pushed != 'true'
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v5
+
+      - name: Possibly move to updated commit
+        if: needs.update-yarn-lock-for-dependabot.outputs.sha != ''
+        run: |
+          git fetch origin ${{ github.head_ref }}
+          git checkout ${{ github.head_ref }}
+          git reset --hard ${{ needs.update-yarn-lock-for-dependabot.outputs.sha }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
