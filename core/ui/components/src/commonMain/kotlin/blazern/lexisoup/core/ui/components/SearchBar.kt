@@ -42,8 +42,6 @@ fun SearchBar(
     interactionSource: MutableInteractionSource? = null,
     keyboardOptions: KeyboardOptions? = null,
 ) {
-    val shape = RoundedCornerShape(percent = 50)
-
     TextField(
         value = query,
         onValueChange = onQueryChange,
@@ -51,7 +49,7 @@ fun SearchBar(
             .height(56.dp)
             .fillMaxWidth(),
         singleLine = true,
-        shape = shape,
+        shape = RoundedCornerShape(percent = 50),
         interactionSource = interactionSource,
         placeholder = placeholder,
         leadingIcon = {

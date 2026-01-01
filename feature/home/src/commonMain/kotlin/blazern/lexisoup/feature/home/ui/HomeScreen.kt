@@ -143,7 +143,7 @@ internal fun HomeScreen(
                         interactionSource = interactionSource,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Search,
-                            hintLocales = LocaleList(state.langFrom?.iso2 ?: "")
+                            hintLocales = state.langFrom?.iso2?.let { LocaleList(it) }
                         ),
                         modifier = Modifier.fillMaxWidth(),
                     )
