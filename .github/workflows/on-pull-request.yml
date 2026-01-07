@@ -32,6 +32,7 @@ jobs:
 
       - name: Update yarn lock
         if: github.event.pull_request.user.login == 'dependabot[bot]'
+        working-directory: lexisoup-kmp
         run: ./gradlew kotlinUpgradeYarnLock
 
       - name: Make and push a commit if any diff
@@ -41,7 +42,7 @@ jobs:
           if git diff --quiet; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add kotlin-js-store/yarn.lock
+          git add lexisoup-kmp/kotlin-js-store/yarn.lock
           git commit -m "dependabot: update Kotlin yarn.lock"
           git push
           NEW_SHA="$(git rev-parse HEAD)"
@@ -58,7 +59,7 @@ jobs:
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           gh pr comment "${{ github.event.pull_request.number }}" --body "$(cat <<EOF
           ‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️
-          ## **Updated \`kotlin-js-store/yarn.lock\` and pushed a commit.**
+          ## **Updated \`lexisoup-kmp/kotlin-js-store/yarn.lock\` and pushed a commit.**
           # This PR will no longer show checks, but they are here:
           ${RUN_URL}
           ‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️‼️
@@ -89,24 +90,28 @@ jobs:
           cache-read-only: false
 
       - name: Run detekt
+        working-directory: lexisoup-kmp
         run: ./gradlew detekt --continue
 
       - name: Run tests
+        working-directory: lexisoup-kmp
         run: ./gradlew 'testAndroidHostTest'
 
       - name: Tests results
         if: failure()
         run: |
-          for report in $(find . -path "*/build/reports/tests/*UnitTest/index.html"); do
+          for report in $(find lexisoup-kmp -path "*/build/reports/tests/*UnitTest/index.html"); do
             echo "# Test: $(basename $(dirname $(dirname $(dirname $(dirname $(dirname "$report"))))))" >> $GITHUB_STEP_SUMMARY
             cat "$report" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           done
 
       - name: Build release to ensure it is working
+        working-directory: lexisoup-kmp
         run: ./gradlew bundleRelease
 
       - name: Build JS to ensure it is working
+        working-directory: lexisoup-kmp
         run: ./gradlew jsBrowserDistribution
 
       - name: Automerge
