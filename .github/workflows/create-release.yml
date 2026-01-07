@@ -20,12 +20,13 @@ jobs:
           cache-read-only: false
 
       - name: Build JS
+        working-directory: lexisoup-kmp
         run: ./gradlew jsBrowserDistribution
 
       - name: Archive JS
         run: |
-          cd composeApp/build/dist/js/productionExecutable
-          zip -r ../../../../../js-dist.zip .
+          cd lexisoup-kmp/composeApp/build/dist/js/productionExecutable
+          zip -r ../../../../../../js-dist.zip .
 
       - name: Generate timestamp tag
         id: gen_tag
