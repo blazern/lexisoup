@@ -1,0 +1,78 @@
+name: deploy release
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  deploy-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger js deploy
+        run: |
+          curl -fsSL -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.LEXISOUP_SERVER_WORKFLOW_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/blazern/lexisoup-server/actions/workflows/deploy-js.yml/dispatches \
+            -d '{"ref":"main"}'
+
+  deploy-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find latest release tag
+        id: latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="$(gh release list \
+            --repo "$GITHUB_REPOSITORY" \
+            --exclude-drafts \
+            --exclude-pre-releases \
+            --limit 1 \
+            --json tagName \
+            -q '.[0].tagName')"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout latest release
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.latest.outputs.tag }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Download latest release artifacts
+        working-directory: ruby
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p release_artifacts
+          gh release download "${{ steps.latest.outputs.tag }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --dir release_artifacts
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          working-directory: ruby
+          # NOTE: the correct Ruby version is expected to be taken from the `./ruby/.ruby-version` file.
+          # ruby-version: XXX
+          # NOTE: next line will install Bundler and all dependencies (Fastlane)
+          bundler-cache: true
+
+      - name: Save Play Store credentials JSON
+        working-directory: ruby
+        run: printf '%s' '${{ secrets.PLAY_STORE_CREDENTIALS_JSON }}' > play-store-credentials.json
+
+      - name: Android deploy with Fastlane
+        working-directory: ruby
+        run: |
+          bundle exec fastlane supply \
+            --json_key ./play-store-credentials.json \
+            --package_name blazern.lexisoup \
+            --track production \
+            --aab ./release_artifacts/release.aab \
+            --metadata_path ./fastlane/metadata/android \
+            --release_status completed

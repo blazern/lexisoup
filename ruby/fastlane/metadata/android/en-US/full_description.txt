@@ -1,0 +1,16 @@
+Lexisoup is a "soup" of lexical data about foreign words:
+- Words' translations
+- Explanations
+- Forms
+- Synonyms
+- Usages examples
+
+Lexisoup has no data of its own.
+Instead, in the hope of bringing a better understanding of the word, lexisoup brings together data from the following sources:
+- PanLex
+- Kaikki (Wiktionary)
+- Tatoeba
+- Wortschatz Leipzig
+- ChatGPT
+
+It is a small open source app, its source code can be found here: https://github.com/blazern/lexisoup/
