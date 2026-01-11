@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.ImeAction
@@ -122,6 +124,7 @@ internal fun HomeScreen(
                         )
                     }
 
+                    val focusRequester = remember { FocusRequester() }
                     SearchBar(
                         state.query,
                         onQueryChange = { onQueryChange(it) },
@@ -131,13 +134,16 @@ internal fun HomeScreen(
                             SearchIcon()
                         },
                         trailingIcon = {
-                            IconButton(onClick = {
-                                onQueryChange("")
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = stringResource(ResStr.string.home_cd_clear_search_query),
-                                )
+                            if (state.query.isNotEmpty()) {
+                                IconButton(onClick = {
+                                    onQueryChange("")
+                                    focusRequester.requestFocus()
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = stringResource(ResStr.string.home_cd_clear_search_query),
+                                    )
+                                }
                             }
                         },
                         interactionSource = interactionSource,
@@ -145,7 +151,9 @@ internal fun HomeScreen(
                             imeAction = ImeAction.Search,
                             hintLocales = state.langFrom?.iso2?.let { LocaleList(it) }
                         ),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
                     )
                     Box {
                         val langsSelectorHeightDp =
