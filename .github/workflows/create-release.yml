@@ -8,38 +8,65 @@ permissions:
   contents: write
 
 jobs:
-  build-app-and-create-release:
+  generate-version:
     runs-on: ubuntu-latest
-
+    outputs:
+      version_code: ${{ steps.generate.outputs.version_code }}
+      version_name: ${{ steps.generate.outputs.version_name }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: actions/setup-python@v6
         with:
-          cache-read-only: false
-
-      - name: Build JS
-        working-directory: lexisoup-kmp
-        run: ./gradlew jsBrowserDistribution
-
-      - name: Archive JS
+          python-version: '3.14.2'  
+      - name: Generate version
+        id: generate
+        working-directory: python
         run: |
-          cd lexisoup-kmp/composeApp/build/dist/js/productionExecutable
-          zip -r ../../../../../../js-dist.zip .
+          set -euo pipefail
+          out="$(python3 ./generate_release_version.py)"
+          echo "version_code=$(echo "$out" | jq -r '.version_code')" >> "$GITHUB_OUTPUT"
+          echo "version_name=$(echo "$out" | jq -r '.version_name')" >> "$GITHUB_OUTPUT"
 
-      - name: Generate timestamp tag
-        id: gen_tag
-        run: echo "tag=release-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+  build-android:
+    needs: generate-version
+    uses: ./.github/workflows/build-release-android.yml
+    with:
+      version_code: ${{ needs.generate-version.outputs.version_code }}
+      version_name: ${{ needs.generate-version.outputs.version_name }}
+    secrets: inherit
+
+  build-js:
+    uses: ./.github/workflows/build-release-js.yml
+    secrets: inherit
+
+  create-github-release:
+    runs-on: ubuntu-latest
+    needs: [generate-version, build-android, build-js]
+
+    steps:
+      - name: Download Android artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-release
+          path: ./
+      
+      - name: Download JS artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: js-release
+          path: ./
 
       - name: Create a GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-            tag_name: ${{ steps.gen_tag.outputs.tag }}
-            name: "${{ steps.gen_tag.outputs.tag }}"
+            tag_name: ${{ needs.generate-version.outputs.version_name }}
+            name: ${{ needs.generate-version.outputs.version_name }}
             draft: false
             prerelease: false
-            files: js-dist.zip
+            files: |
+              js-dist.zip
+              release.aab
+              release.apk
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
