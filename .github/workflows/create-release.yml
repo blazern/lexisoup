@@ -36,6 +36,7 @@ jobs:
     secrets: inherit
 
   build-js:
+    needs: generate-version
     uses: ./.github/workflows/build-release-js.yml
     secrets: inherit
 
@@ -59,7 +60,7 @@ jobs:
       - name: Create a GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-            tag_name: ${{ needs.generate-version.outputs.version_name }}
+            tag_name: ${{ needs.generate-version.outputs.version_code }}
             name: ${{ needs.generate-version.outputs.version_name }}
             draft: false
             prerelease: false

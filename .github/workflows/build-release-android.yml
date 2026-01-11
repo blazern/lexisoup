@@ -5,7 +5,7 @@ on:
     inputs:
       version_code:
         required: true
-        type: number
+        type: string
       version_name:
         required: true
         type: string
@@ -42,12 +42,12 @@ jobs:
         run: |
             python3 ./python/build_release_android.py \
             --project-dir ./lexisoup-kmp \
-            --version-code ${{ inputs.version_code }} \
-            --version-name ${{ inputs.version_name }} \
+            --version-code "${{ inputs.version_code }}" \
+            --version-name "${{ inputs.version_name }}" \
             --keystore-path /tmp/keystore.jks \
-            --keystore-password ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} \
-            --keystore-key-alias ${{ secrets.ANDROID_KEYSTORE_KEY_ALIAS }} \
-            --keystore-key-password ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }} \
+            --keystore-password "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+            --keystore-key-alias "${{ secrets.ANDROID_KEYSTORE_KEY_ALIAS }}" \
+            --keystore-key-password "${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }}" \
             --out-aab-path ./release.aab \
             --out-apk-path ./release.apk
 
