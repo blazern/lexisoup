@@ -1,0 +1,63 @@
+name: build release android
+
+on:
+  workflow_call:
+    inputs:
+      version_code:
+        required: true
+        type: number
+      version_name:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-android-release:
+    runs-on: ubuntu-latest
+    outputs:
+      aab_path: ${{ steps.build.outputs.aab_path }}
+      apk_path: ${{ steps.build.outputs.apk_path }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14.2' 
+
+      - name: Store keystore file
+        working-directory: lexisoup-kmp
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/keystore.jks
+
+      - name: Build apk and aab
+        id: build
+        run: |
+            python3 ./python/build_release_android.py \
+            --project-dir ./lexisoup-kmp \
+            --version-code ${{ inputs.version_code }} \
+            --version-name ${{ inputs.version_name }} \
+            --keystore-path /tmp/keystore.jks \
+            --keystore-password ${{ secrets.ANDROID_KEYSTORE_PASSWORD }} \
+            --keystore-key-alias ${{ secrets.ANDROID_KEYSTORE_KEY_ALIAS }} \
+            --keystore-key-password ${{ secrets.ANDROID_KEYSTORE_KEY_PASSWORD }} \
+            --out-aab-path ./release.aab \
+            --out-apk-path ./release.apk
+
+            echo "aab_path=./release.aab" >> $GITHUB_OUTPUT
+            echo "apk_path=./release.apk" >> $GITHUB_OUTPUT
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: |
+              ./release.aab
+              ./release.apk

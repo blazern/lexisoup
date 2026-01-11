@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.testImplementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -8,6 +7,11 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
+
+val versionNameProvider = providers.gradleProperty("versionName").orElse("0.0.0-dev")
+val versionCodeProvider = providers.gradleProperty("versionCode").orElse("1")
+val appVersionName = versionNameProvider.get()
+val appVersionCode = versionCodeProvider.get().toInt()
 
 kotlin {
     androidTarget {
@@ -77,12 +81,31 @@ android {
     namespace = "blazern.lexisoup"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
+    signingConfigs {
+        val keystoreFile = providers.gradleProperty("keystoreFile").orNull
+        val keystorePassword = providers.gradleProperty("keystorePassword").orNull
+        val keystoreKeyAlias = providers.gradleProperty("keystoreKeyAlias").orNull
+        val keystoreKeyPassword = providers.gradleProperty("keystoreKeyPassword").orNull
+
+        if (keystoreFile != null) {
+            create("signed") {
+                storeFile = file(keystoreFile)
+                if (keystorePassword != null) storePassword = keystorePassword
+                if (keystoreKeyAlias != null) keyAlias = keystoreKeyAlias
+                if (keystoreKeyPassword != null) keyPassword = keystoreKeyPassword
+            }
+        }
+    }
+
     defaultConfig {
         applicationId = "blazern.lexisoup"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
+        signingConfigs.findByName("signed")?.let {
+            signingConfig = it
+        }
     }
     packaging {
         resources {

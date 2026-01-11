@@ -1,0 +1,39 @@
+name: build release js
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+
+jobs:
+  build-js-release:
+    runs-on: ubuntu-latest
+    outputs:
+      js_dist_path: ${{ steps.archive-js.outputs.js_dist_path }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
+      - name: Build JS
+        working-directory: lexisoup-kmp
+        run: ./gradlew jsBrowserDistribution
+
+      - name: Archive JS
+        id: archive-js
+        run: |
+          cd lexisoup-kmp/composeApp/build/dist/js/productionExecutable
+          zip -r ../../../../../../js-dist.zip .
+          echo "js_dist_path=./js-dist.zip" >> $GITHUB_OUTPUT
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-release
+          path: |
+              ./js-dist.zip
