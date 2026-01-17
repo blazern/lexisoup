@@ -26,8 +26,10 @@ sealed class LexicalItemDetail(
 
     data class Forms(
         val value: Value,
+        val lang: Lang,
         override val source: DataSource,
         override val meaningId: String? = null,
+        val pos: PartOfSpeech? = null,
     ) : LexicalItemDetail(Type.FORMS) {
         sealed class Value {
             data class Text(val text: String) : Value()

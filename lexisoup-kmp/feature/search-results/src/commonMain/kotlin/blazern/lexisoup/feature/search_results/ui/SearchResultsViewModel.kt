@@ -128,14 +128,6 @@ internal class SearchResultsViewModel(
             val value = detail.value
             if (value is Forms.Value.Detailed) {
                 val forms = value.forms
-                    .map { it.withoutPronoun() }
-                    .distinct()
-                    .filter {
-                        val wordsCount = it.wordsCount
-                        val oneWord = wordsCount == 1 || (wordsCount == 2 && it.hasArticle)
-                        val onlyLetters = Regex("(\\w| )+").matches(it.text)
-                        oneWord && onlyLetters && !it.auxiliary
-                    }
                 return if (forms.isNotEmpty()) {
                     detail.copy(value = Forms.Value.Detailed(forms))
                 } else {

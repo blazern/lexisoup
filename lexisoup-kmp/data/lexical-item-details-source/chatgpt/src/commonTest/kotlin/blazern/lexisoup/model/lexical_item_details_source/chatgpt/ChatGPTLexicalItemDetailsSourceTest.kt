@@ -194,7 +194,7 @@ class ChatGPTLexicalItemDetailsSourceTest {
             .filterIsInstance<Forms>()
             .single()
         assertEquals(
-            Forms(Forms.Value.Text("der Hund, -e"), CHATGPT),
+            Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, CHATGPT),
             forms,
         )
 

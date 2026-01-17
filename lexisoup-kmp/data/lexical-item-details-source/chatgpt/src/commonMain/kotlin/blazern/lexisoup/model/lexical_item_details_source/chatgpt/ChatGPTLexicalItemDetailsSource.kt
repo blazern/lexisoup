@@ -83,16 +83,17 @@ class ChatGPTLexicalItemDetailsSource(
         val data = result.data ?: return Right(emptyList())
 
         val items = data.llm.mapNotNull {
-            it.toDomain().getOrElse { return Left(Err.from(it)) }
+            it.toDomain(langFrom).getOrElse { return Left(Err.from(it)) }
         }
         return Right(items)
     }
 }
 
-private fun LexicalItemsFromLLMQuery.Llm.toDomain(): Either<IllegalArgumentException, LexicalItemDetail?> {
+private fun LexicalItemsFromLLMQuery.Llm.toDomain(lang: Lang): Either<IllegalArgumentException, LexicalItemDetail?> {
     onForms?.let {
         return Right(LexicalItemDetail.Forms(
             value = LexicalItemDetail.Forms.Value.Text(it.text),
+            lang = lang,
             source = mapSource(it.source)
         ))
     }

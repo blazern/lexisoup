@@ -13,7 +13,7 @@ class FormsAccentsEnhancerImplTest {
     private val source = DataSource.TATOEBA
 
     private fun enhancer(vararg forms: String) =
-        FormsAccentsEnhancerImpl(forms.map { WordForm(it, emptyList(), Lang.DE) })
+        FormsAccentsEnhancerImpl(forms.map { WordForm(it, Lang.DE, emptyList()) })
 
     private fun sentence(
         text: String,
@@ -89,8 +89,8 @@ class FormsAccentsEnhancerImplTest {
     fun `empty forms are ignored`() {
         val e = FormsAccentsEnhancerImpl(
             listOf(
-                WordForm("", emptyList(), Lang.DE),
-                WordForm("tanz", emptyList(), Lang.DE)
+                WordForm("", Lang.DE, emptyList()),
+                WordForm("tanz", Lang.DE, emptyList())
             )
         )
         val s = sentence("ich tanz")

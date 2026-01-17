@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Form(
     val form: String,
-    val tags: List<String>? = null
+    val tags: List<String>? = null,
+    val article: String? = null,
 )

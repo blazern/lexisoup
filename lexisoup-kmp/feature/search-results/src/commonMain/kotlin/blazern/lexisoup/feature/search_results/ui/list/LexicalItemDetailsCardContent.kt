@@ -35,7 +35,7 @@ internal fun LexicalItemDetailsCardContent(
     callbacks: LexicalItemDetailCallbacks,
 ) {
     val itemPaddings = PaddingValues(vertical = 18.dp)
-    val header = selectHeader(details)
+    val header = SelectedHeader.select(details)
     val detailsFiltered = if (header != null && header.detailConsumed) {
         details.filter { it != header.sourceDetail }
     } else {
@@ -62,20 +62,21 @@ internal fun LexicalItemDetailsCardContent(
                     )
                 }
             }
-            detailsFiltered.compose<Forms> {
-                Box(Modifier.fillMaxWidth()) {
-                    LexicalItemDetailForms(
-                        it,
-                        contentColor,
-                        callbacks,
-                        Modifier.padding(itemPaddings),
-                    )
-                    Label(
-                        stringResource(Res.string.general_lexical_item_detail_type_forms),
-                        contentColor,
-                    )
-                }
-            }
+            // NOTE: this looks terrible, a table is rather needed, like the one that Wiktionary has
+//            detailsFiltered.compose<Forms> {
+//                Box(Modifier.fillMaxWidth()) {
+//                    LexicalItemDetailForms(
+//                        it,
+//                        contentColor,
+//                        callbacks,
+//                        Modifier.padding(itemPaddings),
+//                    )
+//                    Label(
+//                        stringResource(Res.string.general_lexical_item_detail_type_forms),
+//                        contentColor,
+//                    )
+//                }
+//            }
             detailsFiltered.compose<WordTranslations> {
                 Box(Modifier.fillMaxWidth()) {
                     SentencesPart(

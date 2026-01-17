@@ -97,6 +97,7 @@ private fun Preview() {
                 details = listOf(
                     Forms(
                         Forms.Value.Text("der Hund, -e"),
+                        Lang.DE,
                         DataSource.CHATGPT,
                     )
                 ),

@@ -26,22 +26,22 @@ class FormsForExamplesProviderImplTest {
     private val formsProvider = FormsForExamplesProviderImpl(kaikki)
 
     @Test
-    fun `uses and modifies Kaikki forms`() = runTest {
+    fun `uses Kaikki forms`() = runTest {
         val kaikkiForms = listOf(
             WordForm(
-                text = "ich lache",
+                text = "lache",
                 tags = emptyList(),
                 lang = Lang.DE
             ),
             WordForm(
-                text = "du lachst",
+                text = "lachst",
                 tags = emptyList(),
                 lang = Lang.DE,
             ),
-            WordForm("haben", listOf(WordForm.Tag.Defined.Auxiliary("aux")), Lang.DE),
-            WordForm("der Lachen", emptyList(), Lang.DE),
+            WordForm("haben", Lang.DE, listOf(WordForm.Tag.Defined.Auxiliary("aux"))),
+            WordForm("so ein Lachen", Lang.DE, emptyList(), wordsCount = 3),
         )
-        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), DataSource.KAIKKI)
+        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), Lang.DE, DataSource.KAIKKI)
         kaikki.responseFlow = flowOf(
             Item.Page(details = listOf(formsDetail), types)
         )
@@ -57,7 +57,6 @@ class FormsForExamplesProviderImplTest {
                 tags = emptyList(),
                 lang = Lang.DE,
             ),
-            WordForm("Lachen", emptyList(), Lang.DE),
         )
         assertEquals(
             expectedForms,
@@ -67,8 +66,8 @@ class FormsForExamplesProviderImplTest {
 
     @Test
     fun `iterats over flow until receives forms`() = runTest {
-        val kaikkiForms = listOf(WordForm("lachen", emptyList(), Lang.DE))
-        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), DataSource.KAIKKI)
+        val kaikkiForms = listOf(WordForm("lachen", Lang.DE))
+        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), Lang.DE, DataSource.KAIKKI)
         kaikki.responseFlow = flowOf(
             Item.Page(details = listOf(Explanation("Explanation", DataSource.KAIKKI)), types),
             Item.Page(details = listOf(LexicalItemDetail.Example(TranslationsSet(
@@ -85,8 +84,8 @@ class FormsForExamplesProviderImplTest {
 
     @Test
     fun `first error stops requests`() = runTest {
-        val kaikkiForms = listOf(WordForm("lachen", emptyList(), Lang.DE))
-        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), DataSource.KAIKKI)
+        val kaikkiForms = listOf(WordForm("lachen", Lang.DE))
+        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), Lang.DE, DataSource.KAIKKI)
         kaikki.responseFlow = flowOf(
             Item.Page(details = listOf(Explanation("Explanation", DataSource.KAIKKI)), types),
             Item.Failure(Err.from(Exception())),

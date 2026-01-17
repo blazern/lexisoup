@@ -2,7 +2,6 @@ package blazern.lexisoup.data.lexical_item_details_source.kaikki
 
 import arrow.core.Either.Left
 import arrow.core.Either.Right
-import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.kaikki.model.Entry
 import blazern.lexisoup.data.kaikki.model.Example
 import blazern.lexisoup.data.kaikki.model.Form
@@ -11,16 +10,20 @@ import blazern.lexisoup.data.kaikki.model.Related
 import blazern.lexisoup.data.kaikki.model.Sense
 import blazern.lexisoup.data.kaikki.model.Translation
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource
+import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItemDetailsSourceCacher
 import blazern.lexisoup.domain.error.Err
+import blazern.lexisoup.domain.model.Article
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
+import blazern.lexisoup.domain.model.PartOfSpeech.Noun
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
 import blazern.lexisoup.domain.model.WordForm
+import blazern.lexisoup.domain.model.WordForm.Tag.Defined.MainForm
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Plural
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Singular
 import blazern.lexisoup.utils.FlowIterator
@@ -95,10 +98,23 @@ class KaikkiLexicalItemDetailsSourceImplTest {
         val expected = listOf(
             Forms(
                 Forms.Value.Detailed(listOf(
-                    WordForm("das Haus", listOf(Singular("singular")), Lang.DE),
-                    WordForm("Häuser", listOf(Plural("plural")), Lang.DE),
+                    WordForm(
+                        text = "Haus",
+                        textRaw = "das Haus",
+                        tags = listOf(Singular("singular")),
+                        lang = Lang.DE,
+                        articles = setOf(Article.allOf(Lang.DE)["das"]!!),
+                    ),
+                    WordForm("Häuser", Lang.DE, listOf(Plural("plural"))),
+                    WordForm(
+                        text="Haus",
+                        tags=listOf(MainForm("")),
+                        lang=Lang.DE,
+                    )
                 )),
+                Lang.DE,
                 DataSource.KAIKKI,
+                pos = Noun,
             ),
             LexicalItemDetail.Explanation("house; building", DataSource.KAIKKI),
             LexicalItemDetail.Example(
@@ -217,9 +233,16 @@ class KaikkiLexicalItemDetailsSourceImplTest {
         val expected = listOf(
             Forms(
                 Forms.Value.Detailed(listOf(
-                    WordForm("Häuser", listOf(Plural("plural")), Lang.DE),
+                    WordForm("Häuser", Lang.DE, listOf(Plural("plural"))),
+                    WordForm(
+                        text="Haus",
+                        tags=listOf(MainForm("")),
+                        lang=Lang.DE,
+                    )
                 )),
+                Lang.DE,
                 DataSource.KAIKKI,
+                pos = Noun,
             ),
             LexicalItemDetail.Explanation("house; building", DataSource.KAIKKI),
             LexicalItemDetail.Example(

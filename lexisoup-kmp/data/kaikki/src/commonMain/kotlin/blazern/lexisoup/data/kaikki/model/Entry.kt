@@ -11,7 +11,7 @@ data class Entry(
     val posTitle: String? = null,
     @SerialName("lang_code")
     val langCode: String,
-    val lang: String,
+    val lang: String? = null,
 
     val senses: List<Sense> = emptyList(),
     val translations: List<Translation> = emptyList(),
