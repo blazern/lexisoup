@@ -35,7 +35,7 @@ internal fun LexicalItemDetailsCardContent(
     callbacks: LexicalItemDetailCallbacks,
 ) {
     val itemPaddings = PaddingValues(vertical = 18.dp)
-    val header = selectHeader(details)
+    val header = SelectedHeader.select(details)
     val detailsFiltered = if (header != null && header.detailConsumed) {
         details.filter { it != header.sourceDetail }
     } else {

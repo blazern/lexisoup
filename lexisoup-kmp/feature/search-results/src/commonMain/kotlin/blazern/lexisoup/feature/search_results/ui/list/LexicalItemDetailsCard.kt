@@ -109,11 +109,12 @@ private fun PreviewCards() {
     )
     val fancyForms = Forms(
         value = Forms.Value.Detailed(listOf(
-            WordForm("der Hund", listOf(Singular(""), Nominative("")), Lang.DE),
-            WordForm("die Hunde", listOf(Plural(""), Nominative("")), Lang.DE),
-            WordForm("des Hundes", listOf(Singular(""), Genitive("")), Lang.DE),
-            WordForm("des Hunds", listOf(Singular(""), Genitive("")), Lang.DE),
+            WordForm("der Hund", Lang.DE, listOf(Singular(""), Nominative(""))),
+            WordForm("die Hunde", Lang.DE, listOf(Plural(""), Nominative(""))),
+            WordForm("des Hundes", Lang.DE, listOf(Singular(""), Genitive(""))),
+            WordForm("des Hunds", Lang.DE, listOf(Singular(""), Genitive(""))),
         )),
+        lang = Lang.DE,
         source = DataSource.KAIKKI,
     )
 
@@ -131,7 +132,7 @@ private fun PreviewCards() {
                             id = "1",
                             listOf(
                                 Explanation(explanation, DataSource.KAIKKI),
-                                Forms(Forms.Value.Text("der Hund, -e"), DataSource.KAIKKI),
+                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.KAIKKI),
                                 WordTranslations(translations, DataSource.KAIKKI),
                                 Synonyms(synonyms, DataSource.KAIKKI),
                             ),
@@ -193,15 +194,6 @@ private fun PreviewAll() {
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
-    val fancyForms = Forms(
-        value = Forms.Value.Detailed(listOf(
-            WordForm("der Hund", listOf(Singular(""), Nominative("")), Lang.DE),
-            WordForm("die Hunde", listOf(Plural(""), Nominative("")), Lang.DE),
-            WordForm("des Hundes", listOf(Singular(""), Genitive("")), Lang.DE),
-            WordForm("des Hunds", listOf(Singular(""), Genitive("")), Lang.DE),
-        )),
-        source = DataSource.KAIKKI,
-    )
 
     MaterialTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -211,7 +203,7 @@ private fun PreviewAll() {
                         LexicalItemDetailsGroupState.Loaded(
                             id = "1",
                             listOf(
-                                Forms(Forms.Value.Text("der Hund, -e"), DataSource.KAIKKI),
+                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.KAIKKI),
                                 WordTranslations(translations, DataSource.KAIKKI),
                                 Synonyms(synonyms, DataSource.KAIKKI),
                             ),

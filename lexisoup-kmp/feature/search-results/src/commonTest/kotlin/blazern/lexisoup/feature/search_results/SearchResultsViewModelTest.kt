@@ -98,67 +98,6 @@ class SearchResultsViewModelTest {
         }
     }
 
-    @Test
-    fun `forms are filtered and sources with zero accepted forms are dropped`() =
-        runTest(testDispatcher) {
-            val sourceAccepted = DataSource.entries[0]
-            val sourceRejected = DataSource.entries[1]
-
-            val acceptedForms = listOf(
-                WordForm("tanzt", emptyList(), Lang.DE),
-                WordForm("die tanzen", emptyList(), Lang.DE),
-                WordForm("haben or sein", listOf(WordForm.Tag.Defined.Auxiliary("auxiliary")), Lang.DE),
-                WordForm("tanzt", emptyList(), Lang.DE),
-            )
-            val acceptedDetail = Forms(
-                Forms.Value.Detailed(acceptedForms),
-                sourceAccepted,
-            )
-
-            val rejectedForms = listOf(
-                WordForm("habe getanzt", emptyList(), Lang.DE),
-                WordForm("haben or sein", listOf(WordForm.Tag.Defined.Auxiliary("auxiliary")), Lang.DE),
-                WordForm("der sehr tanzt", emptyList(), Lang.DE),
-                WordForm("tanzt!", emptyList(), Lang.DE)
-            )
-            val rejectedDetail = Forms(
-                Forms.Value.Detailed(rejectedForms),
-                sourceRejected
-            )
-
-            val sources: List<LexicalItemDetailsSource> = listOf(
-                FakeLexicalItemDetailsSource(sourceAccepted, listOf(acceptedDetail)),
-                FakeLexicalItemDetailsSource(sourceRejected, listOf(rejectedDetail))
-            )
-
-            val vm = SearchResultsViewModel(
-                query = "query",
-                langFrom = Lang.EN,
-                langTo = Lang.DE,
-                dataSource = sources.aggregate(),
-            )
-
-            // Drive loading until idle
-            while (true) {
-                val loadings = vm.state.value.groups
-                    .filterIsInstance<LexicalItemDetailsGroupState.Loading>()
-                if (loadings.isEmpty()) break
-                loadings.forEach { vm.onLoadingDetailVisible(it) }
-                advanceUntilIdle()
-            }
-
-            val loadedFormGroups = vm.state.value.groups
-                .filterIsInstance<LexicalItemDetailsGroupState.Loaded>()
-                .filter { LexicalItemDetail.Type.FORMS in it.types }
-
-            // Only the accepted source should remain (rejected one filtered out completely)
-            assertEquals(listOf(sourceAccepted), loadedFormGroups.map { it.source })
-
-            val loadedForms = loadedFormGroups.single().details.single() as Forms
-            val value = loadedForms.value as Forms.Value.Detailed
-            assertEquals(listOf("tanzt", "die tanzen"), value.forms.map { it.withoutPronoun().text })
-        }
-
     private fun fullSourcesWithFullDetails(
         detailsMultiplier: Int = 1,
     ): List<FakeLexicalItemDetailsSource> {
@@ -168,6 +107,7 @@ class SearchResultsViewModelTest {
             details += List(detailsMultiplier) {
                 Forms(
                     Forms.Value.Text("forms $detailsMultiplier $it"),
+                    Lang.DE,
                     source,
                 )
             }

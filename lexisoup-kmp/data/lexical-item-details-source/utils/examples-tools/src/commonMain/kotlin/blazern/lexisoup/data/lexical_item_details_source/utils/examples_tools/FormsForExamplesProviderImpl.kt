@@ -52,6 +52,4 @@ internal class FormsForExamplesProviderImpl(
 }
 
 private fun List<WordForm>.toFormsForExamples() =
-    map { it.withoutPronoun().withoutArticle() }
-        .distinct()
-        .filter { it.wordsCount == 1 && !it.auxiliary }
+    filter { !it.auxiliary && it.wordsCount == 1 }
