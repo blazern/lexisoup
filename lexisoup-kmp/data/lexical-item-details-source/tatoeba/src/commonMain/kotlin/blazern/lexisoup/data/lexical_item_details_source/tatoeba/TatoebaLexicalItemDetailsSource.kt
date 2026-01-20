@@ -1,6 +1,5 @@
 package blazern.lexisoup.data.lexical_item_details_source.tatoeba
 
-import arrow.core.getOrElse
 import blazern.lexisoup.core.ktor.KtorClientHolder
 import blazern.lexisoup.core.logging.Log
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource
@@ -10,7 +9,9 @@ import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsForExamplesProvider
 import blazern.lexisoup.domain.backend_address.BackendAddressProvider
+import blazern.lexisoup.domain.error.Err
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 
 class TatoebaLexicalItemDetailsSource internal constructor(
@@ -40,23 +41,53 @@ class TatoebaLexicalItemDetailsSource internal constructor(
         query: String,
         langFrom: Lang,
         langTo: Lang,
-    ): Flow<Item>  = flow {
-        val queriesRes = formsForExamplesProvider.requestFor(
+    ): Flow<Item> = flow {
+        val formsRes = formsForExamplesProvider.requestFor(
             query = query,
             langFrom = langFrom,
             langTo = langTo,
         )
-        val finalQuery = queriesRes.map {
-            it.joinToString("|", "(", ")") { "=${it.text}" }
-        }.onLeft {
-            Log.e(TAG, it.e) { "No forms" }
+        val errors = mutableListOf<Err>()
+        formsRes.onLeft {
+            Log.e(TAG, it.e) { "Forms error" }
+            errors += it
         }
 
+        val queries = formsRes.fold(
+            {
+                listOf(query)
+            },
+            {
+                if (it.isEmpty()) {
+                    listOf(query)
+                } else {
+                    listOf(
+                        "=${it.first().text}",
+                        it.takeLast(it.size - 1)
+                            .map { it.text }
+                            .distinct()
+                            .joinToString("|", "(", ")") { "=$it" }
+                    )
+                }
+            }
+        )
+
+        for (query in queries) {
+            searchImpl(query, langFrom, langTo, errors)
+        }
+    }
+
+    private suspend fun FlowCollector<Item>.searchImpl(
+        query: String,
+        langFrom: Lang,
+        langTo: Lang,
+        errors: MutableList<Err>
+    ) {
         var hasNextPage = true
         var page = 1
         while (hasNextPage) {
             val translationsSetsResult = tatoebaClient.search(
-                query = finalQuery.getOrElse { query },
+                query = query,
                 langFrom = langFrom,
                 langTo = langTo,
                 page = page,
@@ -73,7 +104,7 @@ class TatoebaLexicalItemDetailsSource internal constructor(
                         source = source,
                     )
                 },
-                errors = finalQuery.fold({ listOf(it) }, { emptyList() }),
+                errors = errors,
                 nextPageTypes = types,
             )
             emit(result)

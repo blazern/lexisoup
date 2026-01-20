@@ -108,7 +108,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                     WordForm("Häuser", Lang.DE, listOf(Plural("plural"))),
                     WordForm(
                         text="Haus",
-                        tags=listOf(MainForm("")),
+                        tags=listOf(MainForm()),
                         lang=Lang.DE,
                     )
                 )),
@@ -236,7 +236,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                     WordForm("Häuser", Lang.DE, listOf(Plural("plural"))),
                     WordForm(
                         text="Haus",
-                        tags=listOf(MainForm("")),
+                        tags=listOf(MainForm()),
                         lang=Lang.DE,
                     )
                 )),
