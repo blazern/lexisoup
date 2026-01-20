@@ -47,7 +47,17 @@ internal class FormsForExamplesProviderImpl(
         if (formsVal !is LexicalItemDetail.Forms.Value.Detailed) {
             return Left(Err.from(IllegalStateException("Forms without Value: $forms")))
         }
-        return Right(formsVal.forms.toFormsForExamples())
+
+        val result = formsVal.forms.toFormsForExamples().toMutableList()
+        val requestedForm = result.find { it.text == query }
+        if (requestedForm != null) {
+            result.remove(requestedForm)
+            result.add(0, requestedForm)
+        } else {
+            result.add(0, WordForm(query, langFrom))
+        }
+
+        return Right(result)
     }
 }
 

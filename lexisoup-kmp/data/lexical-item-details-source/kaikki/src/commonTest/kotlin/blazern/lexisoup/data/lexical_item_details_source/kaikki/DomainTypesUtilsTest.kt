@@ -42,7 +42,7 @@ class DomainTypesUtilsTest {
                     WordForm("Häuser", Lang.DE, listOf(Plural("plural"))),
                     WordForm(
                         text = "Haus",
-                        tags = listOf(Neuter("neuter"), Nominative("nominative"), MainForm("")),
+                        tags = listOf(Neuter("neuter"), Nominative("nominative"), MainForm()),
                         lang = Lang.DE,
                         // Automatic article
                         articles = setOf(Article.allOf(Lang.DE)["das"]!!)
@@ -101,7 +101,7 @@ class DomainTypesUtilsTest {
         articlesMap.forEach { (genderTxt, article) ->
             val entry = entryTemplate.copy(tags = listOf(genderTxt))
             val mainForm = mainFormTemplate.copy(
-                tags = listOf(tagsMap[genderTxt]!!, MainForm("")),
+                tags = listOf(tagsMap[genderTxt]!!, MainForm()),
                 articles = setOf(article),
             )
             val expected = listOf(
@@ -140,7 +140,7 @@ class DomainTypesUtilsTest {
         articlesMap.forEach { (genderTxt, article) ->
             val entry = entryTemplate.copy(tags = listOf(genderTxt))
             val mainForm = mainFormTemplate.copy(
-                tags = listOf(tagsMap[genderTxt]!!, MainForm("")),
+                tags = listOf(tagsMap[genderTxt]!!, MainForm()),
                 articles = setOf(article),
             )
             val expected = listOf(
@@ -202,7 +202,7 @@ class DomainTypesUtilsTest {
                     ),
                     WordForm(
                         text = "Hund",
-                        tags = listOf(MainForm("")),
+                        tags = listOf(MainForm()),
                         lang = Lang.DE,
                     )
                 )),
@@ -264,7 +264,7 @@ class DomainTypesUtilsTest {
                     ),
                     WordForm(
                         text = "gehen",
-                        tags = listOf(MainForm("")),
+                        tags = listOf(MainForm()),
                         lang = Lang.DE,
                     )
                 )),
@@ -297,7 +297,7 @@ class DomainTypesUtilsTest {
                     ),
                     WordForm(
                         text = "komm her",
-                        tags = listOf(MainForm("")),
+                        tags = listOf(MainForm()),
                         lang = Lang.DE,
                         textRaw = "komm!! her...",
                         wordsCount = 2,

@@ -26,7 +26,7 @@ internal fun Entry.toDetails(
     val result = mutableListOf<LexicalItemDetail>()
 
     val pos = pos.stringToPos()
-    val tags = tags.map { it.toWordFormTag() } + MainForm("")
+    val tags = tags.map { it.toWordFormTag() } + MainForm()
     val mainWordForm = WordForm(
         text = word
             .split(wiktionaryDelimiter)

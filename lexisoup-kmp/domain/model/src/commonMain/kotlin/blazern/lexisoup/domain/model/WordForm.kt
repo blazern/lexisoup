@@ -24,7 +24,9 @@ data class WordForm(
         ) : Tag
 
         sealed interface Defined : Tag {
-            data class MainForm(override val value: String) : Defined
+            data class MainForm(override val value: String) : Defined {
+                constructor() : this("")
+            }
             data class Nominative(override val value: String) : Defined
             data class Accusative(override val value: String) : Defined
             data class Dative(override val value: String) : Defined

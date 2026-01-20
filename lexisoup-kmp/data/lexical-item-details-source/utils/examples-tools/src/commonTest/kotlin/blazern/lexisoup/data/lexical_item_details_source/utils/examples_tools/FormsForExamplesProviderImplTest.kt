@@ -30,13 +30,12 @@ class FormsForExamplesProviderImplTest {
         val kaikkiForms = listOf(
             WordForm(
                 text = "lache",
-                tags = emptyList(),
                 lang = Lang.DE
             ),
             WordForm(
-                text = "lachst",
-                tags = emptyList(),
-                lang = Lang.DE,
+                text = "lachen",
+                tags = listOf(WordForm.Tag.Defined.Infinitive("")),
+                lang = Lang.DE
             ),
             WordForm("haben", Lang.DE, listOf(WordForm.Tag.Defined.Auxiliary("aux"))),
             WordForm("so ein Lachen", Lang.DE, emptyList(), wordsCount = 3),
@@ -47,14 +46,42 @@ class FormsForExamplesProviderImplTest {
         )
 
         val expectedForms = listOf(
+            // NOTE: the form which equals to the query is ranked first
+            WordForm(
+                text = "lachen",
+                tags = listOf(WordForm.Tag.Defined.Infinitive("")),
+                lang = Lang.DE
+            ),
             WordForm(
                 text = "lache",
-                tags = emptyList(),
+                lang = Lang.DE,
+            ),
+        )
+        assertEquals(
+            expectedForms,
+            formsProvider.requestFor("lachen", Lang.DE, Lang.EN).getOrElse { throw it.e!! },
+        )
+    }
+
+    @Test
+    fun `inserts an artificial first form equal to query if not found among Kaikki forms`() = runTest {
+        val kaikkiForms = listOf(
+            WordForm(
+                text = "lachst",
+                lang = Lang.DE,
+            ),
+        )
+        val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), Lang.DE, DataSource.KAIKKI)
+        kaikki.responseFlow = flowOf(Item.Page(details = listOf(formsDetail), types))
+
+        val expectedForms = listOf(
+            // NOTE: kaikki didn't give this form, it's artificial
+            WordForm(
+                text = "lachen",
                 lang = Lang.DE
             ),
             WordForm(
                 text = "lachst",
-                tags = emptyList(),
                 lang = Lang.DE,
             ),
         )

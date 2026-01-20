@@ -1,6 +1,5 @@
 package blazern.lexisoup.data.lexical_item_details_source.tatoeba
 
-
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
@@ -12,7 +11,6 @@ import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
 import blazern.lexisoup.domain.model.WordForm
-import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsForExamplesProvider
 import blazern.lexisoup.utils.FlowIterator
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -107,36 +105,6 @@ class TatoebaLexicalItemDetailsSourceTest {
     }
 
     @Test
-    fun `uses forms to refine Tatoeba query`() = runTest {
-        val forms = listOf(
-            WordForm(
-                text = "lache",
-                tags = emptyList(),
-                lang = Lang.DE
-            ),
-            WordForm(
-                text = "lachst",
-                tags = emptyList(),
-                lang = Lang.DE,
-            ),
-        )
-        formsProvider.nextResult = Right(forms)
-
-        tatoeba.enqueueResult(
-            query = "(=lache|=lachst)",
-            langFrom = Lang.DE,
-            langTo = Lang.EN,
-            page = 1,
-            result = Right(emptyList()),
-        )
-        source.request("lachen", Lang.DE, Lang.EN).toList()
-
-        val calls = tatoeba.calls
-        assertEquals(1, calls.size)
-        assertEquals("(=lache|=lachst)", calls[0].query)
-    }
-
-    @Test
     fun `paginates and retries same page after error`() = runTest {
         val page1 = listOf(
             TranslationsSet(
@@ -206,5 +174,121 @@ class TatoebaLexicalItemDetailsSourceTest {
         )
 
         iter.close()
+    }
+
+    @Test
+    fun `uses forms to refine Tatoeba query`() = runTest {
+        val translations = TranslationsSet(
+            original = Sentence("sie lachen", Lang.DE, DataSource.TATOEBA),
+            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.TATOEBA)),
+            translationsQualities = listOf(QUALITY_MAX),
+        )
+        val forms = listOf(
+            WordForm(
+                text = "lachen",
+                lang = Lang.DE
+            ),
+            WordForm(
+                text = "lache",
+                lang = Lang.DE
+            ),
+            WordForm(
+                text = "lachst",
+                lang = Lang.DE,
+            ),
+        )
+        formsProvider.nextResult = Right(forms)
+
+        // First wave of requests is for the most important form always
+        tatoeba.enqueueResult(
+            query = "=lachen",
+            langFrom = Lang.DE,
+            langTo = Lang.EN,
+            page = 1,
+            result = Right(listOf(translations)),
+        )
+        tatoeba.enqueueResult(
+            query = "=lachen",
+            langFrom = Lang.DE,
+            langTo = Lang.EN,
+            page = 2,
+            result = Right(emptyList()),
+        )
+        // Then come requests for other forms
+        tatoeba.enqueueResult(
+            query = "(=lache|=lachst)",
+            langFrom = Lang.DE,
+            langTo = Lang.EN,
+            page = 1,
+            result = Right(listOf(translations)),
+        )
+        tatoeba.enqueueResult(
+            query = "(=lache|=lachst)",
+            langFrom = Lang.DE,
+            langTo = Lang.EN,
+            page = 2,
+            result = Right(emptyList()),
+        )
+        source.request("lach", Lang.DE, Lang.EN).toList()
+
+        val calls = tatoeba.calls
+        assertEquals(4, calls.size)
+        assertEquals("=lachen", calls[0].query)
+        assertEquals("=lachen", calls[1].query)
+        assertEquals(1, calls[0].page)
+        assertEquals(2, calls[1].page)
+        assertEquals("(=lache|=lachst)", calls[2].query)
+        assertEquals("(=lache|=lachst)", calls[3].query)
+        assertEquals(1, calls[2].page)
+        assertEquals(2, calls[3].page)
+    }
+
+    @Test
+    fun `forms in the Tatoeba query are deduplicated`() = runTest {
+        val translations = TranslationsSet(
+            original = Sentence("sie lachen", Lang.DE, DataSource.TATOEBA),
+            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.TATOEBA)),
+            translationsQualities = listOf(QUALITY_MAX),
+        )
+        val forms = listOf(
+            WordForm(
+                text = "lachen",
+                lang = Lang.DE
+            ),
+            WordForm(
+                text = "lacht",
+                lang = Lang.DE,
+                tags = listOf(WordForm.Tag.Defined.Masculine("")),
+            ),
+            WordForm(
+                text = "lacht",
+                lang = Lang.DE,
+                tags = listOf(WordForm.Tag.Defined.Feminine("")),
+            ),
+        )
+        formsProvider.nextResult = Right(forms)
+
+        // Main form request
+        tatoeba.enqueueResult(
+            query = "=lachen",
+            langFrom = Lang.DE,
+            langTo = Lang.EN,
+            page = 1,
+            result = Right(emptyList()),
+        )
+        tatoeba.enqueueResult(
+            // Secondary forms are deduplicated
+            query = "(=lacht)",
+            langFrom = Lang.DE,
+            langTo = Lang.EN,
+            page = 1,
+            result = Right(emptyList()),
+        )
+        source.request("lachen", Lang.DE, Lang.EN).toList()
+
+        val calls = tatoeba.calls
+        assertEquals(2, calls.size)
+        assertEquals("=lachen", calls[0].query)
+        assertEquals("(=lacht)", calls[1].query)
     }
 }
