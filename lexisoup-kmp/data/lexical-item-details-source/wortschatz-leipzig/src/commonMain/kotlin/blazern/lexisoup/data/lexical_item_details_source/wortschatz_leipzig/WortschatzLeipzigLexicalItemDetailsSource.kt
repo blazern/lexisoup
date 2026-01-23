@@ -20,6 +20,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.encodeURLPathPart
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -71,6 +72,8 @@ class WortschatzLeipzigLexicalItemDetailsSource(
                                 parameter("offset", offset)
                                 parameter("limit", LIMIT)
                             }.body<LeipzigSentencesResponse>()
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             emit(Item.Failure(Err.from(e)))
                             null

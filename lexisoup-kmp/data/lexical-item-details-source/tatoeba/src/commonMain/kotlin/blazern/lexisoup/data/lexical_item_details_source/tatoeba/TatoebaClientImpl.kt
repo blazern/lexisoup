@@ -14,6 +14,7 @@ import blazern.lexisoup.utils.getKotlinPlatform
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.first
 
 internal class TatoebaClientImpl(
@@ -38,6 +39,8 @@ internal class TatoebaClientImpl(
                 parameter("trans_link", "direct")
                 parameter("page", page)
             }.body()
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             return Either.Left(Err.from(e))
         }
