@@ -11,6 +11,7 @@ import blazern.lexisoup.utils.getKotlinPlatform
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -53,6 +54,8 @@ internal class KaikkiClientImpl(
                     .map { json.decodeFromString<Entry>(it) }
                     .toList()
                 Either.Right(entries)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Either.Left(Err.from(e))
             }

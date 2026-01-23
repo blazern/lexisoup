@@ -3,6 +3,7 @@ package blazern.lexisoup.utils
 import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
@@ -102,6 +103,8 @@ private constructor(
                     }
                     hasEnded.store(true)
                     values.trySend(Right(null))
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (t: Throwable) {
                     values.trySend(Left(t))
                 } finally {

@@ -5,6 +5,7 @@ import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.utils.FlowIterator
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -60,6 +61,8 @@ open class LexicalItemDetailsSourceCacher {
 
             val newResult = try {
                 dataStream.iterator.next()
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 emit(Item.Failure(Err.from(e)))
                 continue
