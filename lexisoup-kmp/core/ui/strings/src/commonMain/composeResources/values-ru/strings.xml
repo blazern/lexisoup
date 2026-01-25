@@ -9,8 +9,10 @@
     <string name="search_results_title">Поиск:</string>
     <string name="general_copied_to_clipboard">Скопировано</string>
 
-    <string name="general_expand">Развернуть</string>
-    <string name="general_collapse">Свернуть</string>
+    <string name="general_action_expand">Развернуть</string>
+    <string name="general_action_collapse">Свернуть</string>
+    <string name="general_action_copy">Копировать</string>
+    <string name="general_action_search">Искать</string>
 
     <string name="general_data_source_tatoeba">Tatoeba</string>
     <string name="general_data_source_chatgpt">ChatGPT</string>

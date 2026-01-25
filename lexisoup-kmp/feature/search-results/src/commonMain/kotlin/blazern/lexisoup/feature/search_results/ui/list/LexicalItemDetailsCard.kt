@@ -34,11 +34,13 @@ import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Nominative
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Plural
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Singular
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
+import blazern.lexisoup.feature.search_results.model.SearchRequest
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun LexicalItemDetailsCard(
     state: LexicalItemDetailsGroupState,
+    searchRequest: SearchRequest,
     callbacks: LexicalItemDetailCallbacks,
 ) {
     val defaultColors = CardDefaults.cardColors()
@@ -66,6 +68,7 @@ internal fun LexicalItemDetailsCard(
                 is LexicalItemDetailsGroupState.Loaded -> {
                     LexicalItemDetailsCardContent(
                         target.details,
+                        searchRequest,
                         target.source,
                         contentColorAnimated,
                         callbacks,
@@ -89,6 +92,7 @@ internal fun LexicalItemDetailsCard(
 @Preview(name = "400x500", heightDp = 400, widthDp = 500)
 @Composable
 private fun PreviewCards() {
+    val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
     val translations = TranslationsSet(
         Sentence("Hund", Lang.EN, DataSource.KAIKKI),
         listOf(
@@ -139,6 +143,7 @@ private fun PreviewCards() {
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.KAIKKI,
                         ),
+                        searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                     )
                     LexicalItemDetailsCard(
@@ -151,6 +156,7 @@ private fun PreviewCards() {
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.KAIKKI,
                         ),
+                        searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                     )
                     LexicalItemDetailsCard(
@@ -165,6 +171,7 @@ private fun PreviewCards() {
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.KAIKKI,
                         ),
+                        searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                     )
                 }
@@ -176,6 +183,7 @@ private fun PreviewCards() {
 @Preview(name = "400x500", heightDp = 400, widthDp = 500)
 @Composable
 private fun PreviewAll() {
+    val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
     val translations = TranslationsSet(
         Sentence("Hund", Lang.EN, DataSource.KAIKKI),
         listOf(
@@ -210,6 +218,7 @@ private fun PreviewAll() {
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.KAIKKI,
                         ),
+                        searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                     )
                     LexicalItemDetailsCard(
@@ -218,6 +227,7 @@ private fun PreviewAll() {
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.KAIKKI,
                         ),
+                        searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                     )
                     LexicalItemDetailsCard(
@@ -227,6 +237,7 @@ private fun PreviewAll() {
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.KAIKKI,
                         ),
+                        searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                     )
                 }

@@ -10,8 +10,10 @@
 
     <string name="general_copied_to_clipboard">Copied to clipboard</string>
 
-    <string name="general_expand">Expand</string>
-    <string name="general_collapse">Collapse</string>
+    <string name="general_action_expand">Expand</string>
+    <string name="general_action_collapse">Collapse</string>
+    <string name="general_action_copy">Copy</string>
+    <string name="general_action_search">Search</string>
 
     <string name="general_data_source_tatoeba">Tatoeba</string>
     <string name="general_data_source_chatgpt">ChatGPT</string>

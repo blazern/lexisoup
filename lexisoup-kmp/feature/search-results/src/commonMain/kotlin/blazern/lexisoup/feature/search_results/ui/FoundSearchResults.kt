@@ -23,6 +23,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
+import blazern.lexisoup.feature.search_results.model.SearchRequest
 import blazern.lexisoup.feature.search_results.model.SearchResultsState
 import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailCallbacks
 import blazern.lexisoup.feature.search_results.ui.list.ExampleCard
@@ -33,6 +34,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 internal fun FoundSearchResults(
     state: SearchResultsState,
+    searchRequest: SearchRequest,
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier = Modifier,
 ) {
@@ -42,7 +44,7 @@ internal fun FoundSearchResults(
     ) {
         val allButExamples = state.groups.filter { it.types != setOf(LexicalItemDetail.Type.EXAMPLE) }
         items(allButExamples.size, { allButExamples[it].id }) {
-            LexicalItemDetailsCard(allButExamples[it], callbacks)
+            LexicalItemDetailsCard(allButExamples[it], searchRequest, callbacks)
         }
         examples(
             state.groups,
@@ -89,6 +91,7 @@ private fun List<LexicalItemDetailsGroupState>.toExamples(): List<ExampleState> 
 @Preview(name = "400x500", heightDp = 400, widthDp = 500)
 @Composable
 private fun Preview() {
+    val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
     val state = SearchResultsState(
         groups = listOf(
             // Forms group
@@ -163,6 +166,7 @@ private fun Preview() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             FoundSearchResults(
                 state = state,
+                searchRequest = searchRequest,
                 callbacks = LexicalItemDetailCallbacks.Stub,
                 modifier = Modifier.padding(innerPadding),
             )

@@ -1,6 +1,5 @@
 package blazern.lexisoup.feature.search_results.ui.list
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,14 +23,20 @@ import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.Sentence
+import blazern.lexisoup.feature.search_results.model.SearchRequest
+import blazern.lexisoup.feature.search_results.ui.ContextAction
+import blazern.lexisoup.feature.search_results.ui.ContextMenuTrigger
 import lexisoup.core.ui.strings.generated.resources.Res
-import lexisoup.core.ui.strings.generated.resources.general_collapse
-import lexisoup.core.ui.strings.generated.resources.general_expand
+import lexisoup.core.ui.strings.generated.resources.general_action_collapse
+import lexisoup.core.ui.strings.generated.resources.general_action_copy
+import lexisoup.core.ui.strings.generated.resources.general_action_expand
+import lexisoup.core.ui.strings.generated.resources.general_action_search
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun SentencesList(
     sentences: List<Sentence>,
+    otherLang: Lang,
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier = Modifier,
@@ -51,9 +56,9 @@ internal fun SentencesList(
                         Icon(
                             imageVector = if (expanded) Icons.Filled.Close else Icons.Filled.Add,
                             contentDescription = if (expanded) {
-                                stringResource(Res.string.general_expand)
+                                stringResource(Res.string.general_action_collapse)
                             } else {
-                                stringResource(Res.string.general_collapse)
+                                stringResource(Res.string.general_action_expand)
                             },
                             tint = contentColor,
                         )
@@ -63,20 +68,26 @@ internal fun SentencesList(
         ) {
             FlowRow(modifier = modifier) {
                 sentences.forEachIndexed { inx, sentence ->
-                    Box(
-                        modifier = Modifier
-                            .clickable { callbacks.onTextCopy(sentence.text) }
-                    ) {
-                        Text(
-                            sentence.text,
-                            color = contentColor
+                    ContextMenuTrigger(
+                        actions = listOf(
+                            ContextAction(stringResource(Res.string.general_action_copy)) {
+                                callbacks.onTextCopy(sentence.text)
+                            },
+                            ContextAction(stringResource(Res.string.general_action_search)) {
+                                callbacks.onNewSearch(SearchRequest(
+                                    query = sentence.text,
+                                    langFrom = sentence.lang,
+                                    langTo = otherLang,
+                                ))
+                            },
                         )
+                    ) {
+                        Text(sentence.text, color = contentColor)
                     }
                     if (inx != sentences.size - 1) {
                         Box(
                             modifier = Modifier
                                 .padding(horizontal = 6.dp, vertical = 1.dp)
-                                .clickable { callbacks.onTextCopy(sentence.text) }
                         ) {
                             Text(
                                 "·",
@@ -103,6 +114,7 @@ private fun Preview() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             SentencesList(
                 sentences,
+                otherLang = Lang.EN,
                 contentColor = MaterialTheme.colorScheme.onBackground,
                 callbacks = LexicalItemDetailCallbacks.Stub,
                 modifier = Modifier.padding(innerPadding),
