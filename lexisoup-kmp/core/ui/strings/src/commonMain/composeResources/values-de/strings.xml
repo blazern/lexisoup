@@ -10,8 +10,10 @@
 
     <string name="general_copied_to_clipboard">Kopiert</string>
 
-    <string name="general_expand">Ausklappen</string>
-    <string name="general_collapse">Einklappen</string>
+    <string name="general_action_expand">Ausklappen</string>
+    <string name="general_action_collapse">Einklappen</string>
+    <string name="general_action_copy">Kopieren</string>
+    <string name="general_action_search">Suchen</string>
 
     <string name="general_data_source_tatoeba">Tatoeba</string>
     <string name="general_data_source_chatgpt">ChatGPT</string>

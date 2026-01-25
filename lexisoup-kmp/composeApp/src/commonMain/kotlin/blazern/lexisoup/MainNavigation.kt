@@ -3,6 +3,7 @@ package blazern.lexisoup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,12 +39,7 @@ private fun MainNavigationImpl(
         composable(ROUTE_HOME) {
             HomeRoute(
                 onSearch = { query, langFrom, langTo ->
-                    navController.navigate(
-                        "$ROUTE_SEARCH_RESULTS?" +
-                                "$ARG_QUERY=${query.encodeURLParameter()}" +
-                                "&$ARG_LANG_FROM=${langFrom.iso3}" +
-                                "&$ARG_LANG_TO=${langTo.iso3}"
-                    )
+                    startSearch(navController, query, langFrom, langTo)
                 },
                 onPrivacyPolicyClick = {
                     navController.navigate(ROUTE_PRIVACY_POLICY)
@@ -67,14 +63,31 @@ private fun MainNavigationImpl(
             val langTo = backStackEntry.arguments?.read { getStringOrNull(ARG_LANG_TO) }.orEmpty()
 
             SearchResultsRoute(
-                query,
-                Lang.fromIso3(langFrom) ?: Lang.EN,
-                Lang.fromIso3(langTo) ?: Lang.EN,
+                query = query,
+                langFrom = Lang.fromIso3(langFrom) ?: Lang.EN,
+                langTo = Lang.fromIso3(langTo) ?: Lang.EN,
+                onNewSearch = { query, langFrom, langTo ->
+                    startSearch(navController, query, langFrom, langTo)
+                },
             )
         }
 
         composable(ROUTE_PRIVACY_POLICY) { PrivacyPolicyRoute() }
     }
+}
+
+private fun startSearch(
+    navController: NavHostController,
+    query: String,
+    langFrom: Lang,
+    langTo: Lang
+) {
+    navController.navigate(
+        "$ROUTE_SEARCH_RESULTS?" +
+                "$ARG_QUERY=${query.encodeURLParameter()}" +
+                "&$ARG_LANG_FROM=${langFrom.iso3}" +
+                "&$ARG_LANG_TO=${langTo.iso3}"
+    )
 }
 
 private const val ROUTE_HOME = "home"

@@ -39,19 +39,22 @@ import blazern.lexisoup.feature.search_results.model.SearchResultsState
 import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailCallbacks
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
+import blazern.lexisoup.feature.search_results.model.SearchRequest
 import kotlinx.coroutines.launch
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_copied_to_clipboard
 import lexisoup.core.ui.strings.generated.resources.search_results_title
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@Suppress("LongParameterList")
 @Composable
 internal fun SearchResultsScreen(
-    query: String,
+    searchRequest: SearchRequest,
     state: SearchResultsState,
     onTextCopy: (String, Clipboard)->Unit,
     onLoadingDetailVisible: (LexicalItemDetailsGroupState.Loading) -> Unit,
     onFixErrorRequest: (LexicalItemDetailsGroupState.Error) -> Unit,
+    onNewSearch: (SearchRequest) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -88,7 +91,7 @@ internal fun SearchResultsScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
-                        query,
+                        searchRequest.query,
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.ExtraBold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -101,9 +104,11 @@ internal fun SearchResultsScreen(
                     onLoadingDetailVisible(loading)
                 override fun onFixErrorRequest(error: LexicalItemDetailsGroupState.Error) =
                     onFixErrorRequest(error)
+                override fun onNewSearch(searchRequest: SearchRequest) = onNewSearch(searchRequest)
             }
             FoundSearchResults(
                 state = state,
+                searchRequest = searchRequest,
                 callbacks = callbacks,
             )
         }
@@ -113,6 +118,7 @@ internal fun SearchResultsScreen(
 @Preview(name = "400x500", heightDp = 400, widthDp = 500)
 @Composable
 private fun PreviewAllGood() {
+    val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
     val state = SearchResultsState(
         groups = listOf(
             // Forms
@@ -185,11 +191,12 @@ private fun PreviewAllGood() {
 
     LexisoupTheme {
         SearchResultsScreen(
-            query = "Hund",
+            searchRequest = searchRequest,
             state = state,
             onTextCopy = { _, _ -> },
             onLoadingDetailVisible = {},
             onFixErrorRequest = {},
+            onNewSearch = {},
         )
     }
 }
@@ -197,6 +204,7 @@ private fun PreviewAllGood() {
 @Preview(name = "400x500", heightDp = 400, widthDp = 500)
 @Composable
 private fun PreviewErrors() {
+    val searchRequest = SearchRequest("Herangehensweise", Lang.DE, Lang.EN)
     val state = SearchResultsState(
         groups = listOf(
             // Forms error
@@ -232,11 +240,12 @@ private fun PreviewErrors() {
 
     LexisoupTheme {
         SearchResultsScreen(
-            query = "Herangehensweise",
+            searchRequest = searchRequest,
             state = state,
             onTextCopy = { _, _ -> },
             onLoadingDetailVisible = {},
             onFixErrorRequest = {},
+            onNewSearch = {},
         )
     }
 }
