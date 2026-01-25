@@ -73,8 +73,8 @@ private constructor(
     override fun close() {
         hasEnded.store(true)
         job.cancel()
-        signal.close()
-        values.close()
+        signal.cancel()
+        values.cancel()
     }
 
     companion object {
@@ -108,8 +108,8 @@ private constructor(
                 } catch (t: Throwable) {
                     values.trySend(Left(t))
                 } finally {
-                    values.close()
-                    signal.close()
+                    values.cancel()
+                    signal.cancel()
                 }
             }
 
