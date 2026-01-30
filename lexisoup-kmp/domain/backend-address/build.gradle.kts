@@ -9,6 +9,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":domain:config:api"))
             implementation(project(":domain:settings"))
         }
     }

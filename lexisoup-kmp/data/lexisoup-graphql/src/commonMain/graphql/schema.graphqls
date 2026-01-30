@@ -3,6 +3,16 @@ The `Boolean` scalar type represents `true` or `false`.
 """
 scalar Boolean
 
+type ClientConfig {
+  backendRedirectionUrl: String
+
+  minQueryLength: Int!
+
+  maxQueryLength: Int!
+
+  translatorsParams: [TranslatorParams!]!
+}
+
 type Example {
   translationsSet: TranslationsSet!
 
@@ -36,6 +46,8 @@ scalar Int
 union LexicalItemDetail = Forms|WordTranslations|Synonyms|Explanation|Example
 
 type Query {
+  config: ClientConfig!
+
   llm(query: String!, langFromIso3: String!, langToIso3: String!): [LexicalItemDetail!]!
 
   panlex(query: String!, langFromIso3: String!, langToIso3: String!): [LexicalItemDetail!]!
@@ -83,6 +95,14 @@ type TranslationsSet {
   Possible values are 0-9
   """
   translationsQualities: [Int!]
+}
+
+type TranslatorParams {
+  translatorId: String!
+
+  minQueryLength: Int!
+
+  maxQueryLength: Int!
 }
 
 type WordTranslations {

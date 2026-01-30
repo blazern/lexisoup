@@ -8,6 +8,7 @@ fun backendAddressModule() = module {
     single<BackendAddressProvider> {
         BackendAddressProviderImpl(
             settings = get(),
+            configProvider = get(),
         )
     }
 }
