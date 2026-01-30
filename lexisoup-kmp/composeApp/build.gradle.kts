@@ -56,6 +56,7 @@ kotlin {
             implementation(project(":core:ui:theme"))
             implementation(project(":core:ktor"))
             implementation(project(":domain:backend-address"))
+            implementation(project(":domain:config:impl"))
             implementation(project(":domain:model"))
             implementation(project(":domain:settings"))
             implementation(project(":data:lexisoup-graphql"))

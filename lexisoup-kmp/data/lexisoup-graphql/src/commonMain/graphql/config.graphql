@@ -1,0 +1,8 @@
+query ClientConfig {
+  config {
+    backendRedirectionUrl
+    minQueryLength
+    maxQueryLength
+    translatorsParams { ...TranslatorParamsFields }
+  }
+}

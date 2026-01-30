@@ -16,7 +16,7 @@ kotlin {
                 implementation(libs.apollo.engine.ktor)
                 implementation(project(":core:ktor"))
                 implementation(project(":domain:backend-address"))
-                implementation(project(":domain:model"))
+                api(project(":domain:model"))
             }
         }
     }
