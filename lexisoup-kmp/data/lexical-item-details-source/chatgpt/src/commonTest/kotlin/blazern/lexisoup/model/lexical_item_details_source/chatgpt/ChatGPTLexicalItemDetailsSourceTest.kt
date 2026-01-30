@@ -2,7 +2,7 @@ package blazern.lexisoup.model.lexical_item_details_source.chatgpt
 
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItemDetailsSourceCacher
-import blazern.lexisoup.domain.model.DataSource.CHATGPT
+import blazern.lexisoup.domain.model.DataSource.ChatGPT
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
@@ -186,7 +186,7 @@ class ChatGPTLexicalItemDetailsSourceTest {
             .filterIsInstance<LexicalItemDetail.Explanation>()
             .single()
         assertEquals(
-            LexicalItemDetail.Explanation("Der Hund ist ein Haustier.", CHATGPT),
+            LexicalItemDetail.Explanation("Der Hund ist ein Haustier.", ChatGPT),
             explanation,
         )
 
@@ -194,7 +194,7 @@ class ChatGPTLexicalItemDetailsSourceTest {
             .filterIsInstance<Forms>()
             .single()
         assertEquals(
-            Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, CHATGPT),
+            Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, ChatGPT),
             forms,
         )
 
@@ -204,14 +204,14 @@ class ChatGPTLexicalItemDetailsSourceTest {
         assertEquals(
             LexicalItemDetail.WordTranslations(
                 TranslationsSet(
-                    Sentence("Hund", Lang.DE, CHATGPT),
+                    Sentence("Hund", Lang.DE, ChatGPT),
                     listOf(
-                        Sentence("dog", Lang.EN, CHATGPT),
-                        Sentence("hound", Lang.EN, CHATGPT),
+                        Sentence("dog", Lang.EN, ChatGPT),
+                        Sentence("hound", Lang.EN, ChatGPT),
                     ),
                     listOf(QUALITY_BASIC, QUALITY_BASIC),
                 ),
-                CHATGPT,
+                ChatGPT,
             ),
             translations,
         )
@@ -222,14 +222,14 @@ class ChatGPTLexicalItemDetailsSourceTest {
         assertEquals(
             LexicalItemDetail.Synonyms(
                 TranslationsSet(
-                    Sentence("Hund", Lang.DE, CHATGPT),
+                    Sentence("Hund", Lang.DE, ChatGPT),
                     listOf(
-                        Sentence("Hündin", Lang.DE, CHATGPT),
-                        Sentence("Köter", Lang.DE, CHATGPT),
+                        Sentence("Hündin", Lang.DE, ChatGPT),
+                        Sentence("Köter", Lang.DE, ChatGPT),
                     ),
                     listOf(QUALITY_BASIC, QUALITY_BASIC),
                 ),
-                CHATGPT,
+                ChatGPT,
             ),
             synonyms,
         )
@@ -238,18 +238,18 @@ class ChatGPTLexicalItemDetailsSourceTest {
             .filterIsInstance<LexicalItemDetail.Example>()
         val expectedSets = listOf(
             TranslationsSet(
-                Sentence("Dog", Lang.EN, CHATGPT),
-                listOf(Sentence("Hund", Lang.DE, CHATGPT)),
+                Sentence("Dog", Lang.EN, ChatGPT),
+                listOf(Sentence("Hund", Lang.DE, ChatGPT)),
                 listOf(QUALITY_BASIC),
             ),
             TranslationsSet(
-                Sentence("My dog", Lang.EN, CHATGPT),
-                listOf(Sentence("Mein Hund", Lang.DE, CHATGPT)),
+                Sentence("My dog", Lang.EN, ChatGPT),
+                listOf(Sentence("Mein Hund", Lang.DE, ChatGPT)),
                 listOf(QUALITY_BASIC),
             ),
         )
         val expectedExamples = expectedSets.map {
-            LexicalItemDetail.Example(it, CHATGPT)
+            LexicalItemDetail.Example(it, ChatGPT)
         }
 
         assertEquals(expectedExamples, examples)

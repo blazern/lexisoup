@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 
 interface KaikkiLexicalItemDetailsSource : LexicalItemDetailsSource {
     override val source: DataSource
-        get() = DataSource.KAIKKI
+        get() = DataSource.Kaikki
     override val types: Set<LexicalItemDetail.Type>
         get() = setOf(
             LexicalItemDetail.Type.FORMS,

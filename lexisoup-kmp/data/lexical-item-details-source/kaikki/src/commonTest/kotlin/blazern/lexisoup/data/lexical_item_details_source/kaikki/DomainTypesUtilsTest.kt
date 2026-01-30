@@ -49,7 +49,7 @@ class DomainTypesUtilsTest {
                     )
                 )),
                 Lang.DE,
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
                 pos = Noun,
             ),
         )
@@ -108,7 +108,7 @@ class DomainTypesUtilsTest {
                 Forms(
                     Forms.Value.Detailed(listOf(mainForm)),
                     Lang.DE,
-                    DataSource.KAIKKI,
+                    DataSource.Kaikki,
                     pos = Noun,
                 ),
             )
@@ -147,7 +147,7 @@ class DomainTypesUtilsTest {
                 Forms(
                     Forms.Value.Detailed(listOf(mainForm)),
                     Lang.FR,
-                    DataSource.KAIKKI,
+                    DataSource.Kaikki,
                     pos = Noun,
                 ),
             )
@@ -207,7 +207,7 @@ class DomainTypesUtilsTest {
                     )
                 )),
                 Lang.DE,
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
                 pos = Noun,
             ),
         )
@@ -269,7 +269,7 @@ class DomainTypesUtilsTest {
                     )
                 )),
                 Lang.DE,
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
                 pos = Verb,
             ),
         )
@@ -304,7 +304,7 @@ class DomainTypesUtilsTest {
                     )
                 )),
                 Lang.DE,
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
                 pos = Verb,
             ),
         )

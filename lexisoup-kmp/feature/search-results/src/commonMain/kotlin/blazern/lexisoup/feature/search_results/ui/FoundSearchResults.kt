@@ -101,21 +101,21 @@ private fun Preview() {
                     Forms(
                         Forms.Value.Text("der Hund, -e"),
                         Lang.DE,
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     )
                 ),
                 types = setOf(LexicalItemDetail.Type.FORMS),
-                source = DataSource.CHATGPT,
+                source = DataSource.ChatGPT,
             ),
 
             // Explanations group
             LexicalItemDetailsGroupState.Loaded(
                 id = "2",
                 details = listOf(
-                    Explanation("Hund is Dog", DataSource.CHATGPT)
+                    Explanation("Hund is Dog", DataSource.ChatGPT)
                 ),
                 types = setOf(LexicalItemDetail.Type.EXPLANATION),
-                source = DataSource.CHATGPT,
+                source = DataSource.ChatGPT,
             ),
 
             // Examples group
@@ -124,40 +124,40 @@ private fun Preview() {
                 details = listOf(
                     Example(
                         TranslationsSet(
-                            Sentence("The dog barks", Lang.EN, DataSource.TATOEBA),
-                            listOf(Sentence("Der Hund bellt", Lang.DE, DataSource.TATOEBA)),
+                            Sentence("The dog barks", Lang.EN, DataSource.Tatoeba),
+                            listOf(Sentence("Der Hund bellt", Lang.DE, DataSource.Tatoeba)),
                             listOf(TranslationsSet.QUALITY_MAX),
                         ),
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     ),
                     Example(
                         TranslationsSet(
-                            Sentence("The dog sits", Lang.EN, DataSource.CHATGPT),
+                            Sentence("The dog sits", Lang.EN, DataSource.ChatGPT),
                             listOf(
-                                Sentence("Der Hund sitzt", Lang.DE, DataSource.CHATGPT),
-                                Sentence("Собака сидит", Lang.RU, DataSource.CHATGPT),
+                                Sentence("Der Hund sitzt", Lang.DE, DataSource.ChatGPT),
+                                Sentence("Собака сидит", Lang.RU, DataSource.ChatGPT),
                             ),
                             listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
                         ),
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     ),
                     Example(
                         TranslationsSet(
-                            Sentence("A dog sits on a sofa and looks at me", Lang.EN, DataSource.CHATGPT),
+                            Sentence("A dog sits on a sofa and looks at me", Lang.EN, DataSource.ChatGPT),
                             listOf(
                                 Sentence(
                                     "Ein Hund sitzt auf dem Sofa und guckt mich an",
                                     Lang.DE,
-                                    DataSource.CHATGPT,
+                                    DataSource.ChatGPT,
                                 )
                             ),
                             listOf(TranslationsSet.QUALITY_MAX),
                         ),
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     ),
                 ),
                 types = setOf(LexicalItemDetail.Type.EXAMPLE),
-                source = DataSource.CHATGPT,
+                source = DataSource.ChatGPT,
             ),
         ),
     )

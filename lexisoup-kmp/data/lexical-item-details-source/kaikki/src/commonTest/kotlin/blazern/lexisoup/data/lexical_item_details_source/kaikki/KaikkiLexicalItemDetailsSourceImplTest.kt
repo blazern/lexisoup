@@ -75,7 +75,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
 
     @Test
     fun `source id and supported types`() = runTest {
-        assertEquals(DataSource.KAIKKI, source.source)
+        assertEquals(DataSource.Kaikki, source.source)
         assertEquals(
             setOf(
                 LexicalItemDetail.Type.FORMS,
@@ -113,34 +113,34 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                     )
                 )),
                 Lang.DE,
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
                 pos = Noun,
             ),
-            LexicalItemDetail.Explanation("house; building", DataSource.KAIKKI),
+            LexicalItemDetail.Explanation("house; building", DataSource.Kaikki),
             LexicalItemDetail.Example(
                 TranslationsSet(
-                    original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.KAIKKI),
+                    original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.Kaikki),
                     translations = emptyList(),
                     translationsQualities = emptyList(),
                 ),
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
             ),
             LexicalItemDetail.WordTranslations(
                 TranslationsSet(
-                    original = Sentence("Haus", Lang.DE, DataSource.KAIKKI),
-                    translations = listOf(Sentence("house", Lang.EN, DataSource.KAIKKI)),
+                    original = Sentence("Haus", Lang.DE, DataSource.Kaikki),
+                    translations = listOf(Sentence("house", Lang.EN, DataSource.Kaikki)),
                     translationsQualities = listOf(QUALITY_MAX),
                 ),
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
             ),
             LexicalItemDetail.Synonyms(
                 TranslationsSet(
-                    original = Sentence("Haus", Lang.DE, DataSource.KAIKKI),
+                    original = Sentence("Haus", Lang.DE, DataSource.Kaikki),
                     translations = listOf(
-                        Sentence("Gebäude", Lang.DE, DataSource.KAIKKI),
-                        Sentence("Hütte", Lang.DE, DataSource.KAIKKI),
-                        Sentence("Hochhaus", Lang.DE, DataSource.KAIKKI),
-                        Sentence("Einfamilienhaus", Lang.DE, DataSource.KAIKKI),
+                        Sentence("Gebäude", Lang.DE, DataSource.Kaikki),
+                        Sentence("Hütte", Lang.DE, DataSource.Kaikki),
+                        Sentence("Hochhaus", Lang.DE, DataSource.Kaikki),
+                        Sentence("Einfamilienhaus", Lang.DE, DataSource.Kaikki),
                     ),
                     translationsQualities = listOf(
                         QUALITY_MAX,
@@ -149,7 +149,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                         QUALITY_MAX,
                     ),
                 ),
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
             ),
         )
 
@@ -241,17 +241,17 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                     )
                 )),
                 Lang.DE,
-                DataSource.KAIKKI,
+                DataSource.Kaikki,
                 pos = Noun,
             ),
-            LexicalItemDetail.Explanation("house; building", DataSource.KAIKKI),
+            LexicalItemDetail.Explanation("house; building", DataSource.Kaikki),
             LexicalItemDetail.Example(
                 TranslationsSet(
-                    original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.KAIKKI),
+                    original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.Kaikki),
                     translations = emptyList(),
                     translationsQualities = emptyList(),
                 ),
-                DataSource.KAIKKI
+                DataSource.Kaikki
             )
         )
 

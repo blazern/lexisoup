@@ -10,6 +10,7 @@ import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_BASIC
+import blazern.lexisoup.domain.model.predefined
 import blazern.lexisoup.graphql.model.fragment.SentenceFields
 import blazern.lexisoup.graphql.model.fragment.TranslationsSetFields
 import com.apollographql.apollo.api.ApolloResponse
@@ -54,11 +55,7 @@ fun SentenceFields.toDomain(): Either<IllegalArgumentException, Sentence> {
     ))
 }
 
-fun mapSource(remoteSource: String) = when (remoteSource) {
-    "tatoeba" -> DataSource.TATOEBA
-    "chatgpt" -> DataSource.CHATGPT
-    "kaikki" -> DataSource.KAIKKI
-    "panlex" -> DataSource.PANLEX
-    "wortschatz_leipzig" -> DataSource.WORTSCHATZ_LEIPZIG
-    else -> DataSource.UNKNOWN
-}
+fun mapSource(remoteSource: String) =
+    DataSource.predefined
+        .firstOrNull { it.id == remoteSource }
+        ?: DataSource.Other(remoteSource)

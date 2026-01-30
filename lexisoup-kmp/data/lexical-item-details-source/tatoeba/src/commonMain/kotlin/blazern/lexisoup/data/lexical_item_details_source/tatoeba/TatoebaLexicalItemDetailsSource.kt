@@ -28,7 +28,7 @@ class TatoebaLexicalItemDetailsSource internal constructor(
         formsForExamplesProvider = formsForExamplesProvider
     )
 
-    override val source = DataSource.TATOEBA
+    override val source = DataSource.Tatoeba
     override val types = setOf(LexicalItemDetail.Type.EXAMPLE)
 
     override fun request(

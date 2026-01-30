@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 
 class FormsAccentsEnhancerImplTest {
 
-    private val source = DataSource.TATOEBA
+    private val source = DataSource.Tatoeba
 
     private fun enhancer(vararg forms: String) =
         FormsAccentsEnhancerImpl(forms.map { WordForm(it, Lang.DE, emptyList()) })

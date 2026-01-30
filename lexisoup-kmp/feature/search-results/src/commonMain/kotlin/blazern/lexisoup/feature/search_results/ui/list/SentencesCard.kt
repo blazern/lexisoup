@@ -76,7 +76,7 @@ fun Sentences2CardPreview() {
                     Sentence(
                         "Ein Hund sitzt auf dem Sofa und guckt mich an während ich esse",
                         Lang.DE,
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     ),
                     backgroundColor = MaterialTheme.colorScheme.primary,
                     textColor = MaterialTheme.colorScheme.onPrimary,
@@ -85,7 +85,7 @@ fun Sentences2CardPreview() {
                     Sentence(
                         "A dog sits on a sofa and looks at me while I eat",
                         Lang.EN,
-                        DataSource.TATOEBA,
+                        DataSource.Tatoeba,
                     ),
                     backgroundColor = MaterialTheme.colorScheme.secondary,
                     textColor = MaterialTheme.colorScheme.onSecondary,
@@ -94,7 +94,7 @@ fun Sentences2CardPreview() {
                     Sentence(
                         "Пёс сидит на диване и глядит как я ем",
                         Lang.RU,
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     ),
                     backgroundColor = MaterialTheme.colorScheme.secondary,
                     textColor = MaterialTheme.colorScheme.onSecondary,
@@ -115,7 +115,7 @@ fun Sentences3CardPreview() {
                     Sentence(
                         "One",
                         Lang.EN,
-                        DataSource.TATOEBA,
+                        DataSource.Tatoeba,
                     ),
                     Color.Red
                 ),
@@ -123,7 +123,7 @@ fun Sentences3CardPreview() {
                     Sentence(
                         "Two",
                         Lang.EN,
-                        DataSource.CHATGPT,
+                        DataSource.ChatGPT,
                     ),
                     Color.Green
                 ),
@@ -131,7 +131,7 @@ fun Sentences3CardPreview() {
                     Sentence(
                         "Three",
                         Lang.EN,
-                        DataSource.TATOEBA,
+                        DataSource.Tatoeba,
                     ),
                     Color.Blue
                 ),

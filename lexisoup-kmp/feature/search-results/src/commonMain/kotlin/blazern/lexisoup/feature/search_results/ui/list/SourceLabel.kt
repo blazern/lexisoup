@@ -9,9 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.domain.model.DataSource
-import blazern.lexisoup.domain.model.strRsc
+import blazern.lexisoup.domain.model.i18n
 
 @Composable
 internal fun BoxScope.SourceLabel(
@@ -20,7 +19,7 @@ internal fun BoxScope.SourceLabel(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        stringResource(source.strRsc, preview = "Tatoeba"),
+        source.i18n(),
         style = MaterialTheme.typography.labelSmall,
         color = mainColor.copy(alpha = 0.2f),
         modifier = modifier

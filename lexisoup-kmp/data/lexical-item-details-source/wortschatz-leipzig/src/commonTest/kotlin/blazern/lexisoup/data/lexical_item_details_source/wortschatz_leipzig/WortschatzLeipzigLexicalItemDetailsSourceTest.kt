@@ -77,11 +77,11 @@ class WortschatzLeipzigLexicalItemDetailsSourceTest {
 
     private fun example(text: String, lang: Lang) = LexicalItemDetail.Example(
         translationsSet = TranslationsSet(
-            original = Sentence(text, lang, DataSource.WORTSCHATZ_LEIPZIG),
+            original = Sentence(text, lang, DataSource.WortschatzLeipzig),
             translations = emptyList(),
             translationsQualities = emptyList(),
         ),
-        source = DataSource.WORTSCHATZ_LEIPZIG
+        source = DataSource.WortschatzLeipzig
     )
 
     @BeforeTest
@@ -91,7 +91,7 @@ class WortschatzLeipzigLexicalItemDetailsSourceTest {
 
     @Test
     fun `source id and supported types`() = runTest {
-        assertEquals(DataSource.WORTSCHATZ_LEIPZIG, source.source)
+        assertEquals(DataSource.WortschatzLeipzig, source.source)
         assertEquals(setOf(LexicalItemDetail.Type.EXAMPLE), source.types)
     }
 

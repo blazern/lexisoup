@@ -94,20 +94,20 @@ internal fun LexicalItemDetailsCard(
 private fun PreviewCards() {
     val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
     val translations = TranslationsSet(
-        Sentence("Hund", Lang.EN, DataSource.KAIKKI),
+        Sentence("Hund", Lang.EN, DataSource.Kaikki),
         listOf(
-            Sentence("dog", Lang.DE, DataSource.KAIKKI),
-            Sentence("hound", Lang.DE, DataSource.KAIKKI),
-            Sentence("mutt", Lang.DE, DataSource.KAIKKI),
-            Sentence("human's best friend", Lang.DE, DataSource.KAIKKI),
+            Sentence("dog", Lang.DE, DataSource.Kaikki),
+            Sentence("hound", Lang.DE, DataSource.Kaikki),
+            Sentence("mutt", Lang.DE, DataSource.Kaikki),
+            Sentence("human's best friend", Lang.DE, DataSource.Kaikki),
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
     val synonyms = TranslationsSet(
-        Sentence("Hund", Lang.EN, DataSource.KAIKKI),
+        Sentence("Hund", Lang.EN, DataSource.Kaikki),
         listOf(
-            Sentence("Hündin", Lang.DE, DataSource.KAIKKI),
-            Sentence("Wauwau", Lang.DE, DataSource.KAIKKI),
+            Sentence("Hündin", Lang.DE, DataSource.Kaikki),
+            Sentence("Wauwau", Lang.DE, DataSource.Kaikki),
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
@@ -119,7 +119,7 @@ private fun PreviewCards() {
             WordForm("des Hunds", Lang.DE, listOf(Singular(""), Genitive(""))),
         )),
         lang = Lang.DE,
-        source = DataSource.KAIKKI,
+        source = DataSource.Kaikki,
     )
 
     val explanation = """
@@ -135,13 +135,13 @@ private fun PreviewCards() {
                         LexicalItemDetailsGroupState.Loaded(
                             id = "1",
                             listOf(
-                                Explanation(explanation, DataSource.KAIKKI),
-                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.KAIKKI),
-                                WordTranslations(translations, DataSource.KAIKKI),
-                                Synonyms(synonyms, DataSource.KAIKKI),
+                                Explanation(explanation, DataSource.Kaikki),
+                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.Kaikki),
+                                WordTranslations(translations, DataSource.Kaikki),
+                                Synonyms(synonyms, DataSource.Kaikki),
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
-                            DataSource.KAIKKI,
+                            DataSource.Kaikki,
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -150,11 +150,11 @@ private fun PreviewCards() {
                         LexicalItemDetailsGroupState.Loaded(
                             id = "2",
                             listOf(
-                                WordTranslations(translations, DataSource.KAIKKI),
-                                Synonyms(synonyms, DataSource.KAIKKI),
+                                WordTranslations(translations, DataSource.Kaikki),
+                                Synonyms(synonyms, DataSource.Kaikki),
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
-                            DataSource.KAIKKI,
+                            DataSource.Kaikki,
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -164,12 +164,12 @@ private fun PreviewCards() {
                             id = "3",
                             listOf(
                                 fancyForms,
-                                Explanation(explanation, DataSource.KAIKKI),
-                                WordTranslations(translations, DataSource.KAIKKI),
-                                Synonyms(synonyms, DataSource.KAIKKI),
+                                Explanation(explanation, DataSource.Kaikki),
+                                WordTranslations(translations, DataSource.Kaikki),
+                                Synonyms(synonyms, DataSource.Kaikki),
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
-                            DataSource.KAIKKI,
+                            DataSource.Kaikki,
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -185,20 +185,20 @@ private fun PreviewCards() {
 private fun PreviewAll() {
     val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
     val translations = TranslationsSet(
-        Sentence("Hund", Lang.EN, DataSource.KAIKKI),
+        Sentence("Hund", Lang.EN, DataSource.Kaikki),
         listOf(
-            Sentence("dog", Lang.DE, DataSource.KAIKKI),
-            Sentence("hound", Lang.DE, DataSource.KAIKKI),
-            Sentence("mutt", Lang.DE, DataSource.KAIKKI),
-            Sentence("human's best friend", Lang.DE, DataSource.KAIKKI),
+            Sentence("dog", Lang.DE, DataSource.Kaikki),
+            Sentence("hound", Lang.DE, DataSource.Kaikki),
+            Sentence("mutt", Lang.DE, DataSource.Kaikki),
+            Sentence("human's best friend", Lang.DE, DataSource.Kaikki),
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
     val synonyms = TranslationsSet(
-        Sentence("Hund", Lang.EN, DataSource.KAIKKI),
+        Sentence("Hund", Lang.EN, DataSource.Kaikki),
         listOf(
-            Sentence("Hündin", Lang.DE, DataSource.KAIKKI),
-            Sentence("Wauwau", Lang.DE, DataSource.KAIKKI),
+            Sentence("Hündin", Lang.DE, DataSource.Kaikki),
+            Sentence("Wauwau", Lang.DE, DataSource.Kaikki),
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
@@ -211,12 +211,12 @@ private fun PreviewAll() {
                         LexicalItemDetailsGroupState.Loaded(
                             id = "1",
                             listOf(
-                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.KAIKKI),
-                                WordTranslations(translations, DataSource.KAIKKI),
-                                Synonyms(synonyms, DataSource.KAIKKI),
+                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.Kaikki),
+                                WordTranslations(translations, DataSource.Kaikki),
+                                Synonyms(synonyms, DataSource.Kaikki),
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
-                            DataSource.KAIKKI,
+                            DataSource.Kaikki,
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -225,7 +225,7 @@ private fun PreviewAll() {
                         LexicalItemDetailsGroupState.Loading(
                             id = "2",
                             LexicalItemDetail.Type.entries.toSet(),
-                            DataSource.KAIKKI,
+                            DataSource.Kaikki,
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -235,7 +235,7 @@ private fun PreviewAll() {
                             id = "3",
                             Err.Other(null),
                             LexicalItemDetail.Type.entries.toSet(),
-                            DataSource.KAIKKI,
+                            DataSource.Kaikki,
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
