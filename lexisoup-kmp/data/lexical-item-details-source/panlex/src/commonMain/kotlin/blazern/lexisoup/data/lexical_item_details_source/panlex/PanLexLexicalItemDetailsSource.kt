@@ -28,7 +28,7 @@ class PanLexLexicalItemDetailsSource(
     private val apollo: Flow<ApolloClient>
         get() = apolloClientHolder.client
 
-    override val source = DataSource.PANLEX
+    override val source = DataSource.PanLex
     override val types = setOf(
         LexicalItemDetail.Type.WORD_TRANSLATIONS,
         LexicalItemDetail.Type.SYNONYMS,

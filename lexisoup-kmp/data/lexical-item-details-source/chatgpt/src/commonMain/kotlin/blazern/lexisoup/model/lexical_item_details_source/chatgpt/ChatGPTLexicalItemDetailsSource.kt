@@ -28,7 +28,7 @@ class ChatGPTLexicalItemDetailsSource(
     private val apollo: Flow<ApolloClient>
         get() = apolloClientHolder.client
 
-    override val source = DataSource.CHATGPT
+    override val source = DataSource.ChatGPT
     override val types = setOf(
         LexicalItemDetail.Type.FORMS,
         LexicalItemDetail.Type.WORD_TRANSLATIONS,

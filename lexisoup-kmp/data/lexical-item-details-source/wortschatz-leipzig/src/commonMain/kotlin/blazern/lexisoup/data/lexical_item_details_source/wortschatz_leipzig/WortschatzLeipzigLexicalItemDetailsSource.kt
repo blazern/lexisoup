@@ -31,7 +31,7 @@ class WortschatzLeipzigLexicalItemDetailsSource(
     private val formsForExamplesProvider: FormsForExamplesProvider,
 ) : LexicalItemDetailsSource {
 
-    override val source = DataSource.WORTSCHATZ_LEIPZIG
+    override val source = DataSource.WortschatzLeipzig
     override val types = setOf(LexicalItemDetail.Type.EXAMPLE)
 
     override fun request(

@@ -1,31 +1,50 @@
 package blazern.lexisoup.domain.model
 
+import androidx.compose.runtime.Composable
+import blazern.lexisoup.core.ui.strings.stringResource
+import blazern.lexisoup.domain.model.DataSource.ChatGPT
+import blazern.lexisoup.domain.model.DataSource.Kaikki
+import blazern.lexisoup.domain.model.DataSource.PanLex
+import blazern.lexisoup.domain.model.DataSource.Tatoeba
+import blazern.lexisoup.domain.model.DataSource.WortschatzLeipzig
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_data_source_chatgpt
 import lexisoup.core.ui.strings.generated.resources.general_data_source_kaikki
 import lexisoup.core.ui.strings.generated.resources.general_data_source_panlex
 import lexisoup.core.ui.strings.generated.resources.general_data_source_tatoeba
-import lexisoup.core.ui.strings.generated.resources.general_data_source_unknown
 import lexisoup.core.ui.strings.generated.resources.general_data_source_wortschatz_leipzig
-import org.jetbrains.compose.resources.StringResource
 
-enum class DataSource {
-    TATOEBA,
-    CHATGPT,
-    KAIKKI,
-    PANLEX,
-    WORTSCHATZ_LEIPZIG,
-    UNKNOWN,
+sealed class DataSource(open val id: String) {
+    object Tatoeba : DataSource("tatoeba")
+    object ChatGPT : DataSource("chatgpt")
+    object Kaikki : DataSource("kaikki")
+    object PanLex : DataSource("panlex")
+    object WortschatzLeipzig : DataSource("wortschatz_leipzig")
+    data class Other(override val id: String) : DataSource(id)
+
+    companion object
 }
 
-val DataSource.strRsc: StringResource
-    get() {
-        return when (this) {
-            DataSource.TATOEBA -> Res.string.general_data_source_tatoeba
-            DataSource.CHATGPT -> Res.string.general_data_source_chatgpt
-            DataSource.KAIKKI -> Res.string.general_data_source_kaikki
-            DataSource.PANLEX -> Res.string.general_data_source_panlex
-            DataSource.WORTSCHATZ_LEIPZIG -> Res.string.general_data_source_wortschatz_leipzig
-            DataSource.UNKNOWN -> Res.string.general_data_source_unknown
-        }
-    }
+val DataSource.Companion.predefined: List<DataSource>
+    get() = listOf(
+        Tatoeba,
+        ChatGPT,
+        Kaikki,
+        PanLex,
+        WortschatzLeipzig
+    )
+
+@Composable
+fun DataSource.i18n(): String = when (this) {
+    DataSource.Tatoeba ->
+        stringResource(Res.string.general_data_source_tatoeba, preview = id)
+    DataSource.ChatGPT ->
+        stringResource(Res.string.general_data_source_chatgpt, preview = id)
+    DataSource.Kaikki ->
+        stringResource(Res.string.general_data_source_kaikki, preview = id)
+    DataSource.PanLex ->
+        stringResource(Res.string.general_data_source_panlex, preview = id)
+    DataSource.WortschatzLeipzig ->
+        stringResource(Res.string.general_data_source_wortschatz_leipzig, preview = id)
+    is DataSource.Other -> id
+}

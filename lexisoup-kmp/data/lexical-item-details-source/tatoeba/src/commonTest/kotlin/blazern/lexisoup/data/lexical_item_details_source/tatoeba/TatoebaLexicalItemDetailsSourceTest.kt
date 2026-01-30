@@ -30,20 +30,20 @@ class TatoebaLexicalItemDetailsSourceTest {
 
     private val translationsSets = listOf(
         TranslationsSet(
-            original = Sentence("Hello", Lang.EN, DataSource.TATOEBA),
-            translations = listOf(Sentence("Hallo", Lang.DE, DataSource.TATOEBA)),
+            original = Sentence("Hello", Lang.EN, DataSource.Tatoeba),
+            translations = listOf(Sentence("Hallo", Lang.DE, DataSource.Tatoeba)),
             translationsQualities = listOf(QUALITY_MAX),
         ),
         TranslationsSet(
-            original = Sentence("Good morning", Lang.EN, DataSource.TATOEBA),
-            translations = listOf(Sentence("Guten Morgen", Lang.DE, DataSource.TATOEBA)),
+            original = Sentence("Good morning", Lang.EN, DataSource.Tatoeba),
+            translations = listOf(Sentence("Guten Morgen", Lang.DE, DataSource.Tatoeba)),
             translationsQualities = listOf(QUALITY_MAX),
         ),
     )
 
     @Test
     fun `source and types`() = runTest {
-        assertEquals(DataSource.TATOEBA, source.source)
+        assertEquals(DataSource.Tatoeba, source.source)
         assertEquals(setOf(LexicalItemDetail.Type.EXAMPLE), source.types)
     }
 
@@ -72,7 +72,7 @@ class TatoebaLexicalItemDetailsSourceTest {
         val expected = translationsSets.map {
             LexicalItemDetail.Example(
                 it,
-                source = DataSource.TATOEBA,
+                source = DataSource.Tatoeba,
             )
         }
         assertEquals(expected, results)
@@ -108,15 +108,15 @@ class TatoebaLexicalItemDetailsSourceTest {
     fun `paginates and retries same page after error`() = runTest {
         val page1 = listOf(
             TranslationsSet(
-                original = Sentence("Hello", Lang.EN, DataSource.TATOEBA),
-                translations = listOf(Sentence("Hallo", Lang.DE, DataSource.TATOEBA)),
+                original = Sentence("Hello", Lang.EN, DataSource.Tatoeba),
+                translations = listOf(Sentence("Hallo", Lang.DE, DataSource.Tatoeba)),
                 translationsQualities = listOf(QUALITY_MAX),
             )
         )
         val page2 = listOf(
             TranslationsSet(
-                original = Sentence("Hi", Lang.EN, DataSource.TATOEBA),
-                translations = listOf(Sentence("Hi!", Lang.DE, DataSource.TATOEBA)),
+                original = Sentence("Hi", Lang.EN, DataSource.Tatoeba),
+                translations = listOf(Sentence("Hi!", Lang.DE, DataSource.Tatoeba)),
                 translationsQualities = listOf(QUALITY_MAX),
             )
         )
@@ -159,7 +159,7 @@ class TatoebaLexicalItemDetailsSourceTest {
         // Page 1 emits its examples
         val first = iter.next() as Item.Page
         assertEquals(
-            LexicalItemDetail.Example(page1[0], DataSource.TATOEBA),
+            LexicalItemDetail.Example(page1[0], DataSource.Tatoeba),
             first.details[0]
         )
 
@@ -169,7 +169,7 @@ class TatoebaLexicalItemDetailsSourceTest {
         // Retry of Page 2 succeeds and emits its examples
         val third = iter.next() as Item.Page
         assertEquals(
-            LexicalItemDetail.Example(page2[0], DataSource.TATOEBA),
+            LexicalItemDetail.Example(page2[0], DataSource.Tatoeba),
             third.details[0]
         )
 
@@ -179,8 +179,8 @@ class TatoebaLexicalItemDetailsSourceTest {
     @Test
     fun `uses forms to refine Tatoeba query`() = runTest {
         val translations = TranslationsSet(
-            original = Sentence("sie lachen", Lang.DE, DataSource.TATOEBA),
-            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.TATOEBA)),
+            original = Sentence("sie lachen", Lang.DE, DataSource.Tatoeba),
+            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.Tatoeba)),
             translationsQualities = listOf(QUALITY_MAX),
         )
         val forms = listOf(
@@ -246,8 +246,8 @@ class TatoebaLexicalItemDetailsSourceTest {
     @Test
     fun `forms in the Tatoeba query are deduplicated`() = runTest {
         val translations = TranslationsSet(
-            original = Sentence("sie lachen", Lang.DE, DataSource.TATOEBA),
-            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.TATOEBA)),
+            original = Sentence("sie lachen", Lang.DE, DataSource.Tatoeba),
+            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.Tatoeba)),
             translationsQualities = listOf(QUALITY_MAX),
         )
         val forms = listOf(

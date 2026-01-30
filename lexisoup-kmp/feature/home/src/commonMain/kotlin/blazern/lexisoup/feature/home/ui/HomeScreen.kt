@@ -320,13 +320,13 @@ private fun PreviewSuggestions() {
         canSearch = true,
         suggestions = listOf(
             Suggestion("Hunde", listOf(
-                Sentence("Dog", Lang.EN, DataSource.PANLEX),
-                Sentence("Mutt", Lang.EN, DataSource.PANLEX),
-                Sentence("Hound", Lang.EN, DataSource.PANLEX),
+                Sentence("Dog", Lang.EN, DataSource.PanLex),
+                Sentence("Mutt", Lang.EN, DataSource.PanLex),
+                Sentence("Hound", Lang.EN, DataSource.PanLex),
             )),
             Suggestion("Hündin", listOf(
-                Sentence("Dog", Lang.EN, DataSource.PANLEX),
-                Sentence("Bitch", Lang.EN, DataSource.PANLEX),
+                Sentence("Dog", Lang.EN, DataSource.PanLex),
+                Sentence("Bitch", Lang.EN, DataSource.PanLex),
             )),
         ),
         suggestionsTarget = "Hund",

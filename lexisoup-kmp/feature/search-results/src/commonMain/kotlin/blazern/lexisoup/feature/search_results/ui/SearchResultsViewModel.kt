@@ -9,6 +9,7 @@ import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
+import blazern.lexisoup.domain.model.predefined
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.SearchResultsState
 import blazern.lexisoup.feature.search_results.model.addLoadingFor
@@ -46,7 +47,7 @@ internal class SearchResultsViewModel(
 
     private suspend fun search() {
         _state.value = SearchResultsState()
-        for (source in DataSource.entries) {
+        for (source in DataSource.predefined) {
             sourceTypes[source] = dataSource.typesOf(source)
             val flow = dataSource.request(source)
             dataIters[source] = FlowIterator(flow)

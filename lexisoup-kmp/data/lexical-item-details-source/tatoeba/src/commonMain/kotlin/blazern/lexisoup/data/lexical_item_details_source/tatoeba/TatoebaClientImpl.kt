@@ -53,7 +53,7 @@ internal class TatoebaClientImpl(
                     translations.add(Sentence(
                         text = translationTatoeba.text,
                         lang = langTo,
-                        source = DataSource.TATOEBA,
+                        source = DataSource.Tatoeba,
                     ))
                 }
             }
@@ -62,7 +62,7 @@ internal class TatoebaClientImpl(
                     original = Sentence(
                         text = sentenceTatoeba.text,
                         lang = langFrom,
-                        source = DataSource.TATOEBA,
+                        source = DataSource.Tatoeba,
                     ),
                     translations = translations,
                     translationsQualities = translations.map { TranslationsSet.QUALITY_MAX }

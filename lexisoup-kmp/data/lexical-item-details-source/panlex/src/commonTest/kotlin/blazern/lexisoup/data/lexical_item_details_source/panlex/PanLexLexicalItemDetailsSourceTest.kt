@@ -2,7 +2,7 @@ package blazern.lexisoup.data.lexical_item_details_source.panlex
 
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItemDetailsSourceCacher
-import blazern.lexisoup.domain.model.DataSource.PANLEX
+import blazern.lexisoup.domain.model.DataSource.PanLex
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.Sentence
@@ -127,7 +127,7 @@ class PanLexLexicalItemDetailsSourceTest {
 
     @Test
     fun `source id and supported types`() = runTest {
-        assertEquals(PANLEX, source.source)
+        assertEquals(PanLex, source.source)
         assertEquals(
             setOf(
                 LexicalItemDetail.Type.WORD_TRANSLATIONS,
@@ -151,15 +151,15 @@ class PanLexLexicalItemDetailsSourceTest {
         assertEquals(
             LexicalItemDetail.WordTranslations(
                 TranslationsSet(
-                    original = Sentence("Haus", Lang.DE, PANLEX),
+                    original = Sentence("Haus", Lang.DE, PanLex),
                     translations = listOf(
-                        Sentence("house", Lang.EN, PANLEX),
-                        Sentence("building", Lang.EN, PANLEX),
+                        Sentence("house", Lang.EN, PanLex),
+                        Sentence("building", Lang.EN, PanLex),
                     ),
                     // The first quality is specified in the backend response, but the second is not
                     translationsQualities = listOf(5, QUALITY_BASIC)
                 ),
-                PANLEX
+                PanLex
             ),
             translations
         )
@@ -168,14 +168,14 @@ class PanLexLexicalItemDetailsSourceTest {
         assertEquals(
             LexicalItemDetail.Synonyms(
                 TranslationsSet(
-                    Sentence("Haus", Lang.DE, PANLEX),
+                    Sentence("Haus", Lang.DE, PanLex),
                     listOf(
-                        Sentence("Gebäude", Lang.DE, PANLEX),
-                        Sentence("Bauwerk", Lang.DE, PANLEX),
+                        Sentence("Gebäude", Lang.DE, PanLex),
+                        Sentence("Bauwerk", Lang.DE, PanLex),
                     ),
                     translationsQualities = listOf(2, 3)
                 ),
-                PANLEX
+                PanLex
             ),
             synonyms
         )

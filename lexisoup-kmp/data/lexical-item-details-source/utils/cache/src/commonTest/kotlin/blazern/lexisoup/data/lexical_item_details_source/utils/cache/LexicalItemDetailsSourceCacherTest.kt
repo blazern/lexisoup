@@ -5,6 +5,7 @@ import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
+import blazern.lexisoup.domain.model.predefined
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
@@ -25,7 +26,7 @@ import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
 class LexicalItemDetailsSourceCacherTest {
-    private val source = DataSource.PANLEX
+    private val source = DataSource.PanLex
     private val details = listOf(
         LexicalItemDetail.Explanation("1", source),
         LexicalItemDetail.Explanation("2", source),
@@ -86,7 +87,7 @@ class LexicalItemDetailsSourceCacherTest {
         }
 
         val baseSource = source
-        val otherSource = enumValues<DataSource>().first { it != baseSource }
+        val otherSource = DataSource.predefined.first { it != baseSource }
 
         // Changing every item of the request
         val fn = suspend {

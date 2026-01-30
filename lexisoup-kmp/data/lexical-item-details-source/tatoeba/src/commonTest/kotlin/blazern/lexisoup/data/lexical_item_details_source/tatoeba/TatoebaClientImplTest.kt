@@ -86,17 +86,17 @@ class TatoebaClientImplTest {
 
         val expected = listOf(
             TranslationsSet(
-                original = Sentence("Hello!", Lang.EN, DataSource.TATOEBA),
+                original = Sentence("Hello!", Lang.EN, DataSource.Tatoeba),
                 translations = listOf(
-                    Sentence("Hallo!", Lang.DE, DataSource.TATOEBA),
-                    Sentence("Grüß Gott!", Lang.DE, DataSource.TATOEBA),
+                    Sentence("Hallo!", Lang.DE, DataSource.Tatoeba),
+                    Sentence("Grüß Gott!", Lang.DE, DataSource.Tatoeba),
                 ),
                 translationsQualities = listOf(QUALITY_MAX, QUALITY_MAX),
             ),
             TranslationsSet(
-                original = Sentence("Hello there", Lang.EN, DataSource.TATOEBA),
+                original = Sentence("Hello there", Lang.EN, DataSource.Tatoeba),
                 translations = listOf(
-                    Sentence("Guten Tag", Lang.DE, DataSource.TATOEBA),
+                    Sentence("Guten Tag", Lang.DE, DataSource.Tatoeba),
                 ),
                 translationsQualities = listOf(QUALITY_MAX),
             ),

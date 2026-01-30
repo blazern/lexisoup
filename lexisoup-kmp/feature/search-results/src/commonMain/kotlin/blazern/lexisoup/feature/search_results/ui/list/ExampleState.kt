@@ -163,24 +163,24 @@ private fun PreviewAll() {
     val examples1 = listOf(
         LexicalItemDetail.Example(
             TranslationsSet(
-                Sentence("Hund", Lang.DE, DataSource.KAIKKI),
-                listOf(Sentence("dog", Lang.EN, DataSource.KAIKKI)),
+                Sentence("Hund", Lang.DE, DataSource.Kaikki),
+                listOf(Sentence("dog", Lang.EN, DataSource.Kaikki)),
                 listOf(TranslationsSet.QUALITY_MAX),
             ),
-            DataSource.KAIKKI,
+            DataSource.Kaikki,
         ),
         LexicalItemDetail.Example(
             TranslationsSet(
                 Sentence(
                     "Der Hund sitzt",
                     Lang.DE,
-                    DataSource.KAIKKI,
+                    DataSource.Kaikki,
                     setOf(TextAccent(4, 8)),
                 ),
-                listOf(Sentence("the dog sits", Lang.EN, DataSource.KAIKKI)),
+                listOf(Sentence("the dog sits", Lang.EN, DataSource.Kaikki)),
                 listOf(TranslationsSet.QUALITY_MAX),
             ),
-            DataSource.KAIKKI,
+            DataSource.Kaikki,
         ),
     )
 
@@ -190,13 +190,13 @@ private fun PreviewAll() {
                 Sentence(
                     "Mein Lieblingshund",
                     Lang.DE,
-                    DataSource.CHATGPT,
+                    DataSource.ChatGPT,
                     setOf(TextAccent(14, 18))
                 ),
-                listOf(Sentence("my favorite dog", Lang.DE, DataSource.CHATGPT)),
+                listOf(Sentence("my favorite dog", Lang.DE, DataSource.ChatGPT)),
                 listOf(TranslationsSet.QUALITY_MAX),
             ),
-            DataSource.CHATGPT,
+            DataSource.ChatGPT,
         ),
     )
 
@@ -212,7 +212,7 @@ private fun PreviewAll() {
                             LexicalItemDetailsGroupState.Loading(
                                 id = "1",
                                 setOf(LexicalItemDetail.Type.EXAMPLE),
-                                DataSource.TATOEBA,
+                                DataSource.Tatoeba,
                             ),
                         ),
                         LexicalItemDetailCallbacks.Stub,
@@ -226,7 +226,7 @@ private fun PreviewAll() {
                                 id = "2",
                                 Err.Other(null),
                                 setOf(LexicalItemDetail.Type.EXAMPLE),
-                                DataSource.TATOEBA,
+                                DataSource.Tatoeba,
                             ),
                         ),
                         LexicalItemDetailCallbacks.Stub,

@@ -13,7 +13,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
-import blazern.lexisoup.domain.model.WordForm
+import blazern.lexisoup.domain.model.predefined
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.priority
 import blazern.lexisoup.feature.search_results.ui.SearchResultsViewModel
@@ -81,7 +81,7 @@ class SearchResultsViewModelTest {
             advanceUntilIdle()
         }
 
-        val sortedDataSources = List(detailsMultiplier) { DataSource.entries }
+        val sortedDataSources = List(detailsMultiplier) { DataSource.predefined }
             .flatten()
             .sortedBy { it.priority }
 
@@ -102,7 +102,7 @@ class SearchResultsViewModelTest {
         detailsMultiplier: Int = 1,
     ): List<FakeLexicalItemDetailsSource> {
         // Every type of DataSource
-        val sources = DataSource.entries.map { source ->
+        val sources = DataSource.predefined.map { source ->
             var details = mutableListOf<LexicalItemDetail>()
             details += List(detailsMultiplier) {
                 Forms(

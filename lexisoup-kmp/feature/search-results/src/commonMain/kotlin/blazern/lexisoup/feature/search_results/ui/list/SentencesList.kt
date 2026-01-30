@@ -105,10 +105,10 @@ internal fun SentencesList(
 @Composable
 private fun Preview() {
     val sentences = listOf(
-        Sentence("dog", Lang.DE, DataSource.KAIKKI),
-        Sentence("hound", Lang.DE, DataSource.KAIKKI),
-        Sentence("mutt", Lang.DE, DataSource.KAIKKI),
-        Sentence("human's best friend", Lang.DE, DataSource.KAIKKI),
+        Sentence("dog", Lang.DE, DataSource.Kaikki),
+        Sentence("hound", Lang.DE, DataSource.Kaikki),
+        Sentence("mutt", Lang.DE, DataSource.Kaikki),
+        Sentence("human's best friend", Lang.DE, DataSource.Kaikki),
     )
     MaterialTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

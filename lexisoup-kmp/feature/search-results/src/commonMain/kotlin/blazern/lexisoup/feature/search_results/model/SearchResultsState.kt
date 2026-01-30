@@ -100,12 +100,12 @@ internal val DataSource.priority: Int
     @Suppress("MagicNumber")
     get() {
         return when (this) {
-            DataSource.PANLEX -> 0
-            DataSource.TATOEBA -> 1
-            DataSource.CHATGPT -> 2
-            DataSource.KAIKKI -> 3
-            DataSource.WORTSCHATZ_LEIPZIG -> 4
-            DataSource.UNKNOWN -> 100
+            DataSource.PanLex -> 0
+            DataSource.Tatoeba -> 1
+            DataSource.ChatGPT -> 2
+            DataSource.Kaikki -> 3
+            DataSource.WortschatzLeipzig -> 4
+            is DataSource.Other -> 100
         }
     }
 

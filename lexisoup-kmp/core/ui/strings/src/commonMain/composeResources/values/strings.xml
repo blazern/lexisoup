@@ -20,7 +20,6 @@
     <string name="general_data_source_kaikki">kaikki (Wiktionary)</string>
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
-    <string name="general_data_source_unknown">unknown</string>
 
     <string name="general_lexical_item_detail_type_forms">Forms</string>
     <string name="general_lexical_item_detail_type_word_translations">Translations</string>

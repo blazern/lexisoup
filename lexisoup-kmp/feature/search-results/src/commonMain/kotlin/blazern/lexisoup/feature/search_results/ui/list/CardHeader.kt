@@ -9,9 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.domain.model.DataSource
-import blazern.lexisoup.domain.model.strRsc
+import blazern.lexisoup.domain.model.i18n
 
 @Suppress("MagicNumber")
 @Composable
@@ -37,7 +36,7 @@ internal fun CardHeader(
             Spacer(Modifier.weight(0.8f))
         }
         Text(
-            stringResource(source.strRsc),
+            source.i18n(),
             style = MaterialTheme.typography.labelSmall,
             color = textColor.copy(alpha = 0.2f),
         )

@@ -22,7 +22,7 @@ internal fun Entry.toDetails(
     langFrom: Lang,
     langTo: Lang,
 ): List<LexicalItemDetail> {
-    val src = DataSource.KAIKKI
+    val src = DataSource.Kaikki
     val result = mutableListOf<LexicalItemDetail>()
 
     val pos = pos.stringToPos()
