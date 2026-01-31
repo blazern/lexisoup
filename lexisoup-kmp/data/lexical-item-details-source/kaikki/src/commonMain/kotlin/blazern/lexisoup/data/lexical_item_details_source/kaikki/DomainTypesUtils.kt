@@ -48,7 +48,10 @@ internal fun Entry.toDetails(
     if (senses.isNotEmpty()) {
         for (sense in senses) {
             for (gloss in sense.glosses) {
-                result += Explanation(gloss, src)
+                result += Explanation(
+                    Sentence(gloss, langFrom, src),
+                    src,
+                )
             }
             for (example in sense.examples) {
                 result += LexicalItemDetail.Example(

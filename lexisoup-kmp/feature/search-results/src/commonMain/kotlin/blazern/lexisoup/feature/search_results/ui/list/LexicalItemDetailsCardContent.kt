@@ -19,13 +19,11 @@ import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Explanation
-import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.feature.search_results.model.SearchRequest
 import lexisoup.core.ui.strings.generated.resources.Res
-import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_forms
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_synonyms
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_word_translations
 
@@ -57,10 +55,10 @@ internal fun LexicalItemDetailsCardContent(
             detailsFiltered.compose<Explanation> {
                 Box {
                     Text(
-                        it.text,
+                        it.translationsSet.original.text,
                         color = contentColor,
                         modifier = Modifier.padding(itemPaddings).clickable {
-                            callbacks.onTextCopy(it.text)
+                            callbacks.onTextCopy(it.translationsSet.original.text)
                         }
                     )
                 }

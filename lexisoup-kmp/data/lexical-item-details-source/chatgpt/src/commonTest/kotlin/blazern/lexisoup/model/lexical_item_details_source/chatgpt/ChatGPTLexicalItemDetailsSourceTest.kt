@@ -51,7 +51,7 @@ class ChatGPTLexicalItemDetailsSourceTest {
                   {
                     "__typename": "Explanation",
                     "source": "chatgpt",
-                    "text": "Der Hund ist ein Haustier."
+                    "text": "A 'Hund' is a dog"
                   },
                   {
                     "__typename": "WordTranslations",
@@ -186,7 +186,10 @@ class ChatGPTLexicalItemDetailsSourceTest {
             .filterIsInstance<LexicalItemDetail.Explanation>()
             .single()
         assertEquals(
-            LexicalItemDetail.Explanation("Der Hund ist ein Haustier.", ChatGPT),
+            LexicalItemDetail.Explanation(
+                Sentence("A 'Hund' is a dog", Lang.EN, ChatGPT),
+                ChatGPT,
+            ),
             explanation,
         )
 

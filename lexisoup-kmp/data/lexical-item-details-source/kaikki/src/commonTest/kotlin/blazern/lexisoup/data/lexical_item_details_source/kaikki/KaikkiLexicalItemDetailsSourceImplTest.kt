@@ -49,7 +49,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
         lang = "German",
         senses = listOf(
             Sense(
-                glosses = listOf("house; building"),
+                glosses = listOf("ein Gebäude"),
                 examples = listOf(
                     Example("Das ist ein Haus.")
                 )
@@ -116,7 +116,10 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                 DataSource.Kaikki,
                 pos = Noun,
             ),
-            LexicalItemDetail.Explanation("house; building", DataSource.Kaikki),
+            LexicalItemDetail.Explanation(
+                Sentence("ein Gebäude", Lang.DE, DataSource.Kaikki),
+                DataSource.Kaikki,
+            ),
             LexicalItemDetail.Example(
                 TranslationsSet(
                     original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.Kaikki),
@@ -206,7 +209,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
             lang = "German",
             senses = listOf(
                 Sense(
-                    glosses = listOf("house; building"),
+                    glosses = listOf("ein Gebäude"),
                     examples = listOf(Example("Das ist ein Haus."))
                 )
             ),
@@ -244,7 +247,10 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                 DataSource.Kaikki,
                 pos = Noun,
             ),
-            LexicalItemDetail.Explanation("house; building", DataSource.Kaikki),
+            LexicalItemDetail.Explanation(
+                Sentence("ein Gebäude", Lang.DE, DataSource.Kaikki),
+                DataSource.Kaikki,
+            ),
             LexicalItemDetail.Example(
                 TranslationsSet(
                     original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.Kaikki),

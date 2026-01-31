@@ -135,7 +135,10 @@ private fun PreviewCards() {
                         LexicalItemDetailsGroupState.Loaded(
                             id = "1",
                             listOf(
-                                Explanation(explanation, DataSource.Kaikki),
+                                Explanation(
+                                    Sentence(explanation, Lang.EN, DataSource.Kaikki),
+                                    DataSource.Kaikki,
+                                ),
                                 Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.Kaikki),
                                 WordTranslations(translations, DataSource.Kaikki),
                                 Synonyms(synonyms, DataSource.Kaikki),
@@ -164,7 +167,10 @@ private fun PreviewCards() {
                             id = "3",
                             listOf(
                                 fancyForms,
-                                Explanation(explanation, DataSource.Kaikki),
+                                Explanation(
+                                    Sentence(explanation, Lang.EN, DataSource.Kaikki),
+                                    DataSource.Kaikki,
+                                ),
                                 WordTranslations(translations, DataSource.Kaikki),
                                 Synonyms(synonyms, DataSource.Kaikki),
                             ),

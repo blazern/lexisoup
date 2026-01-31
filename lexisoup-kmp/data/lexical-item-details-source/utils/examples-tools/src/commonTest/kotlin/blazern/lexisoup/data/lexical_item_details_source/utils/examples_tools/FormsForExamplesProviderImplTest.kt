@@ -96,7 +96,12 @@ class FormsForExamplesProviderImplTest {
         val kaikkiForms = listOf(WordForm("lachen", Lang.DE))
         val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), Lang.DE, DataSource.Kaikki)
         kaikki.responseFlow = flowOf(
-            Item.Page(details = listOf(Explanation("Explanation", DataSource.Kaikki)), types),
+            Item.Page(details = listOf(
+                Explanation(
+                    Sentence("Explanation", Lang.EN, DataSource.Kaikki),
+                    DataSource.Kaikki,
+                )
+            ), types),
             Item.Page(details = listOf(LexicalItemDetail.Example(TranslationsSet(
                 Sentence("", Lang.DE, DataSource.Kaikki), emptyList(), emptyList(),
             ), DataSource.Kaikki)), types),
@@ -114,7 +119,12 @@ class FormsForExamplesProviderImplTest {
         val kaikkiForms = listOf(WordForm("lachen", Lang.DE))
         val formsDetail = Forms(Forms.Value.Detailed(kaikkiForms), Lang.DE, DataSource.Kaikki)
         kaikki.responseFlow = flowOf(
-            Item.Page(details = listOf(Explanation("Explanation", DataSource.Kaikki)), types),
+            Item.Page(details = listOf(
+                Explanation(
+                    Sentence("Explanation", Lang.EN, DataSource.Kaikki),
+                    DataSource.Kaikki,
+                )
+            ), types),
             Item.Failure(Err.from(Exception())),
             Item.Page(details = listOf(formsDetail), types),
         )
