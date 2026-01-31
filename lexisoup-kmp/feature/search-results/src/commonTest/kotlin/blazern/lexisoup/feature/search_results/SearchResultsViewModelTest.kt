@@ -112,7 +112,10 @@ class SearchResultsViewModelTest {
                 )
             }
             details += List(detailsMultiplier) {
-                LexicalItemDetail.Explanation("Wörter $detailsMultiplier $it", source)
+                LexicalItemDetail.Explanation(
+                    Sentence("Wörter $detailsMultiplier $it", Lang.DE, source),
+                    source,
+                )
             }
             details += List(detailsMultiplier) {
                 LexicalItemDetail.WordTranslations(

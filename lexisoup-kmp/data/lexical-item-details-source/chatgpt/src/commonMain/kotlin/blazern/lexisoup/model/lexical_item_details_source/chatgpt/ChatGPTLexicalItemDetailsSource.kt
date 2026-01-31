@@ -15,6 +15,7 @@ import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
+import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.graphql.model.LexicalItemsFromLLMQuery
 import com.apollographql.apollo.ApolloClient
 import kotlinx.coroutines.flow.Flow
@@ -83,23 +84,26 @@ class ChatGPTLexicalItemDetailsSource(
         val data = result.data ?: return Right(emptyList())
 
         val items = data.llm.mapNotNull {
-            it.toDomain(langFrom).getOrElse { return Left(Err.from(it)) }
+            it.toDomain(langFrom, langTo).getOrElse { return Left(Err.from(it)) }
         }
         return Right(items)
     }
 }
 
-private fun LexicalItemsFromLLMQuery.Llm.toDomain(lang: Lang): Either<IllegalArgumentException, LexicalItemDetail?> {
+private fun LexicalItemsFromLLMQuery.Llm.toDomain(
+    langFrom: Lang,
+    langTo: Lang,
+): Either<IllegalArgumentException, LexicalItemDetail?> {
     onForms?.let {
         return Right(LexicalItemDetail.Forms(
             value = LexicalItemDetail.Forms.Value.Text(it.text),
-            lang = lang,
+            lang = langFrom,
             source = mapSource(it.source)
         ))
     }
     onExplanation?.let {
         return Right(LexicalItemDetail.Explanation(
-            text = it.text,
+            text = Sentence(it.text, langTo, mapSource(it.source)),
             source = mapSource(it.source)
         ))
     }

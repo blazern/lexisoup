@@ -5,6 +5,7 @@ import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
+import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.predefined
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -28,9 +29,9 @@ import kotlin.concurrent.atomics.incrementAndFetch
 class LexicalItemDetailsSourceCacherTest {
     private val source = DataSource.PanLex
     private val details = listOf(
-        LexicalItemDetail.Explanation("1", source),
-        LexicalItemDetail.Explanation("2", source),
-        LexicalItemDetail.Explanation("3", source),
+        LexicalItemDetail.Explanation(Sentence("1", Lang.EN, source), source),
+        LexicalItemDetail.Explanation(Sentence("2", Lang.EN, source), source),
+        LexicalItemDetail.Explanation(Sentence("3", Lang.EN, source), source),
     )
     private val detailsFlow: Flow<Item> =
         details.map { Item.Page(listOf(it), setOf(LexicalItemDetail.Type.EXAMPLE)) }.asFlow()

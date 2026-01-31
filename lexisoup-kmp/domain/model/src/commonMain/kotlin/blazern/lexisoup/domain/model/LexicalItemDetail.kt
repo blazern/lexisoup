@@ -50,10 +50,24 @@ sealed class LexicalItemDetail(
     ) : LexicalItemDetail(Type.SYNONYMS)
 
     data class Explanation(
-        val text: String,
+        val translationsSet: TranslationsSet,
         override val source: DataSource,
         override val meaningId: String? = null,
-    ) : LexicalItemDetail(Type.EXPLANATION)
+    ) : LexicalItemDetail(Type.EXPLANATION) {
+        constructor(
+            text: Sentence,
+            source: DataSource,
+            meaningId: String? = null,
+        ) : this(
+            translationsSet = TranslationsSet(
+                original = text,
+                translations = emptyList(),
+                translationsQualities = emptyList(),
+            ),
+            source = source,
+            meaningId = meaningId,
+        )
+    }
 
     data class Example(
         val translationsSet: TranslationsSet,

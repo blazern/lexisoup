@@ -112,7 +112,10 @@ private fun Preview() {
             LexicalItemDetailsGroupState.Loaded(
                 id = "2",
                 details = listOf(
-                    Explanation("Hund is Dog", DataSource.ChatGPT)
+                    Explanation(
+                        Sentence("Hund is Dog", Lang.EN, DataSource.ChatGPT),
+                        DataSource.ChatGPT,
+                    )
                 ),
                 types = setOf(LexicalItemDetail.Type.EXPLANATION),
                 source = DataSource.ChatGPT,
