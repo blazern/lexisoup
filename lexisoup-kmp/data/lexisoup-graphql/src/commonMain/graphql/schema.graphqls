@@ -100,9 +100,11 @@ type TranslationsSet {
 type TranslatorParams {
   translatorId: String!
 
-  minQueryLength: Int!
+  textLengthMax: Int!
 
-  maxQueryLength: Int!
+  textLengthMin: Int!
+
+  batchSizeLimit: Int!
 }
 
 type WordTranslations {

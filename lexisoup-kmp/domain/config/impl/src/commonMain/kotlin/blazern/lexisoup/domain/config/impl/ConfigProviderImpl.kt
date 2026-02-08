@@ -62,8 +62,9 @@ class ConfigProviderImpl(
                         .map {
                             TranslatorParams(
                                 translatorId = it.translatorParamsFields.translatorId,
-                                minQueryLength = it.translatorParamsFields.minQueryLength,
-                                maxQueryLength = it.translatorParamsFields.maxQueryLength,
+                                textLengthMin = it.translatorParamsFields.textLengthMin,
+                                textLengthMax = it.translatorParamsFields.textLengthMax,
+                                batchSizeLimit = it.translatorParamsFields.batchSizeLimit,
                             )
                         }
                         .associateBy { it.translatorId },
