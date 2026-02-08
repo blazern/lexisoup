@@ -12,6 +12,7 @@ fragment TranslationsSetFields on TranslationsSet {
 
 fragment TranslatorParamsFields on TranslatorParams {
   translatorId
-  minQueryLength
-  maxQueryLength
+  textLengthMin
+  textLengthMax
+  batchSizeLimit
 }
