@@ -16,6 +16,7 @@ java {
 
 dependencies {
     compileOnly(libs.android.gradlePlugin.api)
+    compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.detekt.gradle.plugin)
 

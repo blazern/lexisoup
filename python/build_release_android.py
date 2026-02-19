@@ -81,7 +81,7 @@ def main() -> None:
 
     project_dir: Path = args.project_dir.resolve()
     gradlew: Path = (project_dir / "gradlew").resolve()
-    module: str = "composeApp"
+    module: str = "androidApp"
     module_dir = project_dir / module
     version_name: str = args.version_name
     version_code: str = str(args.version_code)

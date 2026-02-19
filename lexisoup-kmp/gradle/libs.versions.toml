@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0"
+agp = "9.0.1"
 arrow = "2.2.1.1"
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -16,7 +16,8 @@ androidx-test-runner = "1.7.0"
 androidx-test-core = "1.7.0"
 apollo = "4.3.3"
 apolloKtor = "0.1.1"
-composeMultiplatform = "1.9.0"
+composeMultiplatform = "1.9.3"
+composeMaterial3 = "1.9.0"
 detekt = "1.23.8"
 junit = "4.13.2"
 koin = "4.1.1"
@@ -49,7 +50,7 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-components-uiToolingPreview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "composeMultiplatform" }
 compose-material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "materialIconsCore" }
@@ -104,6 +105,7 @@ arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref 
 # Build logic
 detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 android-gradlePlugin-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "agp" }
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 [plugins]

@@ -34,6 +34,7 @@ plugins {
 }
 
 include(":composeApp")
+include(":androidApp")
 
 include(":a-template-kmp-common")
 
