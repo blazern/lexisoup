@@ -1,4 +1,4 @@
-package blazern.lexisoup.feature.home.ui
+package blazern.lexisoup.core.ui.components.icons
 
 
 import androidx.compose.material.icons.materialIcon
@@ -6,7 +6,7 @@ import androidx.compose.material.icons.materialPath
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Suppress("MagicNumber")
-internal val IconSwitch: ImageVector
+val IconSwitch: ImageVector
     get() {
         if (_switchAlt != null) {
             return _switchAlt!!

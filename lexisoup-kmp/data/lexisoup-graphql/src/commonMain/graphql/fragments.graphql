@@ -9,10 +9,3 @@ fragment TranslationsSetFields on TranslationsSet {
   translations { ...SentenceFields }
   translationsQualities
 }
-
-fragment TranslatorParamsFields on TranslatorParams {
-  translatorId
-  textLengthMin
-  textLengthMax
-  batchSizeLimit
-}

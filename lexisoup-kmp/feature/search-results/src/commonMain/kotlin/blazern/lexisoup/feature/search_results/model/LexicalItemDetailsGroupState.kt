@@ -22,6 +22,7 @@ internal sealed interface LexicalItemDetailsGroupState {
         val details: List<LexicalItemDetail>,
         override val types: Set<LexicalItemDetail.Type>,
         override val source: DataSource,
+        val translationStates: List<TranslationState>,
     ) : LexicalItemDetailsGroupState
 
     data class Error(

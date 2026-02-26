@@ -1,0 +1,10 @@
+query TranslateQuery(
+  $texts: [String!]!,
+  $langFromIso3: String!,
+  $langToIso3: String!
+) {
+  translate(texts: $texts, langFromIso3: $langFromIso3, langToIso3: $langToIso3) {
+    translations
+    source
+  }
+}

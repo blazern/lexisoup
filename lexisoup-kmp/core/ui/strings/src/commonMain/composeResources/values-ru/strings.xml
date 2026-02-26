@@ -14,11 +14,14 @@
     <string name="general_action_copy">Копировать</string>
     <string name="general_action_search">Искать</string>
 
+    <string name="general_cd_translate">Перевести</string>
+
     <string name="general_data_source_tatoeba">Tatoeba</string>
     <string name="general_data_source_chatgpt">ChatGPT</string>
     <string name="general_data_source_kaikki">kaikki (Wiktionary)</string>
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
+    <string name="general_data_source_deepl">DeepL</string>
 
     <string name="general_lexical_item_detail_type_forms">Формы</string>
     <string name="general_lexical_item_detail_type_word_translations">Переводы</string>

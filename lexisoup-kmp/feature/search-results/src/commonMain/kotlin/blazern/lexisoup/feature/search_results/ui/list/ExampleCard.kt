@@ -32,14 +32,10 @@ import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TextAccent
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
+import blazern.lexisoup.feature.search_results.model.TranslationState
+import blazern.lexisoup.feature.search_results.ui.list.model.ExampleState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-
-internal sealed interface ExampleState {
-    data class Loaded(val example: LexicalItemDetail.Example) : ExampleState
-    data class Loading(val loading: LexicalItemDetailsGroupState.Loading) : ExampleState
-    data class Error(val error: LexicalItemDetailsGroupState.Error) : ExampleState
-}
 
 @Composable
 internal fun ExampleCard(
@@ -64,7 +60,7 @@ internal fun ExampleCard(
                 val bg1 = MaterialTheme.colorScheme.secondaryContainer
                 val bg2 = MaterialTheme.colorScheme.surfaceContainer
                 ExampleContent(
-                    example = state.example,
+                    loadedExample = state,
                     contentColor = cardColors.contentColor,
                     backgroundColor1 = bg1,
                     backgroundColor2 = bg2,
@@ -86,13 +82,14 @@ internal fun ExampleCard(
 
 @Composable
 internal fun ExampleContent(
-    example: LexicalItemDetail.Example,
+    loadedExample: ExampleState.Loaded,
     callbacks: LexicalItemDetailCallbacks,
     contentColor: Color,
     backgroundColor1: Color,
     backgroundColor2: Color,
     modifier: Modifier = Modifier,
 ) {
+    val example = loadedExample.example
     val sentences = mutableListOf<Sentence>()
     sentences += example.translationsSet.original
     example.translationsSet.translations.forEach {
@@ -105,11 +102,19 @@ internal fun ExampleContent(
             } else {
                 backgroundColor2 to contentColor
             }
+            val actionsUI = if (sentences.size == 1) {
+                @Composable {
+                    TranslateActions(loadedExample.parentGroup, callbacks)
+                }
+            } else {
+                {}
+            }
             SentenceLine(
                 sentence,
                 color,
                 textColor,
                 callbacks,
+                actionsUI,
             )
         }
     }
@@ -121,6 +126,7 @@ private fun SentenceLine(
     color: Color,
     textColor: Color,
     callbacks: LexicalItemDetailCallbacks,
+    actionsUI: @Composable () -> Unit,
 ) {
     val textAccented = remember(sentence.text, sentence.textAccents) {
         buildAnnotatedString {
@@ -151,13 +157,24 @@ private fun SentenceLine(
                 vertical = 14.dp,
             )
         )
-        SourceLabel(sentence.source, textColor)
+        SourceLabel(
+            sentence.source,
+            textColor,
+            Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 8.dp, top = 4.dp),
+        )
+        Box(Modifier
+            .align(Alignment.BottomEnd)
+            .padding(end = 8.dp, bottom = 4.dp),) {
+            actionsUI()
+        }
     }
 }
 
 
 @Suppress("MagicNumber")
-@Preview(name = "400x500", heightDp = 400, widthDp = 500)
+@Preview(heightDp = 800, widthDp = 500)
 @Composable
 private fun PreviewAll() {
     val examples1 = listOf(
@@ -177,11 +194,20 @@ private fun PreviewAll() {
                     DataSource.Kaikki,
                     setOf(TextAccent(4, 8)),
                 ),
-                listOf(Sentence("the dog sits", Lang.EN, DataSource.Kaikki)),
+                emptyList(),
                 listOf(TranslationsSet.QUALITY_MAX),
             ),
             DataSource.Kaikki,
         ),
+    )
+    val examplesGroup1 = LexicalItemDetailsGroupState.Loaded(
+        id = "1",
+        details = examples1,
+        types = setOf(LexicalItemDetail.Type.EXAMPLE),
+        source = DataSource.Kaikki,
+        translationStates = listOf(
+            TranslationState.CanStart(DataSource.Backend(DataSource.DeepL)),
+        )
     )
 
     val examples2 = listOf(
@@ -199,13 +225,22 @@ private fun PreviewAll() {
             DataSource.ChatGPT,
         ),
     )
+    val examplesGroup2 = LexicalItemDetailsGroupState.Loaded(
+        id = "1",
+        details = examples2,
+        types = setOf(LexicalItemDetail.Type.EXAMPLE),
+        source = DataSource.Kaikki,
+        translationStates = listOf(
+            TranslationState.InProgress(DataSource.Backend(DataSource.DeepL)),
+        )
+    )
 
     MaterialTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding).padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     examples1.forEach {
-                        ExampleCard(ExampleState.Loaded(it), LexicalItemDetailCallbacks.Stub)
+                        ExampleCard(ExampleState.Loaded(it, examplesGroup1), LexicalItemDetailCallbacks.Stub)
                     }
                     ExampleCard(
                         ExampleState.Loading(
@@ -218,7 +253,7 @@ private fun PreviewAll() {
                         LexicalItemDetailCallbacks.Stub,
                     )
                     examples2.forEach {
-                        ExampleCard(ExampleState.Loaded(it), LexicalItemDetailCallbacks.Stub)
+                        ExampleCard(ExampleState.Loaded(it, examplesGroup2), LexicalItemDetailCallbacks.Stub)
                     }
                     ExampleCard(
                         ExampleState.Error(

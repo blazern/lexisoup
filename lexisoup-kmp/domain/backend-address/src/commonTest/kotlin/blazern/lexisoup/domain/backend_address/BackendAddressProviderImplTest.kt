@@ -80,7 +80,9 @@ private class FakeConfigProvider : ConfigProvider {
         backendRedirectionUrl = null,
         minQueryLength = 123,
         maxQueryLength = 123,
-        translatorsParams = emptyMap(),
+        translateTextLengthMin = 10,
+        translateTextLengthMax = 100,
+        translateBatchSizeLimit = 10,
     ))
 
     override val config = configState.asSharedFlow()

@@ -22,6 +22,7 @@ class FeaturePlugin : LibraryPlugin() {
 
                     // Draw icons
                     implementation(libs.findLibrary("compose-material-icons-core").get())
+                    implementation(libs.findLibrary("compose-material-icons-extended").get())
                     implementation(libs.findLibrary("compose-ui-graphics").get())
 
                     // For compose previews

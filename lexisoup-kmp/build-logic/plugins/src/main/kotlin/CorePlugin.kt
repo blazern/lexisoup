@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.api.Plugin
@@ -48,8 +48,7 @@ open class CorePlugin : Plugin<Project> {
         }
 
         extensions.configure<KotlinMultiplatformExtension> {
-            @Suppress("UnstableApiUsage")
-            androidLibrary {
+            targets.withType<KotlinMultiplatformAndroidLibraryTarget>().configureEach {
                 compileSdk = libs.findVersion("android-compileSdk").get().requiredVersion.toInt()
                 minSdk = libs.findVersion("android-minSdk").get().requiredVersion.toInt()
 

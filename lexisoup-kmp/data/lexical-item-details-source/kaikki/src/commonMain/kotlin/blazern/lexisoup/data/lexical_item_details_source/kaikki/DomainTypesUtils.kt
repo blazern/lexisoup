@@ -56,7 +56,7 @@ internal fun Entry.toDetails(
             for (example in sense.examples) {
                 result += LexicalItemDetail.Example(
                     TranslationsSet(
-                        original = Sentence(example.text, langTo, src),
+                        original = Sentence(example.text, langFrom, src),
                         translations = emptyList(),
                         translationsQualities = emptyList(),
                     ),
@@ -108,20 +108,12 @@ private fun extractArticle(pos: PartOfSpeech, tags: List<WordForm.Tag>, lang: La
                 return when (lang) {
                     Lang.DE -> Article.allOf(lang)["der"]
                     Lang.FR -> Article.allOf(lang)["le"]
-                    else -> {
-                        Log.w(TAG) { "Masculine article for $lang not supported" }
-                        null
-                    }
                 }
             }
             is WordForm.Tag.Defined.Feminine -> {
                 return when (lang) {
                     Lang.DE -> Article.allOf(lang)["die"]
                     Lang.FR -> Article.allOf(lang)["la"]
-                    else -> {
-                        Log.w(TAG) { "Feminine article for $lang not supported" }
-                        null
-                    }
                 }
             }
             is WordForm.Tag.Defined.Neuter -> {

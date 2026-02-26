@@ -4,5 +4,7 @@ data class Config(
     val backendRedirectionUrl: String?,
     val minQueryLength: Int,
     val maxQueryLength: Int,
-    val translatorsParams: Map<String, TranslatorParams>,
+    val translateTextLengthMax: Int,
+    val translateTextLengthMin: Int,
+    val translateBatchSizeLimit: Int,
 )

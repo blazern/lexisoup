@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -40,6 +41,8 @@ import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailCallback
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import blazern.lexisoup.feature.search_results.model.SearchRequest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_copied_to_clipboard
@@ -51,10 +54,12 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 internal fun SearchResultsScreen(
     searchRequest: SearchRequest,
     state: SearchResultsState,
+    backgroundErrors: Flow<Err>,
     onTextCopy: (String, Clipboard)->Unit,
     onLoadingDetailVisible: (LexicalItemDetailsGroupState.Loading) -> Unit,
     onFixErrorRequest: (LexicalItemDetailsGroupState.Error) -> Unit,
     onNewSearch: (SearchRequest) -> Unit,
+    onTranslateRequest: (detailsGroup: LexicalItemDetailsGroupState.Loaded, translator: DataSource) -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -67,6 +72,13 @@ internal fun SearchResultsScreen(
             snackbarHostState.showSnackbar(copiedMsg)
         }
         Unit
+    }
+
+    LaunchedEffect(Unit) {
+        backgroundErrors.collect { err ->
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(err.toString())
+        }
     }
 
     Scaffold(
@@ -105,6 +117,10 @@ internal fun SearchResultsScreen(
                 override fun onFixErrorRequest(error: LexicalItemDetailsGroupState.Error) =
                     onFixErrorRequest(error)
                 override fun onNewSearch(searchRequest: SearchRequest) = onNewSearch(searchRequest)
+                override fun onTranslateRequest(
+                    detailsGroup: LexicalItemDetailsGroupState.Loaded,
+                    translator: DataSource,
+                ) = onTranslateRequest(detailsGroup, translator)
             }
             FoundSearchResults(
                 state = state,
@@ -133,6 +149,7 @@ private fun PreviewAllGood() {
                 ),
                 types = setOf(LexicalItemDetail.Type.FORMS),
                 source = DataSource.ChatGPT,
+                translationStates = emptyList(),
             ),
 
             // Explanations
@@ -146,6 +163,7 @@ private fun PreviewAllGood() {
                 ),
                 types = setOf(LexicalItemDetail.Type.EXPLANATION),
                 source = DataSource.ChatGPT,
+                translationStates = emptyList(),
             ),
 
             // Examples
@@ -188,6 +206,7 @@ private fun PreviewAllGood() {
                 ),
                 types = setOf(LexicalItemDetail.Type.EXAMPLE),
                 source = DataSource.ChatGPT,
+                translationStates = emptyList(),
             ),
         )
     )
@@ -196,10 +215,12 @@ private fun PreviewAllGood() {
         SearchResultsScreen(
             searchRequest = searchRequest,
             state = state,
+            backgroundErrors = emptyFlow(),
             onTextCopy = { _, _ -> },
             onLoadingDetailVisible = {},
             onFixErrorRequest = {},
             onNewSearch = {},
+            onTranslateRequest = { _, _ -> },
         )
     }
 }
@@ -233,7 +254,7 @@ private fun PreviewErrors() {
             ),
             // Examples error from ChatGPT
             LexicalItemDetailsGroupState.Error(
-                id = "3",
+                id = "4",
                 err = Err.Other(null),
                 types = setOf(LexicalItemDetail.Type.EXAMPLE),
                 source = DataSource.ChatGPT,
@@ -245,10 +266,12 @@ private fun PreviewErrors() {
         SearchResultsScreen(
             searchRequest = searchRequest,
             state = state,
+            backgroundErrors = emptyFlow(),
             onTextCopy = { _, _ -> },
             onLoadingDetailVisible = {},
             onFixErrorRequest = {},
             onNewSearch = {},
+            onTranslateRequest = { _, _ -> },
         )
     }
 }

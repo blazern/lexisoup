@@ -3,6 +3,8 @@ query ClientConfig {
     backendRedirectionUrl
     minQueryLength
     maxQueryLength
-    translatorsParams { ...TranslatorParamsFields }
+    translateTextLengthMax
+    translateTextLengthMin
+    translateBatchSizeLimit
   }
 }
