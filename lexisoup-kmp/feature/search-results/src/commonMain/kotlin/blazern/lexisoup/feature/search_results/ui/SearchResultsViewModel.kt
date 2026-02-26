@@ -3,32 +3,50 @@ package blazern.lexisoup.feature.search_results.ui
 import androidx.compose.ui.platform.Clipboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import arrow.core.getOrElse
 import blazern.lexisoup.data.lexical_item_details_source.aggregation.LexicalItemDetailsSourceAggregator
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
+import blazern.lexisoup.data.translator.aggregation.TranslatorsAggregator
+import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
-import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.predefined
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.SearchResultsState
+import blazern.lexisoup.feature.search_results.model.TranslationState
 import blazern.lexisoup.feature.search_results.model.addLoadingFor
 import blazern.lexisoup.feature.search_results.model.removeAllButLoadedFor
 import blazern.lexisoup.feature.search_results.model.removeErrorsFor
-import blazern.lexisoup.feature.search_results.model.replaceAllButLoadedWith
+import blazern.lexisoup.feature.search_results.model.replaceByID
+import blazern.lexisoup.feature.search_results.model.replaceMatchingOrJustAdd
+import blazern.lexisoup.feature.search_results.usecases.CanTranslateUseCase
+import blazern.lexisoup.feature.search_results.usecases.CreateTranslationsStatesUseCase
+import blazern.lexisoup.feature.search_results.usecases.TransformPageUseCase
+import blazern.lexisoup.feature.search_results.usecases.TranslateDetailsUseCase
 import blazern.lexisoup.utils.FlowIterator
 import blazern.lexisoup.utils.clipEntryOf
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private typealias LexicalItemDetailFlow = FlowIterator<Item>
 
+@Suppress("LongParameterList")
 internal class SearchResultsViewModel(
     query: String,
-    langFrom: Lang,
-    langTo: Lang,
+    private val langFrom: Lang,
+    private val langTo: Lang,
     dataSource: LexicalItemDetailsSourceAggregator,
+    private val translators: TranslatorsAggregator,
+    private val translateDetails: TranslateDetailsUseCase,
+    private val transformPage: TransformPageUseCase,
+    private val createTranslationsStates: CreateTranslationsStatesUseCase,
 ) : ViewModel() {
     private val loadingInProgress = mutableSetOf<DataSource>()
     private val dataIters = mutableMapOf<DataSource, LexicalItemDetailFlow>()
@@ -39,14 +57,17 @@ internal class SearchResultsViewModel(
     private val dataSource = dataSource.sourceFor(query, langFrom, langTo)
 
     private val _state = MutableStateFlow(SearchResultsState())
-    val state: StateFlow<SearchResultsState> = _state
+    val state: StateFlow<SearchResultsState> = _state.asStateFlow()
+
+    private val _backgroundErrors = MutableSharedFlow<Err>()
+    val backgroundErrors = _backgroundErrors.asSharedFlow()
 
     init {
         viewModelScope.launch { search() }
     }
 
     private suspend fun search() {
-        _state.value = SearchResultsState()
+        _state.update { SearchResultsState() }
         for (source in DataSource.predefined) {
             sourceTypes[source] = dataSource.typesOf(source)
             val flow = dataSource.request(source)
@@ -79,21 +100,23 @@ internal class SearchResultsViewModel(
             }
             loadingInProgress.add(source)
             val sourceTypes = sourceTypes[source].orEmpty()
-            _state.value = _state.value
-                .removeAllButLoadedFor(source)
-                .addLoadingFor(source, sourceTypes)
+            _state.update { state ->
+                state
+                    .removeAllButLoadedFor(source)
+                    .addLoadingFor(source, sourceTypes)
+            }
             val next = iter.next()
             if (next != null) {
                 onNextDetailResult(next, source, sourceTypes)
             } else {
                 // The end
-                _state.value = _state.value.removeAllButLoadedFor(source)
+                _state.update { it.removeAllButLoadedFor(source) }
             }
             loadingInProgress.remove(source)
         }
     }
 
-    private fun onNextDetailResult(
+    private suspend fun onNextDetailResult(
         item: Item,
         source: DataSource,
         requestedTypes: Set<LexicalItemDetail.Type>,
@@ -101,46 +124,78 @@ internal class SearchResultsViewModel(
         var state = _state.value
         when (item) {
             is Item.Failure -> {
-                state = state.replaceAllButLoadedWith(item, source, requestedTypes)
+                state = state.replaceMatchingOrJustAdd(
+                    item,
+                    source,
+                    requestedTypes,
+                ) {
+                    it.source == source && it !is LexicalItemDetailsGroupState.Loaded
+                }
             }
             is Item.Page -> {
-                val page = transform(item)
-                if (page != null) {
-                    state = state.replaceAllButLoadedWith(page, source, requestedTypes)
+                val pages = transformPage(item)
+                pages.forEach { page ->
+                    val translationsStates = createTranslationsStates(page.details, langFrom, langTo)
+                    state = state.replaceMatchingOrJustAdd(
+                        page,
+                        source,
+                        translationsStates,
+                    ) {
+                        it.source == source && it !is LexicalItemDetailsGroupState.Loaded
+                    }
                 }
                 state = state.addLoadingFor(source, item.nextPageTypes)
                 sourceTypes[source] = item.nextPageTypes
             }
         }
-        _state.value = state
-    }
-
-    private fun transform(page: Item.Page): Item.Page? {
-        val transformedDetails = page.details.mapNotNull { transform(it) }
-        return if (transformedDetails.isNotEmpty()) {
-            page.copy(details = transformedDetails)
-        } else {
-            null
-        }
-    }
-
-    private fun transform(detail: LexicalItemDetail): LexicalItemDetail? {
-        if (detail is Forms) {
-            val value = detail.value
-            if (value is Forms.Value.Detailed) {
-                val forms = value.forms
-                return if (forms.isNotEmpty()) {
-                    detail.copy(value = Forms.Value.Detailed(forms))
-                } else {
-                    null
-                }
-            }
-        }
-        return detail
+        _state.update { state }
     }
 
     fun onFixErrorRequest(error: LexicalItemDetailsGroupState.Error) {
-        _state.value = _state.value.removeErrorsFor(error.source)
+        _state.update { it.removeErrorsFor(error.source) }
         continueLoadingFor(error.source)
+    }
+
+    fun onTranslateRequest(
+        detailsGroup: LexicalItemDetailsGroupState.Loaded,
+        translationSource: DataSource,
+    ) {
+        val inProgress = detailsGroup.copy(translationStates = detailsGroup.translationStates.map {
+            if (it.translationSource == translationSource) {
+                TranslationState.InProgress(translationSource)
+            } else {
+                it
+            }
+        })
+        _state.update { it.replaceByID(inProgress) }
+
+        viewModelScope.launch {
+            val translator = translators.getTranslator(translationSource)
+
+            val translationsResults = translateDetails(
+                detailsGroup.details,
+                translator,
+                langFrom,
+                langTo,
+            ).toList()
+            val errors = translationsResults.mapNotNull { it.leftOrNull() }
+            val detailsTranslated = if (errors.isNotEmpty()) {
+                errors.forEach { _backgroundErrors.emit(it) }
+                // Let's consider nothing to be translated
+                detailsGroup.details
+            } else {
+                translationsResults.map {
+                    it.getOrElse { err ->
+                        throw IllegalStateException("Expected no errors", err.e)
+                    }
+                }
+            }
+
+            val translated = detailsGroup.copy(
+                details = detailsTranslated,
+                translationStates = createTranslationsStates(detailsTranslated, langFrom, langTo)
+            )
+            _state.update { it.replaceByID(translated) }
+        }
     }
 }

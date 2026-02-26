@@ -27,6 +27,7 @@ fun SearchResultsRoute(
     SearchResultsScreen(
         SearchRequest(query, langFrom, langTo),
         uiState,
+        viewModel.backgroundErrors,
         onTextCopy = { text, clipboard ->
             viewModel.copyText(text, clipboard)
         },
@@ -38,6 +39,9 @@ fun SearchResultsRoute(
         },
         onNewSearch = {
             onNewSearch(it.query, it.langFrom, it.langTo)
+        },
+        onTranslateRequest = { detailsGroup, translator ->
+            viewModel.onTranslateRequest(detailsGroup, translator)
         },
     )
 }

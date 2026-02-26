@@ -13,7 +13,7 @@ import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.i18n
 
 @Composable
-internal fun BoxScope.SourceLabel(
+internal fun SourceLabel(
     source: DataSource,
     mainColor: Color,
     modifier: Modifier = Modifier,
@@ -22,8 +22,6 @@ internal fun BoxScope.SourceLabel(
         source.i18n(),
         style = MaterialTheme.typography.labelSmall,
         color = mainColor.copy(alpha = 0.2f),
-        modifier = modifier
-            .align(Alignment.TopEnd)
-            .padding(end = 8.dp, top = 4.dp),
+        modifier = modifier,
     )
 }

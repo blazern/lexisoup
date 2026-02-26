@@ -1,11 +1,11 @@
+@file:Suppress("TooManyFunctions")
+
 package blazern.lexisoup.feature.search_results.model
 
 import androidx.compose.runtime.Immutable
-import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.LexicalItemDetail
-import kotlin.collections.plus
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -14,21 +14,94 @@ internal data class SearchResultsState(
     val groups: List<LexicalItemDetailsGroupState> = emptyList(),
 )
 
-internal fun SearchResultsState.replaceAllButLoadedWith(
-    item: Item,
+internal fun SearchResultsState.replaceMatchingOrJustAdd(
+    item: Item.Page,
+    source: DataSource,
+    translationStates: List<TranslationState>,
+    matches: (LexicalItemDetailsGroupState) -> Boolean,
+) = replaceOrAddMatchingImpl(item, source, null, translationStates, matches)
+
+internal fun SearchResultsState.replaceMatchingOrJustAdd(
+    item: Item.Failure,
     source: DataSource,
     types: Set<LexicalItemDetail.Type>,
+    matches: (LexicalItemDetailsGroupState) -> Boolean,
+) = replaceOrAddMatchingImpl(item, source, types, null, matches)
+
+private fun SearchResultsState.replaceOrAddMatchingImpl(
+    item: Item,
+    source: DataSource,
+    types: Set<LexicalItemDetail.Type>?,
+    translationStates: List<TranslationState>?,
+    matches: (LexicalItemDetailsGroupState) -> Boolean,
 ): SearchResultsState {
-    val predicate = { state: LexicalItemDetailsGroupState ->
-        state.source == source && state !is LexicalItemDetailsGroupState.Loaded
-    }
-    val id = groups.firstOrNull(predicate)?.id ?: randomId()
-    var result = this.removeAllButLoadedFor(source)
-    return when (item) {
-        is Item.Page -> result.add(id, item, source)
-        is Item.Failure -> result.addFailure(id, item, source, types)
+    val matchedIds = groups.filter(matches).map { it.id }
+    return if (matchedIds.isNotEmpty()) {
+        val idToKeep = matchedIds.first()
+        val restToRemove = matchedIds.drop(1).toSet()
+
+        val replaced = when (item) {
+            is Item.Page -> {
+                requireNotNull(translationStates)
+                replace(idToKeep, item, source, translationStates)
+            }
+            is Item.Failure -> {
+                requireNotNull(types)
+                replace(idToKeep, item, source, types)
+            }
+        }
+        replaced.remove(restToRemove)
+    } else {
+        when (item) {
+            is Item.Page -> {
+                requireNotNull(translationStates)
+                add(item, source, translationStates)
+            }
+            is Item.Failure -> {
+                requireNotNull(types)
+                addFailure(randomId(), item, source, types)
+            }
+        }
     }
 }
+
+internal fun SearchResultsState.replace(
+    id: String,
+    item: Item.Page,
+    source: DataSource,
+    translationStates: List<TranslationState>,
+) = replaceImpl(id, item, source, null, translationStates)
+
+internal fun SearchResultsState.replace(
+    id: String,
+    item: Item.Failure,
+    source: DataSource,
+    types: Set<LexicalItemDetail.Type>,
+) = replaceImpl(id, item, source, types, null)
+
+private fun SearchResultsState.replaceImpl(
+    id: String,
+    item: Item,
+    source: DataSource,
+    types: Set<LexicalItemDetail.Type>?,
+    translationStates: List<TranslationState>?,
+): SearchResultsState {
+    val result = this.remove(setOf(id))
+    return when (item) {
+        is Item.Page -> {
+            requireNotNull(translationStates)
+            result.add(id, item, source, translationStates)
+        }
+        is Item.Failure -> {
+            requireNotNull(types)
+            result.addFailure(id, item, source, types)
+        }
+    }
+}
+
+internal fun SearchResultsState.remove(
+    ids: Set<String>,
+) = copy(groups = groups.filter { !ids.contains(it.id) })
 
 internal fun SearchResultsState.removeAllButLoadedFor(
     source: DataSource,
@@ -51,9 +124,16 @@ internal fun SearchResultsState.removeErrorsFor(
 }
 
 internal fun SearchResultsState.add(
+    page: Item.Page,
+    source: DataSource,
+    translationStates: List<TranslationState>,
+) = add(randomId(), page, source, translationStates)
+
+private fun SearchResultsState.add(
     id: String,
     page: Item.Page,
     source: DataSource,
+    translationStates: List<TranslationState>,
 ): SearchResultsState {
     return add(
         LexicalItemDetailsGroupState.Loaded(
@@ -61,21 +141,26 @@ internal fun SearchResultsState.add(
             details = page.details,
             types = page.details.map { it.type }.toSet(),
             source = source,
+            translationStates = translationStates,
         )
     )
 }
 
 private fun SearchResultsState.add(
-    state: LexicalItemDetailsGroupState,
+    group: LexicalItemDetailsGroupState,
 ): SearchResultsState {
-    return copy(
-        groups = (groups + listOf(state)).sortedBy { it.source.priority }
-    )
+    return if (groups.map { it.id }.contains(group.id)) {
+        replaceByID(group)
+    } else {
+        copy(
+            groups = (groups + listOf(group)).sortedBy { it.source.priority }
+        )
+    }
 }
 
 internal fun SearchResultsState.addFailure(
     id: String,
-    failure: LexicalItemDetailsSource.Item.Failure,
+    failure: Item.Failure,
     source: DataSource,
     types: Set<LexicalItemDetail.Type>,
 ): SearchResultsState {
@@ -96,6 +181,14 @@ internal fun SearchResultsState.addLoadingFor(
     return add(LexicalItemDetailsGroupState.Loading(randomId(), types, source))
 }
 
+internal fun SearchResultsState.replaceByID(
+    group: LexicalItemDetailsGroupState,
+): SearchResultsState {
+    return copy(
+        groups = groups.map { if (it.id == group.id) group else it }
+    )
+}
+
 internal val DataSource.priority: Int
     @Suppress("MagicNumber")
     get() {
@@ -105,6 +198,8 @@ internal val DataSource.priority: Int
             DataSource.ChatGPT -> 2
             DataSource.Kaikki -> 3
             DataSource.WortschatzLeipzig -> 4
+            DataSource.DeepL -> 5
+            is DataSource.Backend -> this.impl?.priority ?: 50
             is DataSource.Other -> 100
         }
     }

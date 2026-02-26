@@ -57,6 +57,7 @@ kotlin {
             implementation(project(":data:lexisoup-graphql"))
             implementation(project(":data:suggestions"))
             implementation(project(":data:lexical-item-details-source:aggregation"))
+            implementation(project(":data:translator:aggregation"))
 
             implementation(project(":feature:home"))
             implementation(project(":feature:search-results"))

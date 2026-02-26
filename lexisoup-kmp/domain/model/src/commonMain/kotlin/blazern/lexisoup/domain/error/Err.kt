@@ -7,6 +7,10 @@ sealed interface Err {
 
     sealed interface Net : Err {
         data class IO(override val e: Exception) : Net
+        data class InvalidResponse(
+            val msg: String,
+            override val e: Exception? = null,
+        ) : Net
     }
     data class Other(override val e: Exception?) : Err
 

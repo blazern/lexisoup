@@ -4,6 +4,7 @@ import blazern.lexisoup.core.ktor.di.ktorModule
 import blazern.lexisoup.data.lexical_item_details_source.aggregation.di.aggregatingLexicalItemDetailsSourceModules
 import blazern.lexisoup.data.lexisoup.graphql.di.lexisoupGraphQLModule
 import blazern.lexisoup.data.suggestions.di.suggestionsModule
+import blazern.lexisoup.data.translator.aggregation.di.translatorsAggregatorModule
 import blazern.lexisoup.domain.backend_address.di.backendAddressModule
 import blazern.lexisoup.domain.config.impl.di.configModule
 import blazern.lexisoup.domain.settings.di.settingsModule
@@ -23,6 +24,7 @@ fun initKoin() {
             homeScreenModule(),
             lexisoupGraphQLModule(),
             suggestionsModule(),
+            translatorsAggregatorModule(),
             *searchResultModules().toTypedArray(),
             *aggregatingLexicalItemDetailsSourceModules().toTypedArray(),
         )

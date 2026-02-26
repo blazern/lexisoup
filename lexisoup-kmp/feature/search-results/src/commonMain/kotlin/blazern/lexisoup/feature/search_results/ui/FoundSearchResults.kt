@@ -27,7 +27,7 @@ import blazern.lexisoup.feature.search_results.model.SearchRequest
 import blazern.lexisoup.feature.search_results.model.SearchResultsState
 import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailCallbacks
 import blazern.lexisoup.feature.search_results.ui.list.ExampleCard
-import blazern.lexisoup.feature.search_results.ui.list.ExampleState
+import blazern.lexisoup.feature.search_results.ui.list.model.ExampleState
 import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailsCard
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -76,13 +76,14 @@ private fun LazyListScope.examples(
 
 private fun List<LexicalItemDetailsGroupState>.toExamples(): List<ExampleState> {
     val result = mutableListOf<ExampleState>()
-    this.forEach {
-        when (it) {
+    this.forEach { groupState ->
+        when (groupState) {
             is LexicalItemDetailsGroupState.Loaded ->
-                it.details.filterIsInstance<Example>()
-                    .forEach { result.add(ExampleState.Loaded(it)) }
-            is LexicalItemDetailsGroupState.Error -> result.add(ExampleState.Error(it))
-            is LexicalItemDetailsGroupState.Loading -> result.add(ExampleState.Loading(it))
+                groupState.details.filterIsInstance<Example>().forEach { detail ->
+                    result.add(ExampleState.Loaded(detail, groupState))
+                }
+            is LexicalItemDetailsGroupState.Error -> result.add(ExampleState.Error(groupState))
+            is LexicalItemDetailsGroupState.Loading -> result.add(ExampleState.Loading(groupState))
         }
     }
     return result
@@ -106,6 +107,7 @@ private fun Preview() {
                 ),
                 types = setOf(LexicalItemDetail.Type.FORMS),
                 source = DataSource.ChatGPT,
+                translationStates = emptyList(),
             ),
 
             // Explanations group
@@ -119,6 +121,7 @@ private fun Preview() {
                 ),
                 types = setOf(LexicalItemDetail.Type.EXPLANATION),
                 source = DataSource.ChatGPT,
+                translationStates = emptyList(),
             ),
 
             // Examples group
@@ -161,6 +164,7 @@ private fun Preview() {
                 ),
                 types = setOf(LexicalItemDetail.Type.EXAMPLE),
                 source = DataSource.ChatGPT,
+                translationStates = emptyList(),
             ),
         ),
     )

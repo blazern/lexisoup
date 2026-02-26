@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.components.ClearSearchFocusOnBack
 import blazern.lexisoup.core.ui.components.SearchBar
+import blazern.lexisoup.core.ui.components.icons.IconSwitch
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import blazern.lexisoup.core.ui.theme.LinkColor

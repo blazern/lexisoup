@@ -28,6 +28,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
+import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_BASIC
 import blazern.lexisoup.domain.model.WordForm
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Genitive
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Nominative
@@ -35,6 +36,7 @@ import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Plural
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.Singular
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.SearchRequest
+import blazern.lexisoup.feature.search_results.model.TranslationState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -67,9 +69,8 @@ internal fun LexicalItemDetailsCard(
             when (target) {
                 is LexicalItemDetailsGroupState.Loaded -> {
                     LexicalItemDetailsCardContent(
-                        target.details,
+                        target,
                         searchRequest,
-                        target.source,
                         contentColorAnimated,
                         callbacks,
                     )
@@ -89,7 +90,7 @@ internal fun LexicalItemDetailsCard(
     }
 }
 
-@Preview(name = "400x500", heightDp = 400, widthDp = 500)
+@Preview(heightDp = 800, widthDp = 500)
 @Composable
 private fun PreviewCards() {
     val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
@@ -145,6 +146,9 @@ private fun PreviewCards() {
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.Kaikki,
+                            listOf(
+                                TranslationState.InProgress(DataSource.Backend(DataSource.DeepL))
+                            ),
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -158,6 +162,7 @@ private fun PreviewCards() {
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.Kaikki,
+                            translationStates = emptyList(),
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -168,7 +173,19 @@ private fun PreviewCards() {
                             listOf(
                                 fancyForms,
                                 Explanation(
-                                    Sentence(explanation, Lang.EN, DataSource.Kaikki),
+                                    TranslationsSet(
+                                        Sentence("Hund is ein Haustier", Lang.DE, DataSource.Kaikki),
+                                        listOf(Sentence("Dog is a pet", Lang.EN, DataSource.DeepL)),
+                                        listOf(QUALITY_BASIC),
+                                    ),
+                                    DataSource.Kaikki,
+                                ),
+                                Explanation(
+                                    TranslationsSet(
+                                        Sentence("Haustier, dessen Forfahre der Wolf ist", Lang.DE, DataSource.Kaikki),
+                                        listOf(Sentence("Pet whose ancestor is the wolf", Lang.EN, DataSource.DeepL)),
+                                        listOf(QUALITY_BASIC),
+                                    ),
                                     DataSource.Kaikki,
                                 ),
                                 WordTranslations(translations, DataSource.Kaikki),
@@ -176,6 +193,9 @@ private fun PreviewCards() {
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.Kaikki,
+                            listOf(
+                                TranslationState.CanStart(DataSource.Backend(DataSource.DeepL))
+                            ),
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
@@ -186,7 +206,7 @@ private fun PreviewCards() {
     }
 }
 
-@Preview(name = "400x500", heightDp = 400, widthDp = 500)
+@Preview(heightDp = 600, widthDp = 500)
 @Composable
 private fun PreviewAll() {
     val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
@@ -223,6 +243,7 @@ private fun PreviewAll() {
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.Kaikki,
+                            translationStates = emptyList(),
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,

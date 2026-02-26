@@ -5,7 +5,6 @@ import blazern.lexisoup.data.lexisoup.graphql.LexisoupApolloClientHolder
 import blazern.lexisoup.data.lexisoup.graphql.err
 import blazern.lexisoup.domain.config.api.ConfigProvider
 import blazern.lexisoup.domain.config.api.model.Config
-import blazern.lexisoup.domain.config.api.model.TranslatorParams
 import blazern.lexisoup.graphql.model.ClientConfigQuery
 import com.apollographql.apollo.ApolloClient
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +29,9 @@ class ConfigProviderImpl(
             backendRedirectionUrl = null,
             minQueryLength = 3,
             maxQueryLength = 50,
-            translatorsParams = emptyMap(),
+            translateTextLengthMax = 50,
+            translateTextLengthMin = 3,
+            translateBatchSizeLimit = 10,
         )
     )
 
@@ -58,16 +59,9 @@ class ConfigProviderImpl(
                     backendRedirectionUrl = data.config.backendRedirectionUrl,
                     minQueryLength = data.config.minQueryLength,
                     maxQueryLength = data.config.maxQueryLength,
-                    translatorsParams = data.config.translatorsParams
-                        .map {
-                            TranslatorParams(
-                                translatorId = it.translatorParamsFields.translatorId,
-                                textLengthMin = it.translatorParamsFields.textLengthMin,
-                                textLengthMax = it.translatorParamsFields.textLengthMax,
-                                batchSizeLimit = it.translatorParamsFields.batchSizeLimit,
-                            )
-                        }
-                        .associateBy { it.translatorId },
+                    translateTextLengthMax = data.config.translateTextLengthMax,
+                    translateTextLengthMin = data.config.translateTextLengthMin,
+                    translateBatchSizeLimit = data.config.translateBatchSizeLimit,
                 )
             }
             Log.i(TAG) { "Received config: ${config.value}" }

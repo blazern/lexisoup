@@ -15,11 +15,14 @@
     <string name="general_action_copy">Copy</string>
     <string name="general_action_search">Search</string>
 
+    <string name="general_cd_translate">Translate</string>
+
     <string name="general_data_source_tatoeba">Tatoeba</string>
     <string name="general_data_source_chatgpt">ChatGPT</string>
     <string name="general_data_source_kaikki">kaikki (Wiktionary)</string>
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
+    <string name="general_data_source_deepl">DeepL</string>
 
     <string name="general_lexical_item_detail_type_forms">Forms</string>
     <string name="general_lexical_item_detail_type_word_translations">Translations</string>

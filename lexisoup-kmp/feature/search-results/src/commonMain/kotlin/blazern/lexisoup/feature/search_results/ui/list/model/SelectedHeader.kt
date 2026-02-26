@@ -1,4 +1,4 @@
-package blazern.lexisoup.feature.search_results.ui.list
+package blazern.lexisoup.feature.search_results.ui.list.model
 
 import blazern.lexisoup.domain.model.Gender
 import blazern.lexisoup.domain.model.Lang

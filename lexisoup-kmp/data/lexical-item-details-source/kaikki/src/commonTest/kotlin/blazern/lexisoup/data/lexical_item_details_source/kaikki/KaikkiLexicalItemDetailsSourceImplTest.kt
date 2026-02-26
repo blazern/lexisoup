@@ -122,7 +122,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
             ),
             LexicalItemDetail.Example(
                 TranslationsSet(
-                    original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.Kaikki),
+                    original = Sentence("Das ist ein Haus.", Lang.DE, DataSource.Kaikki),
                     translations = emptyList(),
                     translationsQualities = emptyList(),
                 ),
@@ -253,7 +253,7 @@ class KaikkiLexicalItemDetailsSourceImplTest {
             ),
             LexicalItemDetail.Example(
                 TranslationsSet(
-                    original = Sentence("Das ist ein Haus.", Lang.EN, DataSource.Kaikki),
+                    original = Sentence("Das ist ein Haus.", Lang.DE, DataSource.Kaikki),
                     translations = emptyList(),
                     translationsQualities = emptyList(),
                 ),

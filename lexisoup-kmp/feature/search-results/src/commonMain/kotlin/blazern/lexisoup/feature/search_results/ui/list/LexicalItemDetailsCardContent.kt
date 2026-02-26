@@ -1,6 +1,5 @@
 package blazern.lexisoup.feature.search_results.ui.list
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -15,26 +14,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.strings.stringResource
-import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Explanation
 import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
 import blazern.lexisoup.domain.model.Sentence
+import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.SearchRequest
+import blazern.lexisoup.feature.search_results.ui.list.model.SelectedHeader
+import blazern.lexisoup.feature.search_results.ui.list.model.select
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_synonyms
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_word_translations
 
 @Composable
 internal fun LexicalItemDetailsCardContent(
-    details: List<LexicalItemDetail>,
+    detailsGroup: LexicalItemDetailsGroupState.Loaded,
     searchRequest: SearchRequest,
-    source: DataSource,
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
 ) {
+    val details = detailsGroup.details
+    val source = detailsGroup.source
     val itemPaddings = PaddingValues(vertical = 18.dp)
     val header = SelectedHeader.select(details)
     val detailsFiltered = if (header != null && header.detailConsumed) {
@@ -48,20 +50,14 @@ internal fun LexicalItemDetailsCardContent(
             source,
             callbacks,
             Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
-        )
+        ) {
+            TranslateActions(detailsGroup, callbacks)
+        }
         Column(
             Modifier.padding(horizontal = 28.dp),
         ) {
             detailsFiltered.compose<Explanation> {
-                Box {
-                    Text(
-                        it.translationsSet.original.text,
-                        color = contentColor,
-                        modifier = Modifier.padding(itemPaddings).clickable {
-                            callbacks.onTextCopy(it.translationsSet.original.text)
-                        }
-                    )
-                }
+                ExplanationUI(it, contentColor, callbacks, Modifier.padding(itemPaddings))
             }
             // NOTE: this looks terrible, a table is rather needed, like the one that Wiktionary has
 //            detailsFiltered.compose<Forms> {
