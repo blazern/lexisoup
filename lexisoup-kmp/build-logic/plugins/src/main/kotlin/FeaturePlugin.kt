@@ -16,23 +16,21 @@ class FeaturePlugin : LibraryPlugin() {
                 val androidMain = maybeCreate("androidMain")
 
                 commonMain.dependencies {
-                    implementation(libs.findLibrary("androidx-appcompat").get())
-                    implementation(libs.findLibrary("androidx-core-ktx").get())
                     implementation(project(":core:ui:strings"))
 
                     // Draw icons
                     implementation(libs.findLibrary("compose-material-icons-core").get())
                     implementation(libs.findLibrary("compose-material-icons-extended").get())
                     implementation(libs.findLibrary("compose-ui-graphics").get())
-
-                    // For compose previews
-                    implementation(libs.findLibrary("androidx-emoji").get())
-                    implementation(libs.findLibrary("androidx-customview-poolingcontainer").get())
                 }
 
                 androidMain.dependencies {
+                    implementation(libs.findLibrary("androidx-appcompat").get())
+                    implementation(libs.findLibrary("androidx-core-ktx").get())
                     implementation(libs.findLibrary("androidx-activity-compose").get())
                     // For compose previews
+                    implementation(libs.findLibrary("androidx-emoji").get())
+                    implementation(libs.findLibrary("androidx-customview-poolingcontainer").get())
                     implementation(libs.findLibrary("androidx-ui-tooling").get())
                 }
             }
