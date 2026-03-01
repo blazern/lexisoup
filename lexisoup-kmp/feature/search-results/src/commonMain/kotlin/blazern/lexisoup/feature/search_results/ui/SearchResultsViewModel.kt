@@ -20,7 +20,6 @@ import blazern.lexisoup.feature.search_results.model.removeAllButLoadedFor
 import blazern.lexisoup.feature.search_results.model.removeErrorsFor
 import blazern.lexisoup.feature.search_results.model.replaceByID
 import blazern.lexisoup.feature.search_results.model.replaceMatchingOrJustAdd
-import blazern.lexisoup.feature.search_results.usecases.CanTranslateUseCase
 import blazern.lexisoup.feature.search_results.usecases.CreateTranslationsStatesUseCase
 import blazern.lexisoup.feature.search_results.usecases.TransformPageUseCase
 import blazern.lexisoup.feature.search_results.usecases.TranslateDetailsUseCase

@@ -131,7 +131,7 @@ internal fun SearchResultsScreen(
     }
 }
 
-@Preview(name = "400x500", heightDp = 400, widthDp = 500)
+@Preview(name = "400x500", heightDp = 800, widthDp = 500)
 @Composable
 private fun PreviewAllGood() {
     val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)

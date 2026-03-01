@@ -14,12 +14,12 @@ import blazern.lexisoup.domain.model.i18n
 
 @Composable
 internal fun SourceLabel(
-    source: DataSource,
+    text: String,
     mainColor: Color,
     modifier: Modifier = Modifier,
 ) {
     Text(
-        source.i18n(),
+        text,
         style = MaterialTheme.typography.labelSmall,
         color = mainColor.copy(alpha = 0.2f),
         modifier = modifier,
