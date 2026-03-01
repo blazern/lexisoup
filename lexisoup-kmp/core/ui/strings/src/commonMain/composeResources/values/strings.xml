@@ -24,6 +24,8 @@
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
     <string name="general_data_source_deepl">DeepL</string>
 
+    <string name="general_translated_by_postfix">, translation: </string>
+
     <string name="general_lexical_item_detail_type_forms">Forms</string>
     <string name="general_lexical_item_detail_type_word_translations">Translations</string>
     <string name="general_lexical_item_detail_type_synonyms">Synonyms</string>

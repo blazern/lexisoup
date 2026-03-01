@@ -23,6 +23,8 @@
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
     <string name="general_data_source_deepl">DeepL</string>
 
+    <string name="general_translated_by_postfix">, перевод: </string>
+
     <string name="general_lexical_item_detail_type_forms">Формы</string>
     <string name="general_lexical_item_detail_type_word_translations">Переводы</string>
     <string name="general_lexical_item_detail_type_synonyms">Синонимы</string>
