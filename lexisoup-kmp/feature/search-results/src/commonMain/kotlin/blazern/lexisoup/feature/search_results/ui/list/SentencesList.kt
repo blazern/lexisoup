@@ -69,6 +69,7 @@ internal fun SentencesList(
             FlowRow(modifier = modifier) {
                 sentences.forEachIndexed { inx, sentence ->
                     ContextMenuTrigger(
+                        clickActionIndex = 0,
                         actions = listOf(
                             ContextAction(stringResource(Res.string.general_action_copy)) {
                                 callbacks.onTextCopy(sentence.text)
