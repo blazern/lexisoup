@@ -56,7 +56,7 @@ internal fun Entry.toDetails(
             for (example in sense.examples) {
                 result += LexicalItemDetail.Example(
                     TranslationsSet(
-                        original = Sentence(example.text, langFrom, src),
+                        original = Sentence(example.text.noQuotationMarks(), langFrom, src),
                         translations = emptyList(),
                         translationsQualities = emptyList(),
                     ),
@@ -227,6 +227,10 @@ private fun String.stringToPos(): PartOfSpeech {
 
 private fun String.onlyLetters(): String =
     replace(Regex("[^\\p{L}]"), "")
+
+
+private fun String.noQuotationMarks(): String =
+    trim().replace(Regex("^[\"'„‚«‹“‘]+|[\"'“”‘’»›]+$"), "")
 
 private val wiktionaryDelimiter = Regex("""[\\/ ]""")
 

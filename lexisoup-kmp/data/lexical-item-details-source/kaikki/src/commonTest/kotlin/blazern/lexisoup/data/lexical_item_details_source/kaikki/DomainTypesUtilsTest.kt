@@ -1,10 +1,13 @@
 package blazern.lexisoup.data.lexical_item_details_source.kaikki
 
 import blazern.lexisoup.data.kaikki.model.Entry
+import blazern.lexisoup.data.kaikki.model.Example
 import blazern.lexisoup.data.kaikki.model.Form
+import blazern.lexisoup.data.kaikki.model.Sense
 import blazern.lexisoup.domain.model.Article
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
+import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.PartOfSpeech
 import blazern.lexisoup.domain.model.PartOfSpeech.Noun
@@ -310,5 +313,26 @@ class DomainTypesUtilsTest {
         )
         val result = entry.toDetails(langFrom = Lang.DE, langTo = Lang.EN)
         assertEquals(expected, result)
+    }
+
+    @Test
+    fun `quotation marks are removed from examples`() = runTest {
+        val entry = Entry(
+            word = "Haus",
+            pos = "noun",
+            langCode = "de",
+            senses = listOf(
+                Sense(
+                    glosses = emptyList(),
+                    examples = listOf(
+                        Example("„Das ist ein Haus.“"),
+                    ),
+                )
+            ),
+        )
+
+        val result = entry.toDetails(langFrom = Lang.DE, langTo = Lang.EN)
+        val example = result.filterIsInstance<LexicalItemDetail.Example>().first()
+        assertEquals("Das ist ein Haus.", example.translationsSet.original.text)
     }
 }
