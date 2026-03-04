@@ -7,6 +7,8 @@
     <string name="home_search_for_raw_input">Nach „%1$s“ suchen</string>
 
     <string name="search_results_title">Suche:</string>
+    <string name="search_results_show_extra_details">Zusätzliche Details anzeigen</string>
+    <string name="search_results_hide_extra_details">Zusätzliche Details ausblenden</string>
 
     <string name="general_copied_to_clipboard">Kopiert</string>
 
@@ -31,6 +33,7 @@
     <string name="general_lexical_item_detail_type_synonyms">Synonyme</string>
     <string name="general_lexical_item_detail_type_explanation">Erklärung</string>
     <string name="general_lexical_item_detail_type_example">Beispiel</string>
+    <string name="general_lexical_item_detail_type_etymology">Herkunft</string>
 
     <string name="general_lang_en">Englisch</string>
     <string name="general_lang_de">Deutsch</string>

@@ -98,6 +98,7 @@ private fun LexicalItemDetail.copyWith(newTranslations: TranslationsSet): Lexica
     return when (this) {
         is LexicalItemDetail.Explanation -> copy(translationsSet = newTranslations)
         is LexicalItemDetail.Example -> copy(translationsSet = newTranslations)
+        is LexicalItemDetail.Etymology -> copy(translationsSet = newTranslations)
         else -> error("Unexpected translatable detail: $this")
     }
 }

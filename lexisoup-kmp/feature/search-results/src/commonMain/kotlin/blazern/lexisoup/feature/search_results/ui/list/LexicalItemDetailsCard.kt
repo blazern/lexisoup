@@ -44,6 +44,8 @@ internal fun LexicalItemDetailsCard(
     state: LexicalItemDetailsGroupState,
     searchRequest: SearchRequest,
     callbacks: LexicalItemDetailCallbacks,
+    extraDetailsTypes: Set<LexicalItemDetail.Type> = setOf(LexicalItemDetail.Type.ETYMOLOGY),
+    initiallyShowExtraDetails: Boolean = false,
 ) {
     val defaultColors = CardDefaults.cardColors()
     val isError = state is LexicalItemDetailsGroupState.Error
@@ -73,6 +75,8 @@ internal fun LexicalItemDetailsCard(
                         searchRequest,
                         contentColorAnimated,
                         callbacks,
+                        extraDetailsTypes,
+                        initiallyShowExtraDetails,
                     )
                 }
                 is LexicalItemDetailsGroupState.Loading -> {
@@ -90,7 +94,7 @@ internal fun LexicalItemDetailsCard(
     }
 }
 
-@Preview(heightDp = 800, widthDp = 500)
+@Preview(heightDp = 1000, widthDp = 500)
 @Composable
 private fun PreviewCards() {
     val searchRequest = SearchRequest("Hund", Lang.DE, Lang.EN)
@@ -143,6 +147,12 @@ private fun PreviewCards() {
                                 Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.Kaikki),
                                 WordTranslations(translations, DataSource.Kaikki),
                                 Synonyms(synonyms, DataSource.Kaikki),
+                                LexicalItemDetail.Etymology(
+                                    TranslationsSet(
+                                        Sentence("Hund stammt von 'hunt' ab", Lang.DE, DataSource.Kaikki),
+                                    ),
+                                    DataSource.Kaikki,
+                                ),
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.Kaikki,
@@ -152,6 +162,7 @@ private fun PreviewCards() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        initiallyShowExtraDetails = true,
                     )
                     LexicalItemDetailsCard(
                         LexicalItemDetailsGroupState.Loaded(
@@ -190,6 +201,12 @@ private fun PreviewCards() {
                                 ),
                                 WordTranslations(translations, DataSource.Kaikki),
                                 Synonyms(synonyms, DataSource.Kaikki),
+                                LexicalItemDetail.Etymology(
+                                    TranslationsSet(
+                                        Sentence("Hund stammt von 'hunt' ab", Lang.DE, DataSource.Kaikki),
+                                    ),
+                                    DataSource.Kaikki,
+                                ),
                             ),
                             LexicalItemDetail.Type.entries.toSet(),
                             DataSource.Kaikki,

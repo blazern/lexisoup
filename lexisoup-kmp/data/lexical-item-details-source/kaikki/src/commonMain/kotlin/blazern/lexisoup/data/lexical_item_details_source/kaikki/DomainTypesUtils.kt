@@ -89,6 +89,20 @@ internal fun Entry.toDetails(
             src,
         )
     }
+    val etymologies = buildList {
+        etymologyText?.let { add(it) }
+        addAll(etymologyTexts)
+    }
+    etymologies.forEach {
+        result += LexicalItemDetail.Etymology(
+            translationsSet = TranslationsSet(
+                original = Sentence(it, langFrom, src),
+                translations = emptyList(),
+                translationsQualities = emptyList(),
+            ),
+            src,
+        )
+    }
     return result
 }
 

@@ -7,6 +7,9 @@
     <string name="home_search_for_raw_input">Искать «%1$s»</string>
 
     <string name="search_results_title">Поиск:</string>
+    <string name="search_results_show_extra_details">Показать дополнительные детали</string>
+    <string name="search_results_hide_extra_details">Скрыть дополнительные детали</string>
+
     <string name="general_copied_to_clipboard">Скопировано</string>
 
     <string name="general_action_expand">Развернуть</string>
@@ -30,6 +33,7 @@
     <string name="general_lexical_item_detail_type_synonyms">Синонимы</string>
     <string name="general_lexical_item_detail_type_explanation">Объяснение</string>
     <string name="general_lexical_item_detail_type_example">Пример</string>
+    <string name="general_lexical_item_detail_type_etymology">Происхождение</string>
 
     <string name="general_lang_en">Английский</string>
     <string name="general_lang_de">Немецкий</string>

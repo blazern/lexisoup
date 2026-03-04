@@ -299,6 +299,14 @@ class SearchResultsViewModelTest {
                 source,
             )
         }
+        details += List(detailsMultiplier) {
+            LexicalItemDetail.Etymology(
+                TranslationsSet(
+                    original = Sentence("nice text $detailsMultiplier $it $textsPostfix", Lang.EN, source),
+                ),
+                source,
+            )
+        }
         return details
     }
 
