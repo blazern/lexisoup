@@ -25,11 +25,7 @@ class CanTranslateUseCaseTest {
 
         // Synonyms are not translatable
         val nonTranslatable = LexicalItemDetail.Synonyms(
-            TranslationsSet(
-                Sentence("hound", Lang.EN, DataSource.Kaikki),
-                emptyList(),
-                emptyList(),
-            ),
+            listOf(Sentence("hound", Lang.EN, DataSource.Kaikki)),
             DataSource.Kaikki,
         )
 

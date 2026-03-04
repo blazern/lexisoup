@@ -46,7 +46,7 @@ sealed class LexicalItemDetail(
     ) : LexicalItemDetail(Type.WORD_TRANSLATIONS)
 
     data class Synonyms(
-        val translationsSet: TranslationsSet,
+        val sentences: List<Sentence>,
         override val source: DataSource,
         override val meaningId: String? = null,
     ) : LexicalItemDetail(Type.SYNONYMS)

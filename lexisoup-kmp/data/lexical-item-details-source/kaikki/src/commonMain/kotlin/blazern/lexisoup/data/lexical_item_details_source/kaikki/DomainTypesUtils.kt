@@ -81,11 +81,7 @@ internal fun Entry.toDetails(
     if (synonyms.isNotEmpty()) {
         val words = synonyms.mapNotNull { it.word }
         result += LexicalItemDetail.Synonyms(
-            TranslationsSet(
-                original = Sentence(word, langFrom, src),
-                translations = words.map { Sentence(it, langFrom, src) },
-                translationsQualities = words.map { QUALITY_MAX },
-            ),
+            words.map { Sentence(it, langFrom, src) },
             src,
         )
     }

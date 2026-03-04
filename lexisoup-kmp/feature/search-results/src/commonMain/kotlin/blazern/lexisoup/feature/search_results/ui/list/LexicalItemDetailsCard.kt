@@ -108,13 +108,9 @@ private fun PreviewCards() {
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
-    val synonyms = TranslationsSet(
-        Sentence("Hund", Lang.EN, DataSource.Kaikki),
-        listOf(
-            Sentence("Hündin", Lang.DE, DataSource.Kaikki),
-            Sentence("Wauwau", Lang.DE, DataSource.Kaikki),
-        ),
-        listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
+    val synonyms = listOf(
+        Sentence("Hündin", Lang.DE, DataSource.Kaikki),
+        Sentence("Wauwau", Lang.DE, DataSource.Kaikki),
     )
     val fancyForms = Forms(
         value = Forms.Value.Detailed(listOf(
@@ -237,13 +233,9 @@ private fun PreviewAll() {
         ),
         listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
     )
-    val synonyms = TranslationsSet(
-        Sentence("Hund", Lang.EN, DataSource.Kaikki),
-        listOf(
-            Sentence("Hündin", Lang.DE, DataSource.Kaikki),
-            Sentence("Wauwau", Lang.DE, DataSource.Kaikki),
-        ),
-        listOf(TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX, TranslationsSet.QUALITY_MAX),
+    val synonyms = listOf(
+        Sentence("Hündin", Lang.DE, DataSource.Kaikki),
+        Sentence("Wauwau", Lang.DE, DataSource.Kaikki),
     )
 
     MaterialTheme {

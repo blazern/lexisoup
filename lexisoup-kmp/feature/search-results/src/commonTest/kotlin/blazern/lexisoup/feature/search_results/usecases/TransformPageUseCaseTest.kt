@@ -90,11 +90,7 @@ class TransformPageUseCaseTest {
 
     private fun nonExampleDetail(text: String): LexicalItemDetail =
         LexicalItemDetail.Synonyms(
-            TranslationsSet(
-                original = Sentence(text, Lang.EN, DataSource.Kaikki),
-                translations = emptyList(),
-                translationsQualities = emptyList(),
-            ),
+            listOf(Sentence(text, Lang.EN, DataSource.Kaikki)),
             DataSource.Kaikki,
         )
 
