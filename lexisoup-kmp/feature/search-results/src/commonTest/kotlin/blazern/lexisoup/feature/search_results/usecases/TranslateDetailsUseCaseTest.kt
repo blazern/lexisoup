@@ -40,12 +40,9 @@ class TranslateDetailsUseCaseTest {
     )
 
     private val synonyms = LexicalItemDetail.Synonyms(
-        translationsSet = TranslationsSet(
-            Sentence("phrase", Lang.EN, DataSource.Kaikki),
-        ),
+        sentences = listOf(Sentence("phrase", Lang.EN, DataSource.Kaikki)),
         source = DataSource.Kaikki,
     )
-
 
     private val useCase = TranslateDetailsUseCaseImpl(
         canTranslate = CanTranslateUseCase()

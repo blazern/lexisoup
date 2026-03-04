@@ -281,11 +281,7 @@ class SearchResultsViewModelTest {
         }
         details += List(detailsMultiplier) {
             LexicalItemDetail.Synonyms(
-                TranslationsSet(
-                    original = Sentence("text $detailsMultiplier $it $textsPostfix", Lang.EN, source),
-                    translations = listOf(Sentence("string $textsPostfix", Lang.EN, source)),
-                    translationsQualities = listOf(QUALITY_MAX),
-                ),
+                listOf(Sentence("string $textsPostfix", Lang.EN, source)),
                 source,
             )
         }

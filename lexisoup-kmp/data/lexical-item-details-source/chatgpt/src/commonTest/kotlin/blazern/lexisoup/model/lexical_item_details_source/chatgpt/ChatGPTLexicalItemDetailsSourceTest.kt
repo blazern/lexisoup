@@ -224,13 +224,9 @@ class ChatGPTLexicalItemDetailsSourceTest {
             .single()
         assertEquals(
             LexicalItemDetail.Synonyms(
-                TranslationsSet(
-                    Sentence("Hund", Lang.DE, ChatGPT),
-                    listOf(
-                        Sentence("Hündin", Lang.DE, ChatGPT),
-                        Sentence("Köter", Lang.DE, ChatGPT),
-                    ),
-                    listOf(QUALITY_BASIC, QUALITY_BASIC),
+                listOf(
+                    Sentence("Hündin", Lang.DE, ChatGPT),
+                    Sentence("Köter", Lang.DE, ChatGPT),
                 ),
                 ChatGPT,
             ),

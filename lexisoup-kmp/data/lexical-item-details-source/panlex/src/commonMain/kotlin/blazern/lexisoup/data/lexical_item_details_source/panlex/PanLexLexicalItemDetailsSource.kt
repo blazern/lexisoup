@@ -97,7 +97,9 @@ private fun LexicalItemsFromPanLexQuery.Panlex.toDomain(): Either<IllegalArgumen
     onSynonyms?.let {
         val ts = it.translationsSet.translationsSetFields
         return Right(LexicalItemDetail.Synonyms(
-            translationsSet = ts.toDomain().getOrElse { return Left(it) },
+            sentences = ts.toDomain()
+                .map { it.translations }
+                .getOrElse { return Left(it) },
             source = mapSource(it.source)
         ))
     }

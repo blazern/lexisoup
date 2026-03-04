@@ -146,7 +146,7 @@ private fun DetailsColumn(
             ) {
                 SentencesPart(
                     stringResource(Res.string.general_lexical_item_detail_type_synonyms),
-                    it.translationsSet.translations,
+                    it.sentences,
                     otherLang = searchRequest.langTo,
                     callbacks,
                     contentColor,

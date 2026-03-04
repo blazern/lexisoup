@@ -142,20 +142,11 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                 DataSource.Kaikki,
             ),
             LexicalItemDetail.Synonyms(
-                TranslationsSet(
-                    original = Sentence("Haus", Lang.DE, DataSource.Kaikki),
-                    translations = listOf(
-                        Sentence("Gebäude", Lang.DE, DataSource.Kaikki),
-                        Sentence("Hütte", Lang.DE, DataSource.Kaikki),
-                        Sentence("Hochhaus", Lang.DE, DataSource.Kaikki),
-                        Sentence("Einfamilienhaus", Lang.DE, DataSource.Kaikki),
-                    ),
-                    translationsQualities = listOf(
-                        QUALITY_MAX,
-                        QUALITY_MAX,
-                        QUALITY_MAX,
-                        QUALITY_MAX,
-                    ),
+                listOf(
+                    Sentence("Gebäude", Lang.DE, DataSource.Kaikki),
+                    Sentence("Hütte", Lang.DE, DataSource.Kaikki),
+                    Sentence("Hochhaus", Lang.DE, DataSource.Kaikki),
+                    Sentence("Einfamilienhaus", Lang.DE, DataSource.Kaikki),
                 ),
                 DataSource.Kaikki,
             ),

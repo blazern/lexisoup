@@ -167,13 +167,9 @@ class PanLexLexicalItemDetailsSourceTest {
         val synonyms = details.filterIsInstance<LexicalItemDetail.Synonyms>().single()
         assertEquals(
             LexicalItemDetail.Synonyms(
-                TranslationsSet(
-                    Sentence("Haus", Lang.DE, PanLex),
-                    listOf(
-                        Sentence("Gebäude", Lang.DE, PanLex),
-                        Sentence("Bauwerk", Lang.DE, PanLex),
-                    ),
-                    translationsQualities = listOf(2, 3)
+                listOf(
+                    Sentence("Bauwerk", Lang.DE, PanLex),
+                    Sentence("Gebäude", Lang.DE, PanLex),
                 ),
                 PanLex
             ),
