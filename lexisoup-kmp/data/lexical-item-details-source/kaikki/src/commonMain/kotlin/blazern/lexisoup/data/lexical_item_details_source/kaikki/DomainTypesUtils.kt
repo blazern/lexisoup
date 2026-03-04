@@ -15,6 +15,8 @@ import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
 import blazern.lexisoup.domain.model.WordForm
 import blazern.lexisoup.domain.model.WordForm.Tag.Defined.MainForm
+import blazern.lexisoup.utils.noQuotationMarks
+import blazern.lexisoup.utils.onlyLetters
 import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
@@ -224,13 +226,6 @@ private fun String.stringToPos(): PartOfSpeech {
         else -> PartOfSpeech.Other(this)
     }
 }
-
-private fun String.onlyLetters(): String =
-    replace(Regex("[^\\p{L}]"), "")
-
-
-private fun String.noQuotationMarks(): String =
-    trim().replace(Regex("^[\"'„‚«‹“‘]+|[\"'“”‘’»›]+$"), "")
 
 private val wiktionaryDelimiter = Regex("""[\\/ ]""")
 

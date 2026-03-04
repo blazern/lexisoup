@@ -8,6 +8,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_BASIC
+import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
 import blazern.lexisoup.graphql.model.LexicalItemsFromPanLexQuery
 import blazern.lexisoup.test_utils.FakeApolloClientHolder
 import blazern.lexisoup.utils.FlowIterator
@@ -199,5 +200,65 @@ class PanLexLexicalItemDetailsSourceTest {
         val iter = FlowIterator(flow)
         assertTrue(iter.next() is Item.Failure)
         iter.close()
+    }
+
+    @Test
+    fun `reorganizes translations`() = runTest {
+        val json = """
+        {
+          "data": {
+            "panlex": [
+              {
+                "__typename": "WordTranslations",
+                "source": "panlex",
+                "translationsSet": {
+                  "__typename": "TranslationsSet",
+                  "original": {
+                    "__typename": "Sentence",
+                    "text": "dance",
+                    "langIso3": "eng",
+                    "source": "panlex"
+                  },
+                  "translations": [
+                    { "__typename": "Sentence", "text": "tanzen!", "langIso3": "deu", "source": "panlex" },
+                    { "__typename": "Sentence", "text": "springen", "langIso3": "deu", "source": "panlex" },
+                    { "__typename": "Sentence", "text": "tanzen", "langIso3": "deu", "source": "panlex" }
+                  ],
+                  "translationsQualities": [${(QUALITY_MAX / 2) + 1}, 5, ${(QUALITY_MAX / 2) + 1}]
+                }
+              }
+            ]
+          }
+        }
+    """.trimIndent()
+
+        apollo.setResponses(parse(op(), json))
+
+        val details = source.request("tanzen", Lang.DE, Lang.DE)
+            .take(1)
+            .toList()
+            .single()
+            .let { (it as Item.Page).details }
+
+        val translations = details.filterIsInstance<LexicalItemDetail.WordTranslations>().single()
+
+        // "tánzen" + "tanzen" -> "tanzen", quality 6 + 5 = 11, then clamped
+        assertEquals(
+            LexicalItemDetail.WordTranslations(
+                translationsSet = TranslationsSet(
+                    original = Sentence("dance", Lang.EN, PanLex),
+                    translations = listOf(
+                        Sentence("tanzen", Lang.DE, PanLex),
+                        Sentence("springen", Lang.DE, PanLex),
+                    ),
+                    translationsQualities = listOf(
+                        QUALITY_MAX,
+                        5,
+                    ),
+                ),
+                source = PanLex
+            ),
+            translations
+        )
     }
 }
