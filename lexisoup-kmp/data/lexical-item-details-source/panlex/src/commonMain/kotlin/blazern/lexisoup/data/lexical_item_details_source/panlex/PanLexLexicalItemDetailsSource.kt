@@ -15,7 +15,12 @@ import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
+import blazern.lexisoup.domain.model.Sentence
+import blazern.lexisoup.domain.model.TranslationsSet
+import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
+import blazern.lexisoup.domain.model.copy
 import blazern.lexisoup.graphql.model.LexicalItemsFromPanLexQuery
+import blazern.lexisoup.utils.onlyLetters
 import com.apollographql.apollo.ApolloClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -89,8 +94,12 @@ class PanLexLexicalItemDetailsSource(
 private fun LexicalItemsFromPanLexQuery.Panlex.toDomain(): Either<IllegalArgumentException, LexicalItemDetail?> {
     onWordTranslations?.let {
         val ts = it.translationsSet.translationsSetFields
+        val translationsSet = ts
+            .toDomain()
+            .map { it.reorganize() }
+            .getOrElse { return Left(it) }
         return Right(LexicalItemDetail.WordTranslations(
-            translationsSet = ts.toDomain().getOrElse { return Left(it) },
+            translationsSet = translationsSet,
             source = mapSource(it.source)
         ))
     }
@@ -105,4 +114,37 @@ private fun LexicalItemsFromPanLexQuery.Panlex.toDomain(): Either<IllegalArgumen
     }
     // New field in a newer version of the backend was added apparently
     return Right(null)
+}
+
+private fun TranslationsSet.reorganize(): TranslationsSet {
+    val normalizedTranslations = translations.map {
+        it.copy(text = it.text.onlyLetters())
+    }
+
+    // keeps insertion order
+    val firstIndexByText = LinkedHashMap<String, Int>()
+    val dedupedTranslations = mutableListOf<Sentence>()
+    val dedupedQualities = mutableListOf<Int>()
+
+    normalizedTranslations.forEachIndexed { index, translation ->
+        val key = translation.text
+        val quality = translationsQualities[index]
+
+        val existingIndex = firstIndexByText[key]
+        if (existingIndex == null) {
+            firstIndexByText[key] = dedupedTranslations.size
+            dedupedTranslations += translation
+            dedupedQualities += quality
+        } else {
+            dedupedQualities[existingIndex] = dedupedQualities[existingIndex] + quality
+        }
+    }
+
+    val sortedPairs = dedupedTranslations.zip(dedupedQualities)
+        .sortedByDescending { it.second }
+
+    return copy(
+        translations = sortedPairs.map { it.first },
+        translationsQualities = sortedPairs.map { minOf(it.second, QUALITY_MAX) },
+    )
 }
