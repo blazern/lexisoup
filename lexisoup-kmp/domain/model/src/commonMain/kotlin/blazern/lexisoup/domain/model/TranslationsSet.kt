@@ -17,8 +17,8 @@ data class TranslationsSet private constructor(
     companion object {
         operator fun invoke(
             original: Sentence,
-            translations: List<Sentence>,
-            translationsQualities: List<Int>
+            translations: List<Sentence> = emptyList(),
+            translationsQualities: List<Int> = emptyList(),
         ): TranslationsSet {
             if (translationsQualities.size != translations.size) {
                 Log.e(TAG) { "Sizes do not match: $translationsQualities $translations" }

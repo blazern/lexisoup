@@ -8,6 +8,7 @@ internal val LexicalItemDetail.translatableSet: TranslationsSet?
         val translationsSet = when (this) {
             is LexicalItemDetail.Explanation -> translationsSet
             is LexicalItemDetail.Example -> translationsSet
+            is LexicalItemDetail.Etymology -> translationsSet
             else -> return null
         }
         if (translationsSet.translations.isNotEmpty()) {

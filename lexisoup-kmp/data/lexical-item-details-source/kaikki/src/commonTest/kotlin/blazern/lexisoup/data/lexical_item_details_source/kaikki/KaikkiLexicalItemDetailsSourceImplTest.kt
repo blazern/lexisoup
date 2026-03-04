@@ -71,6 +71,11 @@ class KaikkiLexicalItemDetailsSourceImplTest {
             Related("Hochhaus"),
             Related("Einfamilienhaus"),
         ),
+        etymologyText = "etymology1",
+        etymologyTexts = listOf(
+            "etymology2",
+            "etymology3",
+        ),
     )
 
     @Test
@@ -152,6 +157,18 @@ class KaikkiLexicalItemDetailsSourceImplTest {
                         QUALITY_MAX,
                     ),
                 ),
+                DataSource.Kaikki,
+            ),
+            LexicalItemDetail.Etymology(
+                TranslationsSet(Sentence("etymology1", Lang.DE, DataSource.Kaikki)),
+                DataSource.Kaikki,
+            ),
+            LexicalItemDetail.Etymology(
+                TranslationsSet(Sentence("etymology2", Lang.DE, DataSource.Kaikki)),
+                DataSource.Kaikki,
+            ),
+            LexicalItemDetail.Etymology(
+                TranslationsSet(Sentence("etymology3", Lang.DE, DataSource.Kaikki)),
                 DataSource.Kaikki,
             ),
         )

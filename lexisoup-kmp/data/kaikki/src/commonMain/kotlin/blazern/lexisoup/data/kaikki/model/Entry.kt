@@ -24,5 +24,10 @@ data class Entry(
     val coordinateTerms: List<Related> = emptyList(),
 
     val tags: List<String> = emptyList(),
-    val forms: List<Form> = emptyList()
+    val forms: List<Form> = emptyList(),
+
+    @SerialName("etymology_text")
+    val etymologyText: String? = null,
+    @SerialName("etymology_texts")
+    val etymologyTexts: List<String> = emptyList(),
 )

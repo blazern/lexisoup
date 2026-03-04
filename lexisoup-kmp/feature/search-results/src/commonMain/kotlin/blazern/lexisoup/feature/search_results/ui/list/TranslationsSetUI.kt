@@ -9,24 +9,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
-import blazern.lexisoup.domain.model.LexicalItemDetail.Explanation
+import blazern.lexisoup.domain.model.TranslationsSet
 
 @Composable
-internal fun ExplanationUI(
-    explanation: Explanation,
+internal fun TranslationsSetUI(
+    translationsSet: TranslationsSet,
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier,
 ) {
     Column(modifier) {
         Text(
-            explanation.translationsSet.original.text,
+            translationsSet.original.text,
             color = contentColor,
             modifier = Modifier.clickable {
-                callbacks.onTextCopy(explanation.translationsSet.original.text)
+                callbacks.onTextCopy(translationsSet.original.text)
             }
         )
-        explanation.translationsSet.translations.forEach { translation ->
+        translationsSet.translations.forEach { translation ->
             Text(
                 translation.text,
                 color = contentColor,
