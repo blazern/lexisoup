@@ -21,7 +21,7 @@ sealed class LexicalItemDetail(
 ) {
     /**
      * Non-null if this [LexicalItemDetail] belongs to a group (e.g. to a
-     * particular meaning of a the target word).
+     * particular meaning of the target word).
      */
     abstract val meaningId: String?
     abstract val source: DataSource
