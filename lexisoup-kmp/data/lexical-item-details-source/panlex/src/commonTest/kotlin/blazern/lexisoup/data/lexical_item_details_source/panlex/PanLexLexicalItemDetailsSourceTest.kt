@@ -222,9 +222,10 @@ class PanLexLexicalItemDetailsSourceTest {
                   "translations": [
                     { "__typename": "Sentence", "text": "tanzen!", "langIso3": "deu", "source": "panlex" },
                     { "__typename": "Sentence", "text": "springen", "langIso3": "deu", "source": "panlex" },
-                    { "__typename": "Sentence", "text": "tanzen", "langIso3": "deu", "source": "panlex" }
+                    { "__typename": "Sentence", "text": "tanzen", "langIso3": "deu", "source": "panlex" },
+                    { "__typename": "Sentence", "text": "einen Tanz führen", "langIso3": "deu", "source": "panlex" }
                   ],
-                  "translationsQualities": [${(QUALITY_MAX / 2) + 1}, 5, ${(QUALITY_MAX / 2) + 1}]
+                  "translationsQualities": [${(QUALITY_MAX / 2) + 1}, 5, ${(QUALITY_MAX / 2) + 1}, 1]
                 }
               }
             ]
@@ -250,10 +251,12 @@ class PanLexLexicalItemDetailsSourceTest {
                     translations = listOf(
                         Sentence("tanzen", Lang.DE, PanLex),
                         Sentence("springen", Lang.DE, PanLex),
+                        Sentence("einen Tanz führen", Lang.DE, PanLex),
                     ),
                     translationsQualities = listOf(
                         QUALITY_MAX,
                         5,
+                        1,
                     ),
                 ),
                 source = PanLex
