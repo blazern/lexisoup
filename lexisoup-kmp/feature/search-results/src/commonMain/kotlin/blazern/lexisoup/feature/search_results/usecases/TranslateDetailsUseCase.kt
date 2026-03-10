@@ -3,6 +3,7 @@ package blazern.lexisoup.feature.search_results.usecases
 import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
+import arrow.core.getOrElse
 import blazern.lexisoup.data.translator.api.Translator
 import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.Lang
@@ -43,7 +44,8 @@ internal class TranslateDetailsUseCaseImpl(
         val translatableIndexed =
             details.mapIndexedNotNull { index, detail ->
                 val translatable = detail.translatableSet?.original
-                if (translatable != null && canTranslate(detail, translator, langFrom, langTo)) {
+                if (translatable != null
+                    && canTranslate(detail, translator, langFrom, langTo, ifLangsDownloaded = true)) {
                     index to translatable
                 } else {
                     null
@@ -75,8 +77,20 @@ internal class TranslateDetailsUseCaseImpl(
         langTo: Lang,
         errors: MutableList<Err>,
     ): Map<Int, TranslationsSet> {
-        val result = mutableMapOf<Int, TranslationsSet>()
+        val canTranslateWithoutDownloading = translator.canTranslate(
+            batch.first().second,
+            langFrom,
+            langTo,
+            ifLangsDownloaded = false,
+        )
+        if (!canTranslateWithoutDownloading) {
+            translator.downloadLangsPair(langFrom, langTo).getOrElse {
+                errors += it
+                return emptyMap()
+            }
+        }
 
+        val result = mutableMapOf<Int, TranslationsSet>()
         translator.translate(
             sentences = batch.map { it.second },
             langFrom = langFrom,

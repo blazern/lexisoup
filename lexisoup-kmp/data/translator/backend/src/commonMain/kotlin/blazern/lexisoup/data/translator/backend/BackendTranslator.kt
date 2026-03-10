@@ -31,9 +31,11 @@ class BackendTranslator(
     override val source = DataSource.Backend(impl = null)
     override val capabilities: Flow<Translator.Capabilities> = configProvider.config.map {
         Translator.Capabilities(
-            langs = Lang.entries.associateWith { Lang.entries.toSet() },
-            textLengthMax = it.translateTextLengthMax,
+            availableLangs = Lang.entries.associateWith { Lang.entries.toSet() },
+            downloadableLangs = emptyMap(),
+            availableOffline = false,
             textLengthMin = it.translateTextLengthMin,
+            textLengthMax = it.translateTextLengthMax,
             translateBatchSizeLimit = it.translateBatchSizeLimit,
         )
     }
@@ -74,4 +76,9 @@ class BackendTranslator(
             )))
         }
     }
+
+    override suspend fun downloadLangsPair(
+        lang1: Lang,
+        lang2: Lang
+    ) = error("Backend translator is not available offline")
 }

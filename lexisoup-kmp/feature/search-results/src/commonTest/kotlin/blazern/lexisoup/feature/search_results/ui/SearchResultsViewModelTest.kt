@@ -230,6 +230,80 @@ class SearchResultsViewModelTest {
         )
     }
 
+    @Test
+    fun `translation states are recalculated after langs download`() = runTest(testDispatcher) {
+        val translationSource = DataSource.DeepL
+        var languagePackDownloaded = false
+
+        val source = FakeLexicalItemDetailsSource(
+            source = DataSource.Kaikki,
+            details = listOf(
+                LexicalItemDetail.Explanation(
+                    Sentence("first", Lang.EN, DataSource.Kaikki),
+                    DataSource.Kaikki,
+                ),
+                LexicalItemDetail.Explanation(
+                    Sentence("second", Lang.EN, DataSource.Kaikki),
+                    DataSource.Kaikki,
+                ),
+            ),
+        )
+
+        val viewModel = SearchResultsViewModel(
+            query = "query",
+            langFrom = Lang.EN,
+            langTo = Lang.DE,
+            dataSource = listOf(source).aggregate(),
+            translators = FakeTranslatorsAggregator(
+                listOf(FakeTranslator(source = translationSource))
+            ),
+            translateDetails = FakeTranslateDetailsUseCase { details, _, _, _ ->
+                languagePackDownloaded = true
+                details.map { Right(it) }.asFlow()
+            },
+            transformPage = FakeTransformPageUseCase { page -> listOf(page) },
+            createTranslationsStates = FakeCreateTranslationsStatesUseCase { _, _, _ ->
+                listOf(
+                    if (languagePackDownloaded) {
+                        TranslationState.CanStart(translationSource)
+                    } else {
+                        TranslationState.MustDownloadLangs(translationSource)
+                    }
+                )
+            },
+        )
+
+        loadEverything(viewModel)
+
+        val loadedGroupsBefore = viewModel.state.value.groups
+            .filterIsInstance<LexicalItemDetailsGroupState.Loaded>()
+
+        assertEquals(2, loadedGroupsBefore.size)
+        assertEquals(
+            listOf(TranslationState.MustDownloadLangs(translationSource)),
+            loadedGroupsBefore[0].translationStates,
+        )
+        assertEquals(
+            listOf(TranslationState.MustDownloadLangs(translationSource)),
+            loadedGroupsBefore[1].translationStates,
+        )
+
+        viewModel.onTranslateRequest(loadedGroupsBefore[0], translationSource)
+        advanceUntilIdle()
+
+        val loadedGroupsAfter = viewModel.state.value.groups
+            .filterIsInstance<LexicalItemDetailsGroupState.Loaded>()
+
+        assertEquals(
+            listOf(TranslationState.CanStart(translationSource)),
+            loadedGroupsAfter[0].translationStates,
+        )
+        assertEquals(
+            listOf(TranslationState.CanStart(translationSource)),
+            loadedGroupsAfter[1].translationStates,
+        )
+    }
+
     private fun fullSourcesWithFullDetails(
         detailsMultiplier: Int = 1,
         textsPostfix: String = "",

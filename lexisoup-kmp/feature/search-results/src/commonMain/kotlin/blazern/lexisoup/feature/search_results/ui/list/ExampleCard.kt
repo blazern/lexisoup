@@ -214,7 +214,7 @@ private fun PreviewAll() {
         types = setOf(LexicalItemDetail.Type.EXAMPLE),
         source = DataSource.Kaikki,
         translationStates = listOf(
-            TranslationState.CanStart(DataSource.Backend(DataSource.DeepL)),
+            TranslationState.MustDownloadLangs(DataSource.MlKit),
         )
     )
 

@@ -11,10 +11,17 @@ internal open class CanTranslateUseCase {
         translator: Translator,
         langFrom: Lang,
         langTo: Lang,
+        ifLangsDownloaded: Boolean,
     ): Boolean {
         val translatableSet = detail.translatableSet
-        return translatableSet != null
-                && translatableSet.original.lang == langFrom
-                && translator.canTranslate(translatableSet.original, langFrom, langTo)
+        if (translatableSet?.original?.lang != langFrom) {
+            return false
+        }
+        return translator.canTranslate(
+            translatableSet.original,
+            langFrom,
+            langTo,
+            ifLangsDownloaded,
+        )
     }
 }

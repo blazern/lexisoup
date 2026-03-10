@@ -9,9 +9,13 @@
     <string name="search_results_title">Search:</string>
     <string name="search_results_show_extra_details">Show extra details</string>
     <string name="search_results_hide_extra_details">Hide extra details</string>
+    <string name="search_results_download_langs_dialog_title">Download language package?</string>
+    <string name="search_results_download_langs_dialog_text">This translation requires downloading the language package first (30–70 MB)</string>
 
     <string name="general_copied_to_clipboard">Copied to clipboard</string>
 
+    <string name="general_action_cancel">Cancel</string>
+    <string name="general_action_download">Download</string>
     <string name="general_action_expand">Expand</string>
     <string name="general_action_collapse">Collapse</string>
     <string name="general_action_copy">Copy</string>
@@ -25,6 +29,7 @@
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
     <string name="general_data_source_deepl">DeepL</string>
+    <string name="general_data_source_mlkit">Google ML Kit</string>
 
     <string name="general_translated_by_postfix">, translation: </string>
 

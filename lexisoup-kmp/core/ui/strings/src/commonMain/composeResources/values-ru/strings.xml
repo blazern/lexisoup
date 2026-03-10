@@ -9,9 +9,13 @@
     <string name="search_results_title">Поиск:</string>
     <string name="search_results_show_extra_details">Показать дополнительные детали</string>
     <string name="search_results_hide_extra_details">Скрыть дополнительные детали</string>
+    <string name="search_results_download_langs_dialog_title">Скачать языковой пакет?</string>
+    <string name="search_results_download_langs_dialog_text">Для этого перевода сначала необходимо скачать языковой пакет (30–70 МБ).</string>
 
     <string name="general_copied_to_clipboard">Скопировано</string>
 
+    <string name="general_action_cancel">Отменить</string>
+    <string name="general_action_download">Скачать</string>
     <string name="general_action_expand">Развернуть</string>
     <string name="general_action_collapse">Свернуть</string>
     <string name="general_action_copy">Копировать</string>
@@ -25,6 +29,7 @@
     <string name="general_data_source_panlex">PanLex</string>
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
     <string name="general_data_source_deepl">DeepL</string>
+    <string name="general_data_source_mlkit">Google ML Kit</string>
 
     <string name="general_translated_by_postfix">, перевод: </string>
 

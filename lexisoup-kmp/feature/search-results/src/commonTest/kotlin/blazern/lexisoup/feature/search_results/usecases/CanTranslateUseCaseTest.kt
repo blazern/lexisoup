@@ -34,6 +34,7 @@ class CanTranslateUseCaseTest {
             translator = translator,
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            ifLangsDownloaded = true,
         )
 
         assertFalse(result)
@@ -57,6 +58,7 @@ class CanTranslateUseCaseTest {
             translator = translator,
             langFrom = Lang.EN, // mismatch (original is DE)
             langTo = Lang.RU,
+            ifLangsDownloaded = true,
         )
 
         assertFalse(result)
@@ -76,7 +78,9 @@ class CanTranslateUseCaseTest {
         val translator = FakeTranslator(
             capabilities = flowOf(
                 Translator.Capabilities(
-                    langs = mapOf(Lang.EN to setOf(Lang.DE)),
+                    availableLangs = mapOf(Lang.EN to setOf(Lang.DE)),
+                    downloadableLangs = emptyMap(),
+                    availableOffline = false,
                     textLengthMax = 100,
                     textLengthMin = 0,
                     translateBatchSizeLimit = 10,
@@ -89,6 +93,7 @@ class CanTranslateUseCaseTest {
             translator = translator,
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            ifLangsDownloaded = true,
         )
 
         assertTrue(result)
@@ -109,7 +114,9 @@ class CanTranslateUseCaseTest {
         val translator = FakeTranslator(
             capabilities = flowOf(
                 Translator.Capabilities(
-                    langs = mapOf(Lang.EN to setOf(Lang.FR)),
+                    availableLangs = mapOf(Lang.EN to setOf(Lang.FR)),
+                    downloadableLangs = emptyMap(),
+                    availableOffline = false,
                     textLengthMax = 100,
                     textLengthMin = 0,
                     translateBatchSizeLimit = 10,
@@ -122,6 +129,7 @@ class CanTranslateUseCaseTest {
             translator = translator,
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            ifLangsDownloaded = true,
         )
 
         assertFalse(result)

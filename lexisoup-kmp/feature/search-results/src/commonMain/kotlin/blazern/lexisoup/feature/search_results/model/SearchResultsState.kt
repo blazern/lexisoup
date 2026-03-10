@@ -199,6 +199,7 @@ internal val DataSource.priority: Int
             DataSource.Kaikki -> 3
             DataSource.WortschatzLeipzig -> 4
             DataSource.DeepL -> 5
+            DataSource.MlKit -> 6
             is DataSource.Backend -> this.impl?.priority ?: 50
             is DataSource.Other -> 100
         }

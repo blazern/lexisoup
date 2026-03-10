@@ -190,11 +190,20 @@ internal class SearchResultsViewModel(
                 }
             }
 
-            val translated = detailsGroup.copy(
-                details = detailsTranslated,
-                translationStates = createTranslationsStates(detailsTranslated, langFrom, langTo)
-            )
-            _state.update { it.replaceByID(translated) }
+            _state.update { it.replaceByID(detailsGroup.copy(details = detailsTranslated)) }
+            // Let's recalculate the translations' states for each of the loaded groups,
+            // because it's possible current translation has downloaded a language pack
+            // See implementation of [TranslateDetailsUseCase].
+            _state.update {
+                SearchResultsState(it.groups.map {
+                    when (it) {
+                        is LexicalItemDetailsGroupState.Loaded -> it.copy(
+                            translationStates = createTranslationsStates(it.details, langFrom, langTo)
+                        )
+                        else -> it
+                    }
+                })
+            }
         }
     }
 }

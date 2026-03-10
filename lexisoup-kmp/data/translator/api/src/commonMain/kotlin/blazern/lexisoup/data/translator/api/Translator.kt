@@ -15,7 +15,7 @@ interface Translator {
 
     /**
      * @return the emitted values are guaranteed to match the indexes of [sentences] 1 to 1.
-     * The returned Flow can however be shorter than [sentences] is an error has occurred, in that
+     * The returned Flow can however be shorter than [sentences] if an error has occurred, in that
      * case the last element of the Flow would be that error.
      * No more than 1 error will be emitted.
      */
@@ -25,25 +25,47 @@ interface Translator {
         langTo: Lang,
     ): Flow<Either<Err, TranslationsSet>>
 
-    suspend fun canTranslate(sentence: Sentence, langFrom: Lang, langTo: Lang): Boolean {
+    suspend fun downloadLangsPair(
+        lang1: Lang,
+        lang2: Lang,
+    ): Either<Err, Unit>
+
+    /**
+     * Can translate IF the [langFrom]-[langTo] pair is downloaded.
+     */
+    suspend fun canTranslate(
+        sentence: Sentence,
+        langFrom: Lang,
+        langTo: Lang,
+        ifLangsDownloaded: Boolean,
+    ): Boolean {
         val capabilities = capabilities.first()
         if (sentence.text.length !in capabilities.textLengthMin..capabilities.textLengthMax) {
             return false
         }
-        if (!capabilities.langs[langFrom].orEmpty().contains(langTo)) {
-            return false
+        val hasLangs = { map: Map<Lang, Set<Lang>> ->
+            map[langFrom].orEmpty().contains(langTo)
         }
-        return true
+        if (hasLangs(capabilities.availableLangs)) {
+            return true
+        }
+        if (ifLangsDownloaded && hasLangs(capabilities.downloadableLangs)) {
+            return true
+        }
+        return false
     }
 
     /**
-     * @property langs supported language pairs.
-     * @property translateBatchSizeLimit the maximum size of `texts` in [translate].
+     * @property availableLangs language pairs available right now.
+     * @property downloadableLangs downloadable language pairs.
+     * @property translateBatchSizeLimit the maximum size of `sentences` in [translate].
      */
     data class Capabilities(
-        val langs: Map<Lang, Set<Lang>>,
-        val textLengthMax: Int,
+        val availableLangs: Map<Lang, Set<Lang>>,
+        val downloadableLangs: Map<Lang, Set<Lang>>,
+        val availableOffline: Boolean,
         val textLengthMin: Int,
+        val textLengthMax: Int,
         val translateBatchSizeLimit: Int,
     )
 }
