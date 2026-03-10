@@ -1,6 +1,5 @@
 package blazern.lexisoup.feature.search_results.usecases
 
-import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
 import blazern.lexisoup.data.translator.api.Translator
@@ -12,14 +11,17 @@ import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_BASIC
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
+import blazern.lexisoup.domain.model.TranslationsSet.Companion.invoke
 import blazern.lexisoup.domain.model.copy
 import blazern.lexisoup.feature.search_results.FakeTranslator
+import blazern.lexisoup.feature.search_results.capabilities
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TranslateDetailsUseCaseTest {
@@ -94,11 +96,8 @@ class TranslateDetailsUseCaseTest {
 
         val translator = FakeTranslator(
             results = translations.map { Right(it) },
-            capabilities = flowOf(Translator.Capabilities(
-                langs = Lang.entries.associateWith { Lang.entries.toSet() },
-                textLengthMax = 1000,
-                textLengthMin = 0,
-                translateBatchSizeLimit = 100,
+            capabilities = flowOf(capabilities(
+                availableLangs = Lang.entries.associateWith { Lang.entries.toSet() },
             ))
         )
 
@@ -140,6 +139,10 @@ class TranslateDetailsUseCaseTest {
         }.map { Right(it) }
 
         assertEquals(expected, result)
+        assertTrue(
+            translator.capturedDownloadRequests.isEmpty(),
+            translator.capturedDownloadRequests.toString(),
+        )
     }
 
     @Test
@@ -174,6 +177,46 @@ class TranslateDetailsUseCaseTest {
 
         // Once an error is observed, the use case emits the error(s) and returns early.
         assertEquals(listOf(Left(err)), result)
+    }
+
+    @Test
+    fun `downloads langs before translating`() = runTest {
+        val original = TranslationsSet(
+            Sentence("word", Lang.EN, DataSource.Kaikki),
+        )
+        val translation = original.copy(
+            translations = listOf(Sentence("Wort", Lang.DE, DataSource.Kaikki)),
+            translationsQualities = listOf(QUALITY_BASIC),
+        )
+        val translator = FakeTranslator(
+            results = listOf(Right(translation)),
+            capabilities = flowOf(capabilities(
+                availableLangs = emptyMap(),
+                downloadableLangs = Lang.entries.associateWith { Lang.entries.toSet() },
+            )),
+            downloadLangsResult = Right(Unit),
+        )
+
+        val result = useCase(
+            details = listOf(LexicalItemDetail.Example(
+                translationsSet = original,
+                source = DataSource.Kaikki,
+            )),
+            translator = translator,
+            langFrom = Lang.EN,
+            langTo = Lang.DE,
+        ).toList()
+
+        assertEquals(listOf(Lang.EN), translator.capturedLangFrom)
+        assertEquals(listOf(Lang.DE), translator.capturedLangTo)
+        assertEquals(listOf(listOf(original.original)), translator.capturedSentences)
+        assertEquals(listOf(Lang.EN to Lang.DE), translator.capturedDownloadRequests)
+
+        val expected = LexicalItemDetail.Example(
+            translationsSet = translation,
+            source = DataSource.Kaikki,
+        )
+        assertEquals(listOf(Right(expected)), result)
     }
 
     private fun translationsSet(

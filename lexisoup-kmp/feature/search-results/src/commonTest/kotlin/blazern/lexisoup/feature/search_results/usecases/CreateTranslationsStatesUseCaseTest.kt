@@ -8,6 +8,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.feature.search_results.FakeTranslator
+import blazern.lexisoup.feature.search_results.capabilities
 import blazern.lexisoup.feature.search_results.model.TranslationState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -34,20 +35,14 @@ class CreateTranslationsStatesUseCaseTest {
             translatorsBySource = mapOf(
                 source1 to translatorWithCapabilities(
                     source = source1,
-                    capabilities = Translator.Capabilities(
-                        langs = mapOf(Lang.EN to setOf(Lang.FR)), // does NOT include DE
-                        textLengthMax = 100,
-                        textLengthMin = 0,
-                        translateBatchSizeLimit = 10,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.EN to setOf(Lang.FR)), // does NOT include DE
                     )
                 ),
                 source2 to translatorWithCapabilities(
                     source = source2,
-                    capabilities = Translator.Capabilities(
-                        langs = mapOf(Lang.DE to setOf(Lang.EN)), // wrong direction for EN->DE
-                        textLengthMax = 100,
-                        textLengthMin = 0,
-                        translateBatchSizeLimit = 10,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.DE to setOf(Lang.EN)), // wrong direction for EN->DE
                     )
                 ),
             ),
@@ -83,29 +78,20 @@ class CreateTranslationsStatesUseCaseTest {
             translatorsBySource = mapOf(
                 s1 to translatorWithCapabilities(
                     source = s1,
-                    capabilities = Translator.Capabilities(
-                        langs = mapOf(Lang.EN to setOf(Lang.DE)), // can
-                        textLengthMax = 100,
-                        textLengthMin = 0,
-                        translateBatchSizeLimit = 10,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.EN to setOf(Lang.DE)), // can
                     )
                 ),
                 s2 to translatorWithCapabilities(
                     source = s2,
-                    capabilities = Translator.Capabilities(
-                        langs = mapOf(Lang.EN to setOf(Lang.FR)), // cannot
-                        textLengthMax = 100,
-                        textLengthMin = 0,
-                        translateBatchSizeLimit = 10,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.EN to setOf(Lang.FR)), // cannot
                     )
                 ),
                 s3 to translatorWithCapabilities(
                     source = s3,
-                    capabilities = Translator.Capabilities(
-                        langs = mapOf(Lang.EN to setOf(Lang.DE)), // can
-                        textLengthMax = 100,
-                        textLengthMin = 0,
-                        translateBatchSizeLimit = 10,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.EN to setOf(Lang.DE)), // can
                     )
                 ),
             ),
@@ -126,6 +112,62 @@ class CreateTranslationsStatesUseCaseTest {
         val expected = listOf(
             TranslationState.CanStart(s1),
             TranslationState.CanStart(s3),
+        )
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `adds MustDownloadLangs for each source that can translate after downloading`() = runTest {
+        val details = listOf(
+            exampleDetail("some text", Lang.EN),
+            exampleDetail("some other text", Lang.EN),
+        )
+
+        val s1 = DataSource.Backend(impl = null)
+        val s2 = DataSource.Kaikki
+        val s3 = DataSource.Tatoeba
+
+        val translators = fakeAggregator(
+            translatorsBySource = mapOf(
+                s1 to translatorWithCapabilities(
+                    source = s1,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.EN to setOf(Lang.DE)), // can
+                    )
+                ),
+                s2 to translatorWithCapabilities(
+                    source = s2,
+                    capabilities = capabilities(
+                        availableLangs = mapOf(Lang.EN to setOf(Lang.FR)), // cannot
+                    )
+                ),
+                s3 to translatorWithCapabilities(
+                    source = s3,
+                    capabilities = capabilities(
+                        availableLangs = emptyMap(),
+                        // can after downloading
+                        downloadableLangs = mapOf(Lang.EN to setOf(Lang.DE)),
+                    )
+                ),
+            ),
+            dataSourcesOrder = listOf(s1, s2, s3),
+        )
+
+        val useCase = CreateTranslationsStatesUseCaseImpl(
+            translators = translators,
+            canTranslate = canTranslate,
+        )
+
+        val result = useCase(
+            details = details,
+            langFrom = Lang.EN,
+            langTo = Lang.DE,
+        )
+
+        val expected = listOf(
+            TranslationState.CanStart(s1),
+            TranslationState.MustDownloadLangs(s3),
         )
 
         assertEquals(expected, result)

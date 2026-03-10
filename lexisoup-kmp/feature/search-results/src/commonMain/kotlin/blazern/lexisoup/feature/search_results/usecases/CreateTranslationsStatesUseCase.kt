@@ -27,8 +27,12 @@ internal open class CreateTranslationsStatesUseCaseImpl(
         translatorsLoop@ for (translationSource in translators.dataSources) {
             val translator = translators.getTranslator(translationSource)
             details.forEach { detail ->
-                if (canTranslate(detail, translator, langFrom, langTo)) {
+                if (canTranslate(detail, translator, langFrom, langTo, ifLangsDownloaded = false)) {
                     translationsStates.add(TranslationState.CanStart(translationSource))
+                    continue@translatorsLoop
+                }
+                if (canTranslate(detail, translator, langFrom, langTo, ifLangsDownloaded = true)) {
+                    translationsStates.add(TranslationState.MustDownloadLangs(translationSource))
                     continue@translatorsLoop
                 }
             }

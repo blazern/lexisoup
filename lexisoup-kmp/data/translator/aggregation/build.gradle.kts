@@ -10,7 +10,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":data:translator:api"))
+            implementation(project(":core:utils"))
             implementation(project(":data:translator:backend"))
+            implementation(project(":data:translator:mlkit"))
             implementation(project(":data:lexisoup-graphql"))
             implementation(project(":domain:config:api"))
         }
