@@ -1,6 +1,5 @@
 package blazern.lexisoup.feature.search_results.ui.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.domain.model.DataSource
@@ -31,6 +28,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
+import blazern.lexisoup.domain.model.i18n
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.SearchRequest
 import blazern.lexisoup.feature.search_results.ui.list.model.SelectedHeader
@@ -61,7 +59,8 @@ internal fun LexicalItemDetailsCardContent(
     }
     Column(Modifier.fillMaxWidth()) {
         CardHeader(
-            header?.text,
+            header?.title,
+            header?.pos?.i18n(),
             source,
             callbacks,
             translationsSource = extractTranslationsSource(detailsGroup),

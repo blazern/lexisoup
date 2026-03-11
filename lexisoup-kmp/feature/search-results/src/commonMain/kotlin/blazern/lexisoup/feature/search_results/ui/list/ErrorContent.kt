@@ -25,7 +25,8 @@ internal fun ErrorContent(
         .clickable { callbacks.onFixErrorRequest(error) }
     ) {
         CardHeader(
-            headerText = null,
+            title = null,
+            subtitle = null,
             error.source,
             callbacks,
             textColor = textColor,

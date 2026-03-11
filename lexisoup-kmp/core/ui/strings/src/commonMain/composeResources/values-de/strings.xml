@@ -31,6 +31,19 @@
     <string name="general_data_source_deepl">DeepL</string>
     <string name="general_data_source_mlkit">Google ML Kit</string>
 
+    <string name="general_pos_noun">Substantiv</string>
+    <string name="general_pos_verb">Verb</string>
+    <string name="general_pos_prep">Präposition</string>
+    <string name="general_pos_pron">Pronomen</string>
+    <string name="general_pos_adj">Adjektiv</string>
+    <string name="general_pos_adv">Adverb</string>
+    <string name="general_pos_conj">Konjunktion</string>
+    <string name="general_pos_article">Artikel</string>
+    <string name="general_pos_det">Determinativ</string>
+    <string name="general_pos_num">Numerale</string>
+    <string name="general_pos_particle">Partikel</string>
+    <string name="general_pos_inj">Interjektion</string>
+
     <string name="general_translated_by_postfix">, Übersetzung: </string>
 
     <string name="general_lexical_item_detail_type_forms">Formen</string>

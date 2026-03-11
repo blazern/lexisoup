@@ -17,7 +17,8 @@ internal fun LoadingContent(
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp)) {
         CardHeader(
-            headerText = null,
+            title = null,
+            subtitle = null,
             source,
             callbacks,
         )
