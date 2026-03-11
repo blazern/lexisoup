@@ -2,6 +2,7 @@ package blazern.lexisoup.feature.search_results.ui.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -10,7 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.domain.model.DataSource
@@ -21,7 +25,8 @@ import lexisoup.core.ui.strings.generated.resources.general_translated_by_postfi
 @Suppress("MagicNumber")
 @Composable
 internal fun CardHeader(
-    headerText: String?,
+    title: String?,
+    subtitle: String?,
     source: DataSource,
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier = Modifier,
@@ -31,18 +36,36 @@ internal fun CardHeader(
     Box(contentAlignment = Alignment.Center,
         modifier = modifier.fillMaxWidth()
     ) {
-        if (headerText != null) {
+        if (title != null) {
             Text(
-                headerText,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold,
-                color = textColor,
+                buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(
+                            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                            fontWeight = FontWeight.SemiBold,
+                            color = textColor,
+                        )
+                    ) {
+                        append(title)
+                    }
+
+                    if (subtitle != null) {
+                        append(" ")
+                        withStyle(
+                            SpanStyle(
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                fontWeight = FontWeight.SemiBold,
+                                color = textColor,
+                            )
+                        ) {
+                            append(subtitle)
+                        }
+                    }
+                },
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(start = 20.dp, end = 20.dp, top = 14.dp)
-                    .clickable {
-                        callbacks.onTextCopy(headerText)
-                    }
+                    .clickable { callbacks.onTextCopy(title) }
             )
         }
         val translationsSourceText = translationsSource

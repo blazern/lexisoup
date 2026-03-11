@@ -31,6 +31,19 @@
     <string name="general_data_source_deepl">DeepL</string>
     <string name="general_data_source_mlkit">Google ML Kit</string>
 
+    <string name="general_pos_noun">существительное</string>
+    <string name="general_pos_verb">глагол</string>
+    <string name="general_pos_prep">предлог</string>
+    <string name="general_pos_pron">местоимение</string>
+    <string name="general_pos_adj">прилагательное</string>
+    <string name="general_pos_adv">наречие</string>
+    <string name="general_pos_conj">союз</string>
+    <string name="general_pos_article">артикль</string>
+    <string name="general_pos_det">детерминатив</string>
+    <string name="general_pos_num">числительное</string>
+    <string name="general_pos_particle">частица</string>
+    <string name="general_pos_inj">междометие</string>
+
     <string name="general_translated_by_postfix">, перевод: </string>
 
     <string name="general_lexical_item_detail_type_forms">Формы</string>

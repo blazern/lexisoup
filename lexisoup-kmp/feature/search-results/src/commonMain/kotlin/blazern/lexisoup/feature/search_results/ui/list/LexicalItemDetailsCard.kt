@@ -26,6 +26,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail.Explanation
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
 import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
+import blazern.lexisoup.domain.model.PartOfSpeech
 import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_BASIC
@@ -121,6 +122,7 @@ private fun PreviewCards() {
         )),
         lang = Lang.DE,
         source = DataSource.Kaikki,
+        pos = PartOfSpeech.Noun,
     )
 
     val explanation = """
@@ -246,7 +248,12 @@ private fun PreviewAll() {
                         LexicalItemDetailsGroupState.Loaded(
                             id = "1",
                             listOf(
-                                Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.Kaikki),
+                                Forms(
+                                    Forms.Value.Text("der Hund, -e"),
+                                    Lang.DE,
+                                    DataSource.Kaikki,
+                                    pos = PartOfSpeech.Noun,
+                                ),
                                 WordTranslations(translations, DataSource.Kaikki),
                                 Synonyms(synonyms, DataSource.Kaikki),
                             ),

@@ -11,9 +11,10 @@ import blazern.lexisoup.feature.search_results.forms.selectNounFormsForHeader
 import blazern.lexisoup.feature.search_results.forms.selectVerbFormsForHeader
 
 internal data class SelectedHeader(
-    val text: String,
+    val title: String,
     val sourceDetail: LexicalItemDetail,
     val detailConsumed: Boolean,
+    val pos: PartOfSpeech? = null,
 ) {
     companion object
 }
@@ -24,7 +25,8 @@ internal fun SelectedHeader.Companion.select(details: List<LexicalItemDetail>): 
         val value = forms.value
         return when (value) {
             is Forms.Value.Text -> SelectedHeader(
-                text = value.text,
+                title = value.text,
+                pos = forms.pos,
                 sourceDetail = forms,
                 detailConsumed = true,
             )
@@ -45,8 +47,8 @@ private fun SelectedHeader.Companion.createFor(
     return when (source.pos) {
         PartOfSpeech.Noun -> SelectedHeader.forNoun(detailedForms.forms, lang, source)
         PartOfSpeech.Verb -> SelectedHeader.forVerb(detailedForms.forms, source)
-        is PartOfSpeech.Other -> SelectedHeader.forMostImportantOf(detailedForms.forms, source)
         null -> SelectedHeader.forMostImportantOf(detailedForms.forms, source)
+        else -> SelectedHeader.forMostImportantOf(detailedForms.forms, source)
     }
 }
 
@@ -80,7 +82,8 @@ private fun SelectedHeader.Companion.forNoun(
         Lang.FR -> ""
     }
     return SelectedHeader(
-        text = langSpecificPrefix + text,
+        title = langSpecificPrefix + text,
+        pos = source.pos,
         sourceDetail = source,
         detailConsumed = false,
     )
@@ -93,7 +96,8 @@ private fun SelectedHeader.Companion.forVerb(
     val importantForms = selectVerbFormsForHeader(forms, source.lang)
     val text = importantForms.joinToString(", ") { it.text }
     return SelectedHeader(
-        text = text,
+        title = text,
+        pos = source.pos,
         sourceDetail = source,
         detailConsumed = false,
     )
@@ -103,11 +107,12 @@ private fun SelectedHeader.Companion.forMostImportantOf(
     forms: List<WordForm>,
     source: Forms,
 ) = SelectedHeader(
-    text = forms
+    title = forms
         .sortedBy { it.importance }
         .asReversed()
         .first()
         .text,
+    pos = source.pos,
     sourceDetail = source,
     detailConsumed = false,
 )

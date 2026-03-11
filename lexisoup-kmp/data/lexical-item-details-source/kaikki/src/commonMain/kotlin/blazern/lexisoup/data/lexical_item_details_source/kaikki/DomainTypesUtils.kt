@@ -223,6 +223,15 @@ private fun String.stringToPos(): PartOfSpeech {
     return when (this) {
         "noun" -> PartOfSpeech.Noun
         "verb" -> PartOfSpeech.Verb
+        "prep" -> PartOfSpeech.Preposition
+        "pron" -> PartOfSpeech.Pronoun
+        "adj" -> PartOfSpeech.Adjective
+        "adv" -> PartOfSpeech.Adverb
+        "conj" -> PartOfSpeech.Conjunction
+        "det" -> PartOfSpeech.Determiner
+        "num" -> PartOfSpeech.Numeral
+        "particle" -> PartOfSpeech.Particle
+        "inj" -> PartOfSpeech.Interjection
         else -> PartOfSpeech.Other(this)
     }
 }
