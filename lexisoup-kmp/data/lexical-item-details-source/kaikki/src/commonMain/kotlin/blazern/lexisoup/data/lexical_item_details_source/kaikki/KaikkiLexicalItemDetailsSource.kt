@@ -8,6 +8,7 @@ import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItem
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
+import blazern.lexisoup.utils.unique
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -33,7 +34,7 @@ class KaikkiLexicalItemDetailsSourceImpl(
         langFrom: Lang,
         langTo: Lang
     ): Flow<Item> = cacher.retrieveOrExecute(source, query, langFrom, langTo) {
-        requestImpl(query, langFrom, langTo)
+        requestImpl(query, langFrom, langTo).unique()
     }
 
     private fun requestImpl(

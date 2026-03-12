@@ -271,4 +271,20 @@ class KaikkiLexicalItemDetailsSourceImplTest {
 
         assertEquals(expected, results)
     }
+
+    @Test
+    fun `removes duplicates`() = runTest {
+        kaikkiClient.enqueue(
+            "Haus",
+            Lang.DE,
+            Right(listOf(
+                entry,
+                // A duplicate!
+                entry,
+            )
+        ))
+
+        val results = source.request("Haus", Lang.DE, Lang.EN).toList()
+        assertEquals(1, results.size, results.toString())
+    }
 }

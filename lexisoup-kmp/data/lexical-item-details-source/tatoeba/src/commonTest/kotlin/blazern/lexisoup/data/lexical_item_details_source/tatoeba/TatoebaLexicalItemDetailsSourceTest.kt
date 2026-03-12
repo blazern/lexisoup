@@ -245,11 +245,6 @@ class TatoebaLexicalItemDetailsSourceTest {
 
     @Test
     fun `forms in the Tatoeba query are deduplicated`() = runTest {
-        val translations = TranslationsSet(
-            original = Sentence("sie lachen", Lang.DE, DataSource.Tatoeba),
-            translations = listOf(Sentence("they laugh", Lang.EN, DataSource.Tatoeba)),
-            translationsQualities = listOf(QUALITY_MAX),
-        )
         val forms = listOf(
             WordForm(
                 text = "lachen",
@@ -290,5 +285,32 @@ class TatoebaLexicalItemDetailsSourceTest {
         assertEquals(2, calls.size)
         assertEquals("=lachen", calls[0].query)
         assertEquals("(=lacht)", calls[1].query)
+    }
+
+    @Test
+    fun `removes duplicates`() = runTest {
+        val pages = 3
+        repeat(pages) { index ->
+            tatoeba.enqueueResult(
+                query = "hello",
+                langFrom = Lang.EN,
+                langTo = Lang.DE,
+                page = index + 1,
+                result = Right(listOf(translationsSets.first())),
+            )
+        }
+        tatoeba.enqueueResult(
+            query = "hello",
+            langFrom = Lang.EN,
+            langTo = Lang.DE,
+            page = pages + 1,
+            result = Right(emptyList()),
+        )
+
+        val results = source.request("hello", Lang.EN, Lang.DE)
+            .toList()
+            .map { (it as Item.Page).details }
+            .flatten()
+        assertEquals(1, results.size, results.toString())
     }
 }
