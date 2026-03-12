@@ -10,6 +10,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsForExamplesProvider
 import blazern.lexisoup.domain.backend_address.BackendAddressProvider
 import blazern.lexisoup.domain.error.Err
+import blazern.lexisoup.utils.unique
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -35,7 +36,7 @@ class TatoebaLexicalItemDetailsSource internal constructor(
         query: String,
         langFrom: Lang,
         langTo: Lang
-    ): Flow<Item> = requestImpl(query, langFrom, langTo)
+    ): Flow<Item> = requestImpl(query, langFrom, langTo).unique()
 
     private fun requestImpl(
         query: String,
