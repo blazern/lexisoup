@@ -4,6 +4,7 @@ import androidx.compose.ui.platform.Clipboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import arrow.core.getOrElse
+import blazern.lexisoup.core.logging.Log
 import blazern.lexisoup.data.lexical_item_details_source.aggregation.LexicalItemDetailsSourceAggregator
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.translator.aggregation.TranslatorsAggregator
@@ -27,9 +28,12 @@ import blazern.lexisoup.utils.FlowIterator
 import blazern.lexisoup.utils.clipEntryOf
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -63,6 +67,9 @@ internal class SearchResultsViewModel(
 
     init {
         viewModelScope.launch { search() }
+        state
+            .onEach { Log.d(TAG) { "State:${it.toLogsString()}" } }
+            .shareIn(viewModelScope, SharingStarted.Eagerly)
     }
 
     private suspend fun search() {
@@ -94,6 +101,11 @@ internal class SearchResultsViewModel(
     ) {
         val iter = dataIters[source] ?: return
         viewModelScope.launch {
+            Log.d(TAG) {
+                "continueLoadingFor: $source, " +
+                "in progress: ${loadingInProgress.contains(source)}, " +
+                "has ended: ${iter.hasEnded()}"
+            }
             if (loadingInProgress.contains(source) || iter.hasEnded()) {
                 return@launch
             }
@@ -120,34 +132,36 @@ internal class SearchResultsViewModel(
         source: DataSource,
         requestedTypes: Set<LexicalItemDetail.Type>,
     ) {
-        var state = _state.value
         when (item) {
             is Item.Failure -> {
-                state = state.replaceMatchingOrJustAdd(
-                    item,
-                    source,
-                    requestedTypes,
-                ) {
-                    it.source == source && it !is LexicalItemDetailsGroupState.Loaded
+                _state.update {
+                    it.replaceMatchingOrJustAdd(
+                        item,
+                        source,
+                        requestedTypes,
+                    ) {
+                        it.source == source && it !is LexicalItemDetailsGroupState.Loaded
+                    }
                 }
             }
             is Item.Page -> {
                 val pages = transformPage(item)
                 pages.forEach { page ->
                     val translationsStates = createTranslationsStates(page.details, langFrom, langTo)
-                    state = state.replaceMatchingOrJustAdd(
-                        page,
-                        source,
-                        translationsStates,
-                    ) {
-                        it.source == source && it !is LexicalItemDetailsGroupState.Loaded
+                    _state.update {
+                        it.replaceMatchingOrJustAdd(
+                            page,
+                            source,
+                            translationsStates,
+                        ) {
+                            it.source == source && it !is LexicalItemDetailsGroupState.Loaded
+                        }
                     }
                 }
-                state = state.addLoadingFor(source, item.nextPageTypes)
+                _state.update { it.addLoadingFor(source, item.nextPageTypes) }
                 sourceTypes[source] = item.nextPageTypes
             }
         }
-        _state.update { state }
     }
 
     fun onFixErrorRequest(error: LexicalItemDetailsGroupState.Error) {
@@ -194,16 +208,37 @@ internal class SearchResultsViewModel(
             // Let's recalculate the translations' states for each of the loaded groups,
             // because it's possible current translation has downloaded a language pack
             // See implementation of [TranslateDetailsUseCase].
-            _state.update {
-                SearchResultsState(it.groups.map {
-                    when (it) {
-                        is LexicalItemDetailsGroupState.Loaded -> it.copy(
-                            translationStates = createTranslationsStates(it.details, langFrom, langTo)
-                        )
-                        else -> it
-                    }
-                })
+            state.value.groups.forEach { group ->
+                val updatedGroup = when (group) {
+                    is LexicalItemDetailsGroupState.Loaded -> group.copy(
+                        translationStates = createTranslationsStates(group.details, langFrom, langTo)
+                    )
+                    else -> group
+                }
+                // NOTE: [createTranslationsStates] is suspending, so we're deliberately
+                // calling [update] outside of it.
+                // It's also possible to coroutines would compete here, but in that case
+                // they both would just set the same translation state in the end, so
+                // it's not a problem.
+                _state.update { it.replaceByID(updatedGroup) }
             }
         }
     }
+}
+
+private const val TAG = "SearchResultsViewModel"
+
+private fun SearchResultsState.toLogsString() = buildString {
+    append("[")
+    append(
+        groups.joinToString(", ") { group ->
+            val type = when (group) {
+                is LexicalItemDetailsGroupState.Loaded -> "Loaded"
+                is LexicalItemDetailsGroupState.Loading -> "Loading"
+                is LexicalItemDetailsGroupState.Error -> "Error"
+            }
+            "$type:${group.source}"
+        }
+    )
+    append("]")
 }

@@ -33,6 +33,8 @@ sealed class DataSource(open val id: String) {
      */
     data class Backend(val impl: DataSource?) : DataSource("backend")
 
+    override fun toString() = id
+
     companion object
 }
 
