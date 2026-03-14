@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Example(
-    val text: String,
+    val text: String? = null,
     val ref: String? = null,
     val author: String? = null
 )
