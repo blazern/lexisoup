@@ -10,14 +10,6 @@ internal class TranslatorsAggregatorImpl(
     translators: List<Translator>,
 ) : TranslatorsAggregator {
     private val translators = translators
-        .let {
-            if (getKotlinPlatform() == KotlinPlatform.ANDROID) {
-                // For now disabled
-                it.filter { it !is BackendTranslator }
-            } else {
-                it
-            }
-        }
         .associateBy { it.source }
 
     override val dataSources: List<DataSource> = this.translators.keys.toList()
