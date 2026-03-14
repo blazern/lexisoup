@@ -17,11 +17,12 @@ fun translatorsAggregatorModule() = module {
         )
     }.bind(Translator::class)
 
-    if (platformSupportsMlKitTranslator()) {
-        single {
-            createMlKitTranslator()
-        }.bind(Translator::class)
-    }
+    // ML Kit's translation is horrible
+//    if (platformSupportsMlKitTranslator()) {
+//        single {
+//            createMlKitTranslator()
+//        }.bind(Translator::class)
+//    }
 
     single<TranslatorsAggregator> {
         TranslatorsAggregatorImpl(
