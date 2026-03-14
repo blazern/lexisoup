@@ -56,9 +56,10 @@ internal fun Entry.toDetails(
                 )
             }
             for (example in sense.examples) {
+                val text = example.text ?: continue
                 result += LexicalItemDetail.Example(
                     TranslationsSet(
-                        original = Sentence(example.text.noQuotationMarks(), langFrom, src),
+                        original = Sentence(text.noQuotationMarks(), langFrom, src),
                         translations = emptyList(),
                         translationsQualities = emptyList(),
                     ),
