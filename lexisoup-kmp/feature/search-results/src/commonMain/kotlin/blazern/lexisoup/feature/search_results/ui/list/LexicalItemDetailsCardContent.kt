@@ -11,10 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,8 +42,8 @@ internal fun LexicalItemDetailsCardContent(
     searchRequest: SearchRequest,
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
-    extraDetailsTypes: Set<LexicalItemDetail.Type>,
-    initiallyShowExtraDetails: Boolean,
+    showExtraDetails: Boolean?,
+    onExtraDetailsRequest: (Boolean) -> Unit,
 ) {
     val details = detailsGroup.details
     val source = detailsGroup.source
@@ -71,8 +67,8 @@ internal fun LexicalItemDetailsCardContent(
                 contentColor,
                 callbacks,
                 searchRequest,
-                extraDetailsTypes,
-                initiallyShowExtraDetails,
+                showExtraDetails,
+                onExtraDetailsRequest,
             )
             TranslateActions(
                 detailsGroup,
@@ -89,12 +85,9 @@ private fun DetailsColumn(
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
     searchRequest: SearchRequest,
-    extraDetailsTypes: Set<LexicalItemDetail.Type>,
-    initiallyShowExtraDetails: Boolean,
+    showExtraDetails: Boolean?,
+    onExtraDetailsRequest: (Boolean) -> Unit,
 ) {
-    val extraDetailsExist = details.any { extraDetailsTypes.contains(it.type) }
-    var showExtraDetails by remember { mutableStateOf(initiallyShowExtraDetails) }
-
     val itemPaddings = PaddingValues(vertical = 18.dp)
     val horizontalPadding = PaddingValues(horizontal = 28.dp)
     Column {
@@ -153,7 +146,7 @@ private fun DetailsColumn(
                 )
             }
         }
-        if (showExtraDetails) {
+        if (showExtraDetails == true) {
             details.compose<LexicalItemDetail.Etymology> {
                 Box(Modifier.padding(horizontalPadding)) {
                     TranslationsSetUI(
@@ -169,12 +162,12 @@ private fun DetailsColumn(
                 }
             }
         }
-        if (extraDetailsExist) {
+        if (showExtraDetails != null) {
             Box(Modifier
                 .fillMaxWidth()
                 .height(32.dp)
                 .clickable {
-                    showExtraDetails = !showExtraDetails
+                    onExtraDetailsRequest(!showExtraDetails)
                 }) {
                 val text = if (showExtraDetails) {
                     stringResource(Res.string.search_results_hide_extra_details)

@@ -45,8 +45,8 @@ internal fun LexicalItemDetailsCard(
     state: LexicalItemDetailsGroupState,
     searchRequest: SearchRequest,
     callbacks: LexicalItemDetailCallbacks,
-    extraDetailsTypes: Set<LexicalItemDetail.Type> = setOf(LexicalItemDetail.Type.ETYMOLOGY),
-    initiallyShowExtraDetails: Boolean = false,
+    showExtraDetails: Boolean?,
+    onExtraDetailsRequest: (Boolean) -> Unit,
 ) {
     val defaultColors = CardDefaults.cardColors()
     val isError = state is LexicalItemDetailsGroupState.Error
@@ -76,8 +76,8 @@ internal fun LexicalItemDetailsCard(
                         searchRequest,
                         contentColorAnimated,
                         callbacks,
-                        extraDetailsTypes,
-                        initiallyShowExtraDetails,
+                        showExtraDetails,
+                        onExtraDetailsRequest,
                     )
                 }
                 is LexicalItemDetailsGroupState.Loading -> {
@@ -160,7 +160,8 @@ private fun PreviewCards() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
-                        initiallyShowExtraDetails = true,
+                        showExtraDetails = true,
+                        onExtraDetailsRequest = {},
                     )
                     LexicalItemDetailsCard(
                         LexicalItemDetailsGroupState.Loaded(
@@ -175,6 +176,8 @@ private fun PreviewCards() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        showExtraDetails = false,
+                        onExtraDetailsRequest = {},
                     )
                     LexicalItemDetailsCard(
                         LexicalItemDetailsGroupState.Loaded(
@@ -214,6 +217,8 @@ private fun PreviewCards() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        showExtraDetails = false,
+                        onExtraDetailsRequest = {},
                     )
                 }
             }
@@ -263,6 +268,8 @@ private fun PreviewAll() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        showExtraDetails = false,
+                        onExtraDetailsRequest = {},
                     )
                     LexicalItemDetailsCard(
                         LexicalItemDetailsGroupState.Loading(
@@ -272,6 +279,8 @@ private fun PreviewAll() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        showExtraDetails = false,
+                        onExtraDetailsRequest = {},
                     )
                     LexicalItemDetailsCard(
                         LexicalItemDetailsGroupState.Error(
@@ -282,6 +291,8 @@ private fun PreviewAll() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        showExtraDetails = false,
+                        onExtraDetailsRequest = {},
                     )
                 }
             }

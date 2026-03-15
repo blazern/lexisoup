@@ -11,6 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
@@ -38,13 +42,39 @@ internal fun FoundSearchResults(
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier = Modifier,
 ) {
+    val extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY)
+    val showExtraDetailsByIds = remember { mutableStateMapOf<String, Boolean>() }
+    val shouldShowExtraDetails = { state: LexicalItemDetailsGroupState ->
+        when (state) {
+            is LexicalItemDetailsGroupState.Loaded -> {
+                if (state.details.any { extraDetailsTypes.contains(it.type) }) {
+                    // Not showing by default
+                    false
+                } else {
+                    // No extra details can be shown
+                    null
+                }
+            }
+            else -> false
+        }
+    }
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.padding(horizontal = 16.dp),
     ) {
         val allButExamples = state.groups.filter { it.types != setOf(LexicalItemDetail.Type.EXAMPLE) }
         items(allButExamples.size, { allButExamples[it].id }) {
-            LexicalItemDetailsCard(allButExamples[it], searchRequest, callbacks)
+            val state = allButExamples[it]
+            LexicalItemDetailsCard(
+                state,
+                searchRequest,
+                callbacks,
+                showExtraDetailsByIds[state.id] ?: shouldShowExtraDetails(state),
+                onExtraDetailsRequest = { show ->
+                    showExtraDetailsByIds[state.id] = show
+                }
+            )
         }
         examples(
             state.groups,
