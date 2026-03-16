@@ -18,10 +18,10 @@ class FeaturePlugin : LibraryPlugin() {
                 commonMain.dependencies {
                     implementation(project(":core:ui:strings"))
 
-                    // Draw icons
                     implementation(libs.findLibrary("compose-material-icons-core").get())
                     implementation(libs.findLibrary("compose-material-icons-extended").get())
                     implementation(libs.findLibrary("compose-ui-graphics").get())
+                    implementation(libs.findLibrary("ui-tooling-preview").get())
                 }
 
                 androidMain.dependencies {

@@ -31,7 +31,7 @@ import lexisoup.core.ui.strings.generated.resources.general_action_collapse
 import lexisoup.core.ui.strings.generated.resources.general_action_copy
 import lexisoup.core.ui.strings.generated.resources.general_action_expand
 import lexisoup.core.ui.strings.generated.resources.general_action_search
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 internal fun SentencesList(
