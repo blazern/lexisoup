@@ -41,7 +41,8 @@ fun <T> DropdownMenu(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            matchAnchorWidth = false,
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
