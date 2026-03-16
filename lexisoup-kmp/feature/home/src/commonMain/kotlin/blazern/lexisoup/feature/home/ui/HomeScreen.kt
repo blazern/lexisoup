@@ -60,7 +60,7 @@ import lexisoup.core.ui.strings.generated.resources.home_cd_clear_search_query
 import lexisoup.core.ui.strings.generated.resources.home_cd_switch_langs
 import lexisoup.core.ui.strings.generated.resources.home_input_hint
 import lexisoup.core.ui.strings.generated.resources.home_search_for_raw_input
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import lexisoup.core.ui.strings.generated.resources.Res as ResStr
 
 @OptIn(ExperimentalComposeUiApi::class)

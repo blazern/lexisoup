@@ -42,7 +42,7 @@ import blazern.lexisoup.domain.model.i18n
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.TranslationState
 import blazern.lexisoup.feature.search_results.ui.list.model.ExampleState
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable

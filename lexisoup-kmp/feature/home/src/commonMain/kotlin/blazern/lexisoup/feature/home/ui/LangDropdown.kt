@@ -8,7 +8,7 @@ import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.strRsc
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

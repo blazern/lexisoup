@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_copied_to_clipboard
 import lexisoup.core.ui.strings.generated.resources.search_results_title
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 
 @Suppress("LongParameterList")
 @Composable
