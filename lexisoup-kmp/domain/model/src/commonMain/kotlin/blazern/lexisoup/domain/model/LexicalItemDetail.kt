@@ -4,6 +4,7 @@ import blazern.lexisoup.domain.model.LexicalItemDetail.Etymology
 import blazern.lexisoup.domain.model.LexicalItemDetail.Example
 import blazern.lexisoup.domain.model.LexicalItemDetail.Explanation
 import blazern.lexisoup.domain.model.LexicalItemDetail.Forms
+import blazern.lexisoup.domain.model.LexicalItemDetail.Pronunciation
 import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
 import lexisoup.core.ui.strings.generated.resources.Res
@@ -11,6 +12,7 @@ import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_example
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_explanation
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_forms
+import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_pronunciation
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_synonyms
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_word_translations
 import org.jetbrains.compose.resources.StringResource
@@ -83,6 +85,17 @@ sealed class LexicalItemDetail(
         override val meaningId: String? = null,
     ) : LexicalItemDetail(Type.ETYMOLOGY)
 
+    sealed class Pronunciation: LexicalItemDetail(Type.PRONUNCIATION) {
+        data class Audio(
+            val name: String?,
+            val urls: List<String>,
+            override val source: DataSource,
+            override val meaningId: String? = null
+        ) : Pronunciation() {
+            init { require(urls.isNotEmpty()) }
+        }
+    }
+
     enum class Type {
         FORMS,
         WORD_TRANSLATIONS,
@@ -90,6 +103,7 @@ sealed class LexicalItemDetail(
         EXPLANATION,
         EXAMPLE,
         ETYMOLOGY,
+        PRONUNCIATION,
     }
 
     companion object
@@ -103,6 +117,7 @@ fun LexicalItemDetail.Type.toClass(): KClass<out LexicalItemDetail> {
         LexicalItemDetail.Type.EXPLANATION -> Explanation::class
         LexicalItemDetail.Type.EXAMPLE -> Example::class
         LexicalItemDetail.Type.ETYMOLOGY -> Etymology::class
+        LexicalItemDetail.Type.PRONUNCIATION -> Pronunciation::class
     }
 }
 
@@ -114,6 +129,7 @@ fun LexicalItemDetail.Companion.toType(clazz: KClass<out LexicalItemDetail>): Le
         Explanation::class -> LexicalItemDetail.Type.EXPLANATION
         Example::class -> LexicalItemDetail.Type.EXAMPLE
         Etymology::class -> LexicalItemDetail.Type.ETYMOLOGY
+        Pronunciation.Audio::class -> LexicalItemDetail.Type.PRONUNCIATION
         else -> throw NotImplementedError("Please support LexicalItemDetail subclass: $clazz")
     }
 }
@@ -127,5 +143,6 @@ val LexicalItemDetail.Type.strRsc: StringResource
             LexicalItemDetail.Type.EXPLANATION -> Res.string.general_lexical_item_detail_type_explanation
             LexicalItemDetail.Type.EXAMPLE -> Res.string.general_lexical_item_detail_type_example
             LexicalItemDetail.Type.ETYMOLOGY -> Res.string.general_lexical_item_detail_type_etymology
+            LexicalItemDetail.Type.PRONUNCIATION -> Res.string.general_lexical_item_detail_type_pronunciation
         }
     }

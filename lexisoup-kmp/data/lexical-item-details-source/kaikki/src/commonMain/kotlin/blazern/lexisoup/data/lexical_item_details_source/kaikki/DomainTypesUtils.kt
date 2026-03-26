@@ -102,6 +102,19 @@ internal fun Entry.toDetails(
             src,
         )
     }
+    sounds.forEach { sound ->
+        val urls = listOfNotNull(
+            sound.oggUrl,
+            sound.mp3Url,
+        )
+        if (urls.isNotEmpty()) {
+            result += LexicalItemDetail.Pronunciation.Audio(
+                sound.name,
+                urls,
+                src,
+            )
+        }
+    }
     return result
 }
 

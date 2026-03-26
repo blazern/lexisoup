@@ -22,6 +22,7 @@ import blazern.lexisoup.feature.search_results.FakeTranslatorsAggregator
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.TranslationState
 import blazern.lexisoup.feature.search_results.model.priority
+import blazern.lexisoup.feature.search_results.repository.BackgroundErrorsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.awaitCancellation
@@ -35,6 +36,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -57,16 +60,20 @@ class SearchResultsViewModelTest {
         ) = Right(accentsEnhancer)
     }
 
+    private val errorsRepo = BackgroundErrorsRepository()
+
     private fun List<LexicalItemDetailsSource>.aggregate() =
         LexicalItemDetailsSourceAggregator(this, accentsEnhancerProvider)
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        startKoin {}
     }
 
     @AfterTest
     fun tearDown() {
+        stopKoin()
         Dispatchers.resetMain()
     }
 
@@ -82,7 +89,8 @@ class SearchResultsViewModelTest {
             translators = FakeTranslatorsAggregator(listOf(FakeTranslator())),
             translateDetails = FakeTranslateDetailsUseCase { _, _, _, _ -> emptyFlow() },
             transformPage = FakeTransformPageUseCase { page -> listOf(page) },
-            createTranslationsStates = FakeCreateTranslationsStatesUseCase { _, _, _ -> emptyList() }
+            createTranslationsStates = FakeCreateTranslationsStatesUseCase { _, _, _ -> emptyList() },
+            errorsRepo = errorsRepo,
         )
 
         loadEverything(viewModel)
@@ -127,7 +135,8 @@ class SearchResultsViewModelTest {
             transformPage = FakeTransformPageUseCase { page -> listOf(page) },
             createTranslationsStates = FakeCreateTranslationsStatesUseCase { _, _, _ ->
                 expectedTranslationStates
-            }
+            },
+            errorsRepo = errorsRepo,
         )
 
         loadEverything(viewModel)
@@ -171,6 +180,7 @@ class SearchResultsViewModelTest {
             },
             transformPage = FakeTransformPageUseCase { page -> listOf(page) },
             createTranslationsStates = FakeCreateTranslationsStatesUseCase { _, _, _ -> initialStates },
+            errorsRepo = errorsRepo,
         )
 
         loadEverything(viewModel)
@@ -210,6 +220,7 @@ class SearchResultsViewModelTest {
                 createTranslationsStatesCallsCount += 1
                 emptyList()
             },
+            errorsRepo = errorsRepo,
         )
 
         loadEverything(viewModel)
@@ -271,6 +282,7 @@ class SearchResultsViewModelTest {
                     }
                 )
             },
+            errorsRepo = errorsRepo,
         )
 
         loadEverything(viewModel)
@@ -374,6 +386,13 @@ class SearchResultsViewModelTest {
                 TranslationsSet(
                     original = Sentence("nice text $detailsMultiplier $it $textsPostfix", Lang.EN, source),
                 ),
+                source,
+            )
+        }
+        details += List(detailsMultiplier) {
+            LexicalItemDetail.Pronunciation.Audio(
+                "Some audio",
+                listOf("https://upload.wikimedia.org/wikipedia/commons/transcoded/4/40/De-Katze.ogg/De-Katze.ogg.mp3"),
                 source,
             )
         }

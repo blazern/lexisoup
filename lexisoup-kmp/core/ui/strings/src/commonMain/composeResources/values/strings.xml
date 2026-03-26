@@ -11,6 +11,8 @@
     <string name="search_results_hide_extra_details">Hide extra details</string>
     <string name="search_results_download_langs_dialog_title">Download language package?</string>
     <string name="search_results_download_langs_dialog_text">This translation requires downloading the language package first (30–70 MB)</string>
+    <string name="search_results_cd_play">Play the pronunciation audio</string>
+    <string name="search_results_cd_pause">Pause the pronunciation audio</string>
 
     <string name="general_copied_to_clipboard">Copied to clipboard</string>
 
@@ -52,6 +54,7 @@
     <string name="general_lexical_item_detail_type_explanation">Explanation</string>
     <string name="general_lexical_item_detail_type_example">Example</string>
     <string name="general_lexical_item_detail_type_etymology">Origin</string>
+    <string name="general_lexical_item_detail_type_pronunciation">Pronunciation</string>
 
     <string name="general_lang_en">English</string>
     <string name="general_lang_de">German</string>

@@ -38,6 +38,7 @@ include(":androidApp")
 
 include(":a-template-kmp-common")
 
+include(":core:audio")
 include(":core:ui:strings")
 include(":core:ui:theme")
 include(":core:ui:components")

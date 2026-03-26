@@ -39,6 +39,7 @@ import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupStat
 import blazern.lexisoup.feature.search_results.model.SearchRequest
 import blazern.lexisoup.feature.search_results.model.TranslationState
 import androidx.compose.ui.tooling.preview.Preview
+import blazern.lexisoup.domain.model.LexicalItemDetail.Pronunciation.Audio
 
 @Composable
 internal fun LexicalItemDetailsCard(
@@ -142,6 +143,9 @@ private fun PreviewCards() {
                                     Sentence(explanation, Lang.EN, DataSource.Kaikki),
                                     DataSource.Kaikki,
                                 ),
+                                Audio("Hund-de.ogg", listOf("https://website.com/hund.de"), DataSource.Kaikki),
+                                Audio("Hund2-de.ogg", listOf("https://website.com/hund2.de"), DataSource.Kaikki),
+                                Audio("Hund.ogg", listOf("https://website.com/hund-a.de"), DataSource.Kaikki),
                                 Forms(Forms.Value.Text("der Hund, -e"), Lang.DE, DataSource.Kaikki),
                                 WordTranslations(translations, DataSource.Kaikki),
                                 Synonyms(synonyms, DataSource.Kaikki),

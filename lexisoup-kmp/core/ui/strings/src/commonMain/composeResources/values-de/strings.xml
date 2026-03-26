@@ -11,6 +11,8 @@
     <string name="search_results_hide_extra_details">Zusätzliche Details ausblenden</string>
     <string name="search_results_download_langs_dialog_title">Sprachpaket herunterladen?</string>
     <string name="search_results_download_langs_dialog_text">Für diese Übersetzung muss zuerst das Sprachpaket heruntergeladen werden (30–70 MB).</string>
+    <string name="search_results_cd_play">Aussprache abspielen</string>
+    <string name="search_results_cd_pause">Aussprache pausieren</string>
 
     <string name="general_copied_to_clipboard">Kopiert</string>
 
@@ -52,6 +54,7 @@
     <string name="general_lexical_item_detail_type_explanation">Erklärung</string>
     <string name="general_lexical_item_detail_type_example">Beispiel</string>
     <string name="general_lexical_item_detail_type_etymology">Herkunft</string>
+    <string name="general_lexical_item_detail_type_pronunciation">Aussprache</string>
 
     <string name="general_lang_en">Englisch</string>
     <string name="general_lang_de">Deutsch</string>
