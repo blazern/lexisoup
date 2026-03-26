@@ -14,11 +14,12 @@ import blazern.lexisoup.feature.search_results.usecases.TranslateDetailsUseCase
 import blazern.lexisoup.feature.search_results.usecases.TranslateDetailsUseCaseImpl
 import kotlinx.coroutines.CoroutineScope
 import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.annotation.KoinViewModelScopeApi
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.viewmodel.scope.viewModelScope
 
-@OptIn(KoinExperimentalAPI::class)
+@OptIn(KoinExperimentalAPI::class, KoinViewModelScopeApi::class)
 fun searchResultModules() = listOf(
     module {
         viewModelScope {
@@ -37,7 +38,7 @@ fun searchResultModules() = listOf(
             }
 
             scoped<CoroutineScope> {
-                get<SearchResultsViewModel>().viewModelScope
+                getSource<SearchResultsViewModel>()!!.viewModelScope
             }
 
             scoped {
