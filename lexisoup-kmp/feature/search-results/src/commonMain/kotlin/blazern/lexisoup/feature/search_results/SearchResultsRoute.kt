@@ -1,13 +1,18 @@
 package blazern.lexisoup.feature.search_results
 
-import blazern.lexisoup.domain.model.Lang
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.feature.search_results.model.SearchRequest
+import blazern.lexisoup.feature.search_results.repository.AudiosPlaybackRepository
+import blazern.lexisoup.feature.search_results.repository.BackgroundErrorsRepository
+import blazern.lexisoup.feature.search_results.repository.LocalAudiosPlaybackRepository
 import blazern.lexisoup.feature.search_results.ui.SearchResultsScreen
 import blazern.lexisoup.feature.search_results.ui.SearchResultsViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 
 typealias SearchFn = (query: String, langFrom: Lang, langTo: Lang)->Unit
@@ -24,24 +29,29 @@ fun SearchResultsRoute(
         parameters = { parametersOf(query, langFrom, langTo) },
     )
     val uiState by viewModel.state.collectAsState()
-    SearchResultsScreen(
-        SearchRequest(query, langFrom, langTo),
-        uiState,
-        viewModel.backgroundErrors,
-        onTextCopy = { text, clipboard ->
-            viewModel.copyText(text, clipboard)
-        },
-        onLoadingDetailVisible = {
-            viewModel.onLoadingDetailVisible(it)
-        },
-        onFixErrorRequest = {
-            viewModel.onFixErrorRequest(it)
-        },
-        onNewSearch = {
-            onNewSearch(it.query, it.langFrom, it.langTo)
-        },
-        onTranslateRequest = { detailsGroup, translator ->
-            viewModel.onTranslateRequest(detailsGroup, translator)
-        },
-    )
+    val backgroundErrorsRepo = viewModel.get<BackgroundErrorsRepository>()
+    CompositionLocalProvider(
+        LocalAudiosPlaybackRepository provides viewModel.get<AudiosPlaybackRepository>(),
+    ) {
+        SearchResultsScreen(
+            SearchRequest(query, langFrom, langTo),
+            uiState,
+            backgroundErrorsRepo.errors,
+            onTextCopy = { text, clipboard ->
+                viewModel.copyText(text, clipboard)
+            },
+            onLoadingDetailVisible = {
+                viewModel.onLoadingDetailVisible(it)
+            },
+            onFixErrorRequest = {
+                viewModel.onFixErrorRequest(it)
+            },
+            onNewSearch = {
+                onNewSearch(it.query, it.langFrom, it.langTo)
+            },
+            onTranslateRequest = { detailsGroup, translator ->
+                viewModel.onTranslateRequest(detailsGroup, translator)
+            },
+        )
+    }
 }

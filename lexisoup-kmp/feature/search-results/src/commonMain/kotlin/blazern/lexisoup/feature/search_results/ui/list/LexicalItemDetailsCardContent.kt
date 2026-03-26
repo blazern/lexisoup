@@ -20,6 +20,7 @@ import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.LexicalItemDetail.Explanation
+import blazern.lexisoup.domain.model.LexicalItemDetail.Pronunciation.Audio
 import blazern.lexisoup.domain.model.LexicalItemDetail.Synonyms
 import blazern.lexisoup.domain.model.LexicalItemDetail.WordTranslations
 import blazern.lexisoup.domain.model.Sentence
@@ -91,6 +92,12 @@ private fun DetailsColumn(
     val itemPaddings = PaddingValues(vertical = 18.dp)
     val horizontalPadding = PaddingValues(horizontal = 28.dp)
     Column {
+        details.compose<Audio> {
+            AudioUI(
+                it,
+                Modifier.padding(horizontal = 16.dp),
+            )
+        }
         details.compose<Explanation> {
             TranslationsSetUI(
                 it.translationsSet,
@@ -241,6 +248,7 @@ private fun extractTranslationsSource(group: LexicalItemDetailsGroupState.Loaded
             is LexicalItemDetail.Forms -> continue // Shouldn't be translated
             is Synonyms -> continue // Shouldn't be translated
             is WordTranslations -> continue // Expected to always match original source
+            is Audio -> continue // Audios are not translatable
         }
     }
     return null

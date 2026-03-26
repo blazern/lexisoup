@@ -1,14 +1,12 @@
 package blazern.lexisoup.feature.search_results.ui
 
 import androidx.compose.ui.platform.Clipboard
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import arrow.core.getOrElse
 import blazern.lexisoup.core.logging.Log
 import blazern.lexisoup.data.lexical_item_details_source.aggregation.LexicalItemDetailsSourceAggregator
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.translator.aggregation.TranslatorsAggregator
-import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
@@ -21,25 +19,27 @@ import blazern.lexisoup.feature.search_results.model.removeAllButLoadedFor
 import blazern.lexisoup.feature.search_results.model.removeErrorsFor
 import blazern.lexisoup.feature.search_results.model.replaceByID
 import blazern.lexisoup.feature.search_results.model.replaceMatchingOrJustAdd
+import blazern.lexisoup.feature.search_results.repository.BackgroundErrorsRepository
 import blazern.lexisoup.feature.search_results.usecases.CreateTranslationsStatesUseCase
 import blazern.lexisoup.feature.search_results.usecases.TransformPageUseCase
 import blazern.lexisoup.feature.search_results.usecases.TranslateDetailsUseCase
 import blazern.lexisoup.utils.FlowIterator
 import blazern.lexisoup.utils.clipEntryOf
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.viewmodel.scope.ScopeViewModel
 
 private typealias LexicalItemDetailFlow = FlowIterator<Item>
 
+@OptIn(KoinExperimentalAPI::class)
 @Suppress("LongParameterList")
 internal class SearchResultsViewModel(
     query: String,
@@ -47,10 +47,11 @@ internal class SearchResultsViewModel(
     private val langTo: Lang,
     dataSource: LexicalItemDetailsSourceAggregator,
     private val translators: TranslatorsAggregator,
+    private val errorsRepo: BackgroundErrorsRepository,
     private val translateDetails: TranslateDetailsUseCase,
     private val transformPage: TransformPageUseCase,
     private val createTranslationsStates: CreateTranslationsStatesUseCase,
-) : ViewModel() {
+) : ScopeViewModel() {
     private val loadingInProgress = mutableSetOf<DataSource>()
     private val dataIters = mutableMapOf<DataSource, LexicalItemDetailFlow>()
     private val sourceTypes = mutableMapOf<DataSource, Set<LexicalItemDetail.Type>>()
@@ -61,9 +62,6 @@ internal class SearchResultsViewModel(
 
     private val _state = MutableStateFlow(SearchResultsState())
     val state: StateFlow<SearchResultsState> = _state.asStateFlow()
-
-    private val _backgroundErrors = MutableSharedFlow<Err>()
-    val backgroundErrors = _backgroundErrors.asSharedFlow()
 
     init {
         viewModelScope.launch { search() }
@@ -193,7 +191,7 @@ internal class SearchResultsViewModel(
             ).toList()
             val errors = translationsResults.mapNotNull { it.leftOrNull() }
             val detailsTranslated = if (errors.isNotEmpty()) {
-                errors.forEach { _backgroundErrors.emit(it) }
+                errors.forEach { errorsRepo.emit(it) }
                 // Let's consider nothing to be translated
                 detailsGroup.details
             } else {

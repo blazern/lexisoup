@@ -81,6 +81,7 @@ class TranslateDetailsUseCaseTest {
                 LexicalItemDetail.Type.FORMS -> forms // Not translatable
                 LexicalItemDetail.Type.WORD_TRANSLATIONS -> translations // Not translatable
                 LexicalItemDetail.Type.SYNONYMS -> synonyms // Not translatable
+                LexicalItemDetail.Type.PRONUNCIATION -> synonyms // Not translatable
             }
         }
 
@@ -135,6 +136,7 @@ class TranslateDetailsUseCaseTest {
                 is LexicalItemDetail.Forms -> detail
                 is LexicalItemDetail.Synonyms -> detail
                 is LexicalItemDetail.WordTranslations -> detail
+                is LexicalItemDetail.Pronunciation.Audio -> detail
             }
         }.map { Right(it) }
 

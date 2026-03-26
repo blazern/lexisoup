@@ -11,6 +11,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:audio"))
             implementation(project(":core:ui:theme"))
             implementation(project(":core:ui:components"))
             implementation(project(":core:utils"))

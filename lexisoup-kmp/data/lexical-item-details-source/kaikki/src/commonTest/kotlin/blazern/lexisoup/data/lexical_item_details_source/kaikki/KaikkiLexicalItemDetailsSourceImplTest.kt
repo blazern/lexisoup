@@ -8,6 +8,7 @@ import blazern.lexisoup.data.kaikki.model.Form
 import blazern.lexisoup.data.kaikki.model.FormOf
 import blazern.lexisoup.data.kaikki.model.Related
 import blazern.lexisoup.data.kaikki.model.Sense
+import blazern.lexisoup.data.kaikki.model.Sound
 import blazern.lexisoup.data.kaikki.model.Translation
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
@@ -76,6 +77,11 @@ class KaikkiLexicalItemDetailsSourceImplTest {
             "etymology2",
             "etymology3",
         ),
+        sounds = listOf(
+            Sound(null, null, "https://some.website/sounds.mp3"),
+            Sound("ogg", "https://some.website/sounds.ogg", null),
+            Sound("no-urls", null, null),
+        )
     )
 
     @Test
@@ -160,6 +166,16 @@ class KaikkiLexicalItemDetailsSourceImplTest {
             ),
             LexicalItemDetail.Etymology(
                 TranslationsSet(Sentence("etymology3", Lang.DE, DataSource.Kaikki)),
+                DataSource.Kaikki,
+            ),
+            LexicalItemDetail.Pronunciation.Audio(
+                name = null,
+                urls = listOf("https://some.website/sounds.mp3"),
+                DataSource.Kaikki,
+            ),
+            LexicalItemDetail.Pronunciation.Audio(
+                name = "ogg",
+                urls = listOf("https://some.website/sounds.ogg"),
                 DataSource.Kaikki,
             ),
         )

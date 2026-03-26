@@ -19,7 +19,7 @@ class KtorClientHolder(engine: HttpClientEngine? = null) {
         prettyPrint = true
     }
 
-    val client = createHttpClient(engine) {
+    val client: HttpClient = createHttpClient(engine) {
         install(ContentNegotiation) {
             json(jsonConfig)
             json(

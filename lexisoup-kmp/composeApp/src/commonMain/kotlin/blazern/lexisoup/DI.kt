@@ -12,9 +12,13 @@ import blazern.lexisoup.feature.home.di.homeScreenModule
 import blazern.lexisoup.feature.search_results.di.searchResultModules
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
+import org.koin.core.option.viewModelScopeFactory
 
 fun initKoin() {
     startKoin {
+        options(
+            viewModelScopeFactory()
+        )
         modules(
             platformModule(),
             ktorModule(),
