@@ -3,19 +3,22 @@ package blazern.lexisoup.utils
 import arrow.core.Either
 import arrow.core.Either.Left
 import arrow.core.Either.Right
+import blazern.lexisoup.core.logging.Log
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.coroutines.coroutineContext
 
 /**
  * NOTE: could contain tricky concurrency bugs
@@ -36,7 +39,9 @@ private constructor(
      * @throws Throwable - whatever the flow has thrown
      */
     suspend fun next(): T? = mutex.withLock {
-        // If a previous consumer was cancelled after requesting,
+        ensureNotCancelled()
+
+        // If a previous consumer was canceled after requesting,
         // the producer may have already placed the response here.
         values.tryReceive().getOrNull()?.let {
             return when (it) {
@@ -48,18 +53,35 @@ private constructor(
         if (hasEnded.load() == true) {
             return null
         }
+
         try {
             signal.send(Unit)
         } catch (_: ClosedSendChannelException) {
+            ensureNotCancelled()
             hasEnded.store(true)
             return null
         }
 
-        val r = when (val r = values.receive()) {
-            is Left -> throw r.value
-            is Right -> r.value
+        val received = try {
+            values.receive()
+        } catch (_: ClosedReceiveChannelException) {
+            ensureNotCancelled()
+            hasEnded.store(true)
+            return null
         }
-        return r
+
+        val result = when (received) {
+            is Left -> throw received.value
+            is Right -> received.value
+        }
+        return result
+    }
+
+    private suspend fun ensureNotCancelled() {
+        if (job.isCancelled) {
+            currentCoroutineContext().ensureActive()
+            throw CancellationMisalignmentException()
+        }
     }
 
     /**
@@ -91,8 +113,9 @@ private constructor(
             val hasEnded = AtomicBoolean(false)
 
             // Bind to the caller's context (implicit scope)
-            val scope = coroutineScope ?: CoroutineScope(coroutineContext)
+            val scope = coroutineScope ?: CoroutineScope(currentCoroutineContext())
 
+            // NOTE: [CoroutineStart.UNDISPATCHED] to start immediately and wait on [signal.receive]
             @Suppress("TooGenericExceptionCaught")
             val job = scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 try {
@@ -115,5 +138,12 @@ private constructor(
 
             return FlowIterator(signal, values, job, hasEnded)
         }
+
+        const val INVALID_CANCELLATION_MSG = "This FlowIterator's Job was canceled. " +
+                "Please make sure to never use a FlowIterator from a scope with a lifetime not " +
+                "aligned with the scope of this FlowIterator (e.g. iterator created for a screen " +
+                "should not be used in a singleton), and after a `close` call."
+        internal class CancellationMisalignmentException
+            : IllegalStateException(INVALID_CANCELLATION_MSG)
     }
 }

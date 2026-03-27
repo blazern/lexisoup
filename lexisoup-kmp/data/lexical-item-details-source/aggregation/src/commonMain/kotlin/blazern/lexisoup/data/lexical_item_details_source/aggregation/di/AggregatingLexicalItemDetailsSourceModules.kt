@@ -11,6 +11,8 @@ import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItem
 import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.di.examplesToolsModule
 import blazern.lexisoup.data.lexical_item_details_source.wortschatz_leipzig.WortschatzLeipzigLexicalItemDetailsSource
 import blazern.lexisoup.model.lexical_item_details_source.chatgpt.ChatGPTLexicalItemDetailsSource
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -18,7 +20,11 @@ fun aggregatingLexicalItemDetailsSourceModules() = listOf(
     kaikkiModule(),
     examplesToolsModule(),
     module {
-        single { LexicalItemDetailsSourceCacher() }
+        single {
+            // [GlobalScope] for a singleton.
+            @OptIn(DelicateCoroutinesApi::class)
+            LexicalItemDetailsSourceCacher(GlobalScope)
+        }
 
         single {
             TatoebaLexicalItemDetailsSource(
