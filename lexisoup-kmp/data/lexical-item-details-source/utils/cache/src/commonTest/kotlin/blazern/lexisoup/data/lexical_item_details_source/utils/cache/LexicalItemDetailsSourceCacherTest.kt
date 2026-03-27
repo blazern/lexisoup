@@ -19,11 +19,11 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalAtomicApi::class)
 class LexicalItemDetailsSourceCacherTest {
@@ -33,12 +33,12 @@ class LexicalItemDetailsSourceCacherTest {
         LexicalItemDetail.Explanation(Sentence("2", Lang.EN, source), source),
         LexicalItemDetail.Explanation(Sentence("3", Lang.EN, source), source),
     )
-    private val detailsFlow: Flow<Item> =
-        details.map { Item.Page(listOf(it), setOf(LexicalItemDetail.Type.EXAMPLE)) }.asFlow()
+    private val items = details.map { Item.Page(listOf(it), setOf(LexicalItemDetail.Type.EXAMPLE)) }
+    private val detailsFlow: Flow<Item> = items.asFlow()
 
     @Test
     fun `happy path`() = runTest {
-        val cacher = LexicalItemDetailsSourceCacher()
+        val cacher = LexicalItemDetailsSourceCacher(coroutineScope = this)
         val executeCalls = AtomicInt(0)
         val execute = {
             executeCalls.incrementAndFetch()
@@ -58,7 +58,7 @@ class LexicalItemDetailsSourceCacherTest {
     @Test
     fun `caches only successes and replays them to late subscriber, execute called once`() =
         runTest {
-            val cacher = LexicalItemDetailsSourceCacher()
+            val cacher = LexicalItemDetailsSourceCacher(coroutineScope = this)
 
             val executeCalls = AtomicInt(0)
             val execute = {
@@ -80,7 +80,7 @@ class LexicalItemDetailsSourceCacherTest {
 
     @Test
     fun `new stream for different request - execute called per distinct request`() = runTest {
-        val cacher = LexicalItemDetailsSourceCacher()
+        val cacher = LexicalItemDetailsSourceCacher(coroutineScope = this)
         val executeCalls = AtomicInt(0)
         val execute = {
             executeCalls.incrementAndFetch()
@@ -113,7 +113,7 @@ class LexicalItemDetailsSourceCacherTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `late subscriber replays cached items immediately`() = runTest {
-        val cacher = LexicalItemDetailsSourceCacher()
+        val cacher = LexicalItemDetailsSourceCacher(coroutineScope = this)
 
         // long-running upstream
         val emitted = Channel<LexicalItemDetail>(Channel.Factory.UNLIMITED)
@@ -161,7 +161,7 @@ class LexicalItemDetailsSourceCacherTest {
 
     @Test
     fun `forwards Left promptly but does NOT replay errors to late subscribers`() = runTest {
-        val cacher = LexicalItemDetailsSourceCacher()
+        val cacher = LexicalItemDetailsSourceCacher(coroutineScope = this)
         val e1 = Exception()
         val e2 = Exception()
 
@@ -201,7 +201,7 @@ class LexicalItemDetailsSourceCacherTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `slow subscriber does NOT block other subscribers`() = runTest {
-        val cacher = LexicalItemDetailsSourceCacher()
+        val cacher = LexicalItemDetailsSourceCacher(coroutineScope = this)
 
         // controllable long-running upstream
         val upstream = Channel<Item>(Channel.Factory.UNLIMITED)
@@ -267,7 +267,8 @@ class LexicalItemDetailsSourceCacherTest {
     @Test
     fun `cancellation mid-stream - late subscriber replays successes and continues live`() =
         runTest {
-            val cacher = LexicalItemDetailsSourceCacher()
+            val parentScope = this
+            val cacher = LexicalItemDetailsSourceCacher(coroutineScope = parentScope)
 
             val upstream = Channel<Item>(Channel.Factory.UNLIMITED)
             val executeCalls = AtomicInt(0)
@@ -278,12 +279,11 @@ class LexicalItemDetailsSourceCacherTest {
                 }
             }
 
-            val parentScope = this
 
             // First collector consumes some data, then cancels
             val results1 = mutableListOf<Item>()
             val job1 = launch {
-                cacher.retrieveOrExecute(source, "q", Lang.EN, Lang.DE, parentScope) { execute() }
+                cacher.retrieveOrExecute(source, "q", Lang.EN, Lang.DE) { execute() }
                     .collect { results1 += it }
             }
 
@@ -296,7 +296,7 @@ class LexicalItemDetailsSourceCacherTest {
             // Late subscriber: should replay first detail immediately, then continue to get others
             val results2 = mutableListOf<Item>()
             val job2 = launch {
-                cacher.retrieveOrExecute(source, "q", Lang.EN, Lang.DE, parentScope) { execute() }
+                cacher.retrieveOrExecute(source, "q", Lang.EN, Lang.DE) { execute() }
                     .collect { results2 += it }
             }
             runCurrent()
@@ -313,4 +313,53 @@ class LexicalItemDetailsSourceCacherTest {
             upstream.close()
             job2.cancelAndJoin()
         }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `cancellation while waiting for next item does not lose that item for late subscriber`() = runTest {
+        val upstream = Channel<Item>(Channel.RENDEZVOUS)
+        val waitingForNextItem = Channel<Unit>(Channel.RENDEZVOUS)
+
+        val flow = flow {
+            while (true) {
+                waitingForNextItem.send(Unit)
+                emit(upstream.receive())
+            }
+        }
+
+        val cacher = LexicalItemDetailsSourceCacher(coroutineScope = backgroundScope)
+
+        val job = launch {
+            cacher.retrieveOrExecute(source, "q", Lang.EN, Lang.DE) { flow }.collect {}
+        }
+        // Let's make sure the first item is waited and then send it
+        runCurrent()
+        waitingForNextItem.receive()
+        upstream.send(items[0])
+        runCurrent()
+
+        // Let's wait for the second item request and then cancel the job altogether,
+        // before the second item is received by the cacher.
+        waitingForNextItem.receive()
+        job.cancel()
+        job.join()
+        runCurrent()
+        // At this point the cacher is waiting for the second value of `flow`, but
+        // it has no active clients who also want it.
+
+        // And here's the second item
+        upstream.send(items[1])
+        // We expect it to be cached immediately
+        runCurrent()
+
+        // Now let's ensure the second item was not lost
+        val allItems = cacher.retrieveOrExecute(source, "q", Lang.EN, Lang.DE) { flow }
+            .take(2)
+            .toList()
+
+        assertEquals(
+            listOf(items[0], items[1]),
+            allItems,
+        )
+    }
 }

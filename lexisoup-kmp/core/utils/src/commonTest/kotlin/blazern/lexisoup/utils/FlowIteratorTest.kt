@@ -1,8 +1,13 @@
 package blazern.lexisoup.utils
 
+import blazern.lexisoup.utils.FlowIterator.Companion.CancellationMisalignmentException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
@@ -12,6 +17,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -95,5 +101,26 @@ class FlowIteratorTest {
         assertEquals(null, iterator.next())
 
         iterator.close()
+    }
+
+    @Test
+    fun `CancellationMisalignmentException on 'next' after 'close'`() = runTest {
+        val iterator = FlowIterator(flowOf(1, 2, 3))
+        iterator.close()
+        assertFailsWith<CancellationMisalignmentException> {
+            while (iterator.next() != null) Unit
+        }
+    }
+
+    @Test
+    fun `CancellationMisalignmentException on 'next' after iterator's scope end`() = runTest {
+        val scope = CoroutineScope(Job())
+        val iterator = FlowIterator(flowOf(1, 2, 3), scope)
+
+        scope.cancel()
+
+        assertFailsWith<CancellationMisalignmentException> {
+            iterator.next()
+        }
     }
 }
