@@ -71,6 +71,7 @@ internal fun HomeScreen(
     onQueryChange: (query: String)->Unit,
     onLangsChange: (langFrom: Lang, langTo: Lang)->Unit,
     onSearch: SearchFn,
+    onSuggestionClick: (Suggestion)->Unit,
     onLocalhostToggled: (Boolean)->Unit,
     onPrivacyPolicyClick: ()->Unit,
 ) {
@@ -170,7 +171,7 @@ internal fun HomeScreen(
                                     suggestion.text,
                                     suggestion.translations.map { it.text },
                                     Modifier.clickable {
-                                        onSearchWrapper(suggestion.text)
+                                        onSuggestionClick(suggestion)
                                     }
                                 )
                             }
@@ -305,6 +306,7 @@ private fun Preview() {
             onQueryChange = {},
             onLangsChange = { _, _ -> },
             onSearch = { _, _, _ -> },
+            onSuggestionClick = {},
             onLocalhostToggled = {},
             onPrivacyPolicyClick = {},
         )
@@ -320,12 +322,12 @@ private fun PreviewSuggestions() {
         query = "Hund",
         canSearch = true,
         suggestions = listOf(
-            Suggestion("Hunde", listOf(
+            Suggestion("Hunde", Lang.DE, listOf(
                 Sentence("Dog", Lang.EN, DataSource.PanLex),
                 Sentence("Mutt", Lang.EN, DataSource.PanLex),
                 Sentence("Hound", Lang.EN, DataSource.PanLex),
             )),
-            Suggestion("Hündin", listOf(
+            Suggestion("Hündin", Lang.DE, listOf(
                 Sentence("Dog", Lang.EN, DataSource.PanLex),
                 Sentence("Bitch", Lang.EN, DataSource.PanLex),
             )),
@@ -339,6 +341,7 @@ private fun PreviewSuggestions() {
             onQueryChange = {},
             onLangsChange = { _, _ -> },
             onSearch = { _, _, _ -> },
+            onSuggestionClick = {},
             onLocalhostToggled = {},
             onPrivacyPolicyClick = {},
         )
