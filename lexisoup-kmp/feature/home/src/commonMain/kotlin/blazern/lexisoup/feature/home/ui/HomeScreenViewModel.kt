@@ -8,6 +8,7 @@ import blazern.lexisoup.domain.backend_address.BackendAddressProvider
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.Suggestion
 import blazern.lexisoup.domain.settings.SettingsRepository
+import blazern.lexisoup.feature.home.SearchFn
 import blazern.lexisoup.feature.home.model.HomeScreenState
 import blazern.lexisoup.utils.KotlinPlatform
 import blazern.lexisoup.utils.getKotlinPlatform
@@ -69,16 +70,33 @@ internal class HomeScreenViewModel(
                 // if query changes, the call after the [delay] gets cancelled
                 delay(DELAY_BEFORE_SUGGESTION_REQUEST)
 
-                val suggestions = suggestionsProvider
-                    .suggestionsFor(query, langFrom, langTo)
+                var suggestions = suggestionsProvider.suggestionsFor(query, langFrom, langTo)
                     .fold(
                         {
                             Log.e(TAG, it.e) { "Error while retrieving suggestions" }
+                            emit(emptyList<Suggestion>() to query)
+                            return@transformLatest
+                        },
+                        { it }
+                    )
+                if (suggestions.isNotEmpty()) {
+                    emit(suggestions to query)
+                    return@transformLatest
+                }
+
+                // Maybe the user forgot to switch languages?
+                suggestions = suggestionsProvider.suggestionsFor(
+                    query,
+                    langFrom = langTo,
+                    langTo = langFrom,
+                )
+                    .fold(
+                        {
+                            Log.e(TAG, it.e) { "Error while retrieving reverse suggestions" }
                             emptyList()
                         },
                         { it }
                     )
-
                 emit(suggestions to query)
             }.onEach { (suggestions, query) ->
                 _state.update {
@@ -125,12 +143,29 @@ internal class HomeScreenViewModel(
         }
     }
 
-    private fun canSearch(query: String): Boolean {
-        return 2 <= query.trim().length
+    fun onSuggestionClick(
+        suggestion: Suggestion,
+        searchFn: SearchFn,
+    ) {
+        val langFrom = state.value.langFrom ?: return
+        val langTo = state.value.langTo ?: return
+        if (suggestion.lang == state.value.langFrom) {
+            searchFn(suggestion.text, langFrom, langTo)
+        } else {
+            onLangsChange(langFrom = langTo, langTo = langFrom)
+            searchFn(suggestion.text, langTo, langFrom)
+        }
     }
 
-    private companion object {
-        const val TAG = "HomeScreenViewModel"
-        val DELAY_BEFORE_SUGGESTION_REQUEST = 300.milliseconds
+    // Visible for tests
+    internal fun canSearch(query: String): Boolean {
+        return MIN_QUERY_LENGTH <= query.trim().length
+    }
+
+    companion object {
+        private const val TAG = "HomeScreenViewModel"
+        // Visible for tests
+        internal const val MIN_QUERY_LENGTH = 2
+        internal val DELAY_BEFORE_SUGGESTION_REQUEST = 300.milliseconds
     }
 }

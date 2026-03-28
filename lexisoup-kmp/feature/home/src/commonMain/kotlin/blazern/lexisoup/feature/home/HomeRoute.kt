@@ -26,6 +26,7 @@ fun HomeRoute(
         viewModel::onQueryChange,
         viewModel::onLangsChange,
         onSearch,
+        { viewModel.onSuggestionClick(it, onSearch) },
         viewModel::onLocalhostToggled,
         onPrivacyPolicyClick,
     )
