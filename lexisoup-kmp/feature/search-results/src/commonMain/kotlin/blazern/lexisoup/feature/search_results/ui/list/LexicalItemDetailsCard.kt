@@ -46,6 +46,7 @@ internal fun LexicalItemDetailsCard(
     state: LexicalItemDetailsGroupState,
     searchRequest: SearchRequest,
     callbacks: LexicalItemDetailCallbacks,
+    extraDetailsTypes: Set<LexicalItemDetail.Type>,
     showExtraDetails: Boolean?,
     onExtraDetailsRequest: (Boolean) -> Unit,
 ) {
@@ -77,6 +78,7 @@ internal fun LexicalItemDetailsCard(
                         searchRequest,
                         contentColorAnimated,
                         callbacks,
+                        extraDetailsTypes,
                         showExtraDetails,
                         onExtraDetailsRequest,
                     )
@@ -165,6 +167,7 @@ private fun PreviewCards() {
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                         showExtraDetails = true,
+                        extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                         onExtraDetailsRequest = {},
                     )
                     LexicalItemDetailsCard(
@@ -181,6 +184,7 @@ private fun PreviewCards() {
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
                         showExtraDetails = false,
+                        extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                         onExtraDetailsRequest = {},
                     )
                     LexicalItemDetailsCard(
@@ -221,6 +225,7 @@ private fun PreviewCards() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                         showExtraDetails = false,
                         onExtraDetailsRequest = {},
                     )
@@ -272,6 +277,7 @@ private fun PreviewAll() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                         showExtraDetails = false,
                         onExtraDetailsRequest = {},
                     )
@@ -283,6 +289,7 @@ private fun PreviewAll() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                         showExtraDetails = false,
                         onExtraDetailsRequest = {},
                     )
@@ -295,6 +302,7 @@ private fun PreviewAll() {
                         ),
                         searchRequest,
                         LexicalItemDetailCallbacks.Stub,
+                        extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                         showExtraDetails = false,
                         onExtraDetailsRequest = {},
                     )

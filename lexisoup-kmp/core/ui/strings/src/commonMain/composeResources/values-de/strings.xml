@@ -4,6 +4,7 @@
     <string name="home_input_hint">Suchbegriff</string>
     <string name="home_cd_clear_search_query">Suchbegriff löschen</string>
     <string name="home_cd_switch_langs">Sprachen wechseln</string>
+    <string name="home_cd_settings">Einstellungen</string>
     <string name="home_search_for_raw_input">Nach „%1$s“ suchen</string>
 
     <string name="search_results_title">Suche:</string>
@@ -13,6 +14,11 @@
     <string name="search_results_download_langs_dialog_text">Für diese Übersetzung muss zuerst das Sprachpaket heruntergeladen werden (30–70 MB).</string>
     <string name="search_results_cd_play">Aussprache abspielen</string>
     <string name="search_results_cd_pause">Aussprache pausieren</string>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_privacy_policy">Datenschutzerklärung</string>
+    <string name="settings_data_sources_title">Aktivierte Datenquellen</string>
+    <string name="settings_lexical_items_details_types_title">Aktivierte Typen lexikalischer Details</string>
 
     <string name="general_copied_to_clipboard">Kopiert</string>
 

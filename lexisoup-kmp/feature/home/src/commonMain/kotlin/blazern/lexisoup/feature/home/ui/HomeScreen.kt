@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -41,15 +42,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.components.ClearSearchFocusOnBack
 import blazern.lexisoup.core.ui.components.SearchBar
 import blazern.lexisoup.core.ui.components.icons.IconSwitch
 import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
-import blazern.lexisoup.core.ui.theme.LinkColor
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.Sentence
@@ -57,10 +57,10 @@ import blazern.lexisoup.domain.model.Suggestion
 import blazern.lexisoup.feature.home.SearchFn
 import blazern.lexisoup.feature.home.model.HomeScreenState
 import lexisoup.core.ui.strings.generated.resources.home_cd_clear_search_query
+import lexisoup.core.ui.strings.generated.resources.home_cd_settings
 import lexisoup.core.ui.strings.generated.resources.home_cd_switch_langs
 import lexisoup.core.ui.strings.generated.resources.home_input_hint
 import lexisoup.core.ui.strings.generated.resources.home_search_for_raw_input
-import androidx.compose.ui.tooling.preview.Preview
 import lexisoup.core.ui.strings.generated.resources.Res as ResStr
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -73,7 +73,7 @@ internal fun HomeScreen(
     onSearch: SearchFn,
     onSuggestionClick: (Suggestion)->Unit,
     onLocalhostToggled: (Boolean)->Unit,
-    onPrivacyPolicyClick: ()->Unit,
+    onSettingsClick: ()->Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isSearchFocused by interactionSource.collectIsFocusedAsState()
@@ -213,15 +213,12 @@ internal fun HomeScreen(
                 }
             }
 
-            Text(
-                text = "Privacy policy",
-                color = LinkColor,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-                    .clickable { onPrivacyPolicyClick() }
-            )
+            IconButton(onClick = onSettingsClick) {
+                Icon(
+                    Icons.Filled.Settings,
+                    contentDescription = stringResource(ResStr.string.home_cd_settings),
+                )
+            }
         }
     }
 }
@@ -308,7 +305,7 @@ private fun Preview() {
             onSearch = { _, _, _ -> },
             onSuggestionClick = {},
             onLocalhostToggled = {},
-            onPrivacyPolicyClick = {},
+            onSettingsClick = {},
         )
     }
 }
@@ -343,7 +340,7 @@ private fun PreviewSuggestions() {
             onSearch = { _, _, _ -> },
             onSuggestionClick = {},
             onLocalhostToggled = {},
-            onPrivacyPolicyClick = {},
+            onSettingsClick = {},
         )
     }
 }

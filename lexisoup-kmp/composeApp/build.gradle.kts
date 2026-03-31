@@ -60,8 +60,9 @@ kotlin {
             implementation(project(":data:translator:aggregation"))
 
             implementation(project(":feature:home"))
-            implementation(project(":feature:search-results"))
             implementation(project(":feature:privacy-policy"))
+            implementation(project(":feature:search-results"))
+            implementation(project(":feature:settings"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -4,6 +4,7 @@
     <string name="home_input_hint">Поисковый запрос</string>
     <string name="home_cd_clear_search_query">Очистить поисковый запрос</string>
     <string name="home_cd_switch_langs">Сменить язык</string>
+    <string name="home_cd_settings">Настройки</string>
     <string name="home_search_for_raw_input">Искать «%1$s»</string>
 
     <string name="search_results_title">Поиск:</string>
@@ -13,6 +14,11 @@
     <string name="search_results_download_langs_dialog_text">Для этого перевода сначала необходимо скачать языковой пакет (30–70 МБ).</string>
     <string name="search_results_cd_play">Проиграть аудио произношения</string>
     <string name="search_results_cd_pause">Остановить аудио произношения</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_privacy_policy">Политика конфиденциальности</string>
+    <string name="settings_data_sources_title">Включенные источники данных</string>
+    <string name="settings_lexical_items_details_types_title">Включенные типы лексических деталей</string>
 
     <string name="general_copied_to_clipboard">Скопировано</string>
 

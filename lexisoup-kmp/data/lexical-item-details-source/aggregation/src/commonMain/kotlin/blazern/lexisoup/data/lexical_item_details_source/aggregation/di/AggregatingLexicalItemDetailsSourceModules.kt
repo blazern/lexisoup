@@ -67,6 +67,7 @@ fun aggregatingLexicalItemDetailsSourceModules() = listOf(
             LexicalItemDetailsSourceAggregator(
                 dataSources = getAll(),
                 accentsEnhancerProvider = get(),
+                settings = get(),
             )
         }
     }

@@ -11,11 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import blazern.lexisoup.domain.model.DataSource
@@ -29,20 +28,19 @@ import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupState
 import blazern.lexisoup.feature.search_results.model.SearchRequest
 import blazern.lexisoup.feature.search_results.model.SearchResultsState
-import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailCallbacks
 import blazern.lexisoup.feature.search_results.ui.list.ExampleCard
-import blazern.lexisoup.feature.search_results.ui.list.model.ExampleState
+import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailCallbacks
 import blazern.lexisoup.feature.search_results.ui.list.LexicalItemDetailsCard
-import androidx.compose.ui.tooling.preview.Preview
+import blazern.lexisoup.feature.search_results.ui.list.model.ExampleState
 
 @Composable
 internal fun FoundSearchResults(
     state: SearchResultsState,
     searchRequest: SearchRequest,
+    extraDetailsTypes: Set<LexicalItemDetail.Type>,
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier = Modifier,
 ) {
-    val extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY)
     val showExtraDetailsByIds = remember { mutableStateMapOf<String, Boolean>() }
     val shouldShowExtraDetails = { state: LexicalItemDetailsGroupState ->
         when (state) {
@@ -70,6 +68,7 @@ internal fun FoundSearchResults(
                 state,
                 searchRequest,
                 callbacks,
+                extraDetailsTypes,
                 showExtraDetailsByIds[state.id] ?: shouldShowExtraDetails(state),
                 onExtraDetailsRequest = { show ->
                     showExtraDetailsByIds[state.id] = show
@@ -204,6 +203,7 @@ private fun Preview() {
             FoundSearchResults(
                 state = state,
                 searchRequest = searchRequest,
+                extraDetailsTypes = setOf(LexicalItemDetail.Type.ETYMOLOGY),
                 callbacks = LexicalItemDetailCallbacks.Stub,
                 modifier = Modifier.padding(innerPadding),
             )

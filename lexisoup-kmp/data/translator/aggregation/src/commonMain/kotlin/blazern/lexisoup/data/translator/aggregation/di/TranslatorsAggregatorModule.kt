@@ -27,6 +27,7 @@ fun translatorsAggregatorModule() = module {
     single<TranslatorsAggregator> {
         TranslatorsAggregatorImpl(
             translators = getAll(),
+            settings = get(),
         )
     }
 }

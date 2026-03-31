@@ -4,6 +4,7 @@
     <string name="home_input_hint">Search query</string>
     <string name="home_cd_clear_search_query">Clear search query</string>
     <string name="home_cd_switch_langs">Switch languages</string>
+    <string name="home_cd_settings">Settings</string>
     <string name="home_search_for_raw_input">Search for “%1$s”</string>
 
     <string name="search_results_title">Search:</string>
@@ -13,6 +14,11 @@
     <string name="search_results_download_langs_dialog_text">This translation requires downloading the language package first (30–70 MB)</string>
     <string name="search_results_cd_play">Play the pronunciation audio</string>
     <string name="search_results_cd_pause">Pause the pronunciation audio</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_data_sources_title">Enabled Data Sources</string>
+    <string name="settings_lexical_items_details_types_title">Enabled Lexical Details Types</string>
 
     <string name="general_copied_to_clipboard">Copied to clipboard</string>
 

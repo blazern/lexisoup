@@ -10,6 +10,7 @@ import blazern.lexisoup.domain.config.impl.di.configModule
 import blazern.lexisoup.domain.settings.di.settingsModule
 import blazern.lexisoup.feature.home.di.homeScreenModule
 import blazern.lexisoup.feature.search_results.di.searchResultModules
+import blazern.lexisoup.feature.settings.di.settingsModules
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.option.viewModelScopeFactory
@@ -31,6 +32,7 @@ fun initKoin() {
             translatorsAggregatorModule(),
             *searchResultModules().toTypedArray(),
             *aggregatingLexicalItemDetailsSourceModules().toTypedArray(),
+            *settingsModules().toTypedArray(),
         )
     }
 }
