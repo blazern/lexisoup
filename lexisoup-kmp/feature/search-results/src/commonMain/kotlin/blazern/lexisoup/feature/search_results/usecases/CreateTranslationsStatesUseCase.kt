@@ -24,7 +24,7 @@ internal open class CreateTranslationsStatesUseCaseImpl(
         langTo: Lang,
     ): List<TranslationState> {
         val translationsStates = mutableListOf<TranslationState>()
-        translatorsLoop@ for (translationSource in translators.dataSources) {
+        translatorsLoop@ for (translationSource in translators.dataSources()) {
             val translator = translators.getTranslator(translationSource)
             details.forEach { detail ->
                 if (canTranslate(detail, translator, langFrom, langTo, ifLangsDownloaded = false)) {

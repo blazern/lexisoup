@@ -14,6 +14,7 @@ import blazern.lexisoup.domain.model.Sentence
 import blazern.lexisoup.domain.model.TranslationsSet
 import blazern.lexisoup.domain.model.TranslationsSet.Companion.QUALITY_MAX
 import blazern.lexisoup.domain.model.predefined
+import blazern.lexisoup.domain.settings.SettingsRepository
 import blazern.lexisoup.feature.search_results.FakeCreateTranslationsStatesUseCase
 import blazern.lexisoup.feature.search_results.FakeTransformPageUseCase
 import blazern.lexisoup.feature.search_results.FakeTranslateDetailsUseCase
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -62,8 +64,11 @@ class SearchResultsViewModelTest {
 
     private val errorsRepo = BackgroundErrorsRepository()
 
-    private fun List<LexicalItemDetailsSource>.aggregate() =
-        LexicalItemDetailsSourceAggregator(this, accentsEnhancerProvider)
+    private fun List<LexicalItemDetailsSource>.aggregate() = LexicalItemDetailsSourceAggregator(
+        this,
+        accentsEnhancerProvider,
+        FakeSettingsRepository(),
+    )
 
     @BeforeTest
     fun setUp() {
@@ -440,4 +445,10 @@ private class FakeLexicalItemDetailsSource(
             emit(page)
         }
     }
+}
+
+private class FakeSettingsRepository : SettingsRepository {
+    override fun getExcludedDataSourcesIDs(): Flow<Set<String>> = flowOf(emptySet())
+    override fun getExcludedLexicalItemsDetailsTypes(): Flow<Set<LexicalItemDetail.Type>> =
+        flowOf(emptySet())
 }

@@ -14,6 +14,7 @@ import blazern.lexisoup.core.ui.theme.LexisoupTheme
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.feature.home.HomeRoute
 import blazern.lexisoup.feature.search_results.SearchResultsRoute
+import blazern.lexisoup.feature.settings.SettingsRoute
 import blazern.lexisoup.privacy_policy.PrivacyPolicyRoute
 import io.ktor.http.encodeURLParameter
 
@@ -41,8 +42,8 @@ private fun MainNavigationImpl(
                 onSearch = { query, langFrom, langTo ->
                     startSearch(navController, query, langFrom, langTo)
                 },
-                onPrivacyPolicyClick = {
-                    navController.navigate(ROUTE_PRIVACY_POLICY)
+                onSettingsClick = {
+                    navController.navigate(ROUTE_SETTINGS)
                 },
             )
         }
@@ -72,6 +73,14 @@ private fun MainNavigationImpl(
             )
         }
 
+        composable(ROUTE_SETTINGS) {
+            SettingsRoute(
+                onPrivacyPolicyClick = {
+                    navController.navigate(ROUTE_PRIVACY_POLICY)
+                },
+            )
+        }
+
         composable(ROUTE_PRIVACY_POLICY) { PrivacyPolicyRoute() }
     }
 }
@@ -91,8 +100,9 @@ private fun startSearch(
 }
 
 private const val ROUTE_HOME = "home"
-private const val ROUTE_SEARCH_RESULTS = "search_results"
 private const val ROUTE_PRIVACY_POLICY = "privacy_policy"
+private const val ROUTE_SEARCH_RESULTS = "search_results"
+private const val ROUTE_SETTINGS = "settings"
 
 private const val ARG_QUERY = "query"
 private const val ARG_LANG_FROM = "lang_from"

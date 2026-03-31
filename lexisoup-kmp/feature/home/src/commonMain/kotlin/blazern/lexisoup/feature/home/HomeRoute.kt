@@ -14,7 +14,7 @@ typealias SearchFn = (query: String, langFrom: Lang, langTo: Lang)->Unit
 @Composable
 fun HomeRoute(
     onSearch: SearchFn,
-    onPrivacyPolicyClick: ()->Unit,
+    onSettingsClick: ()->Unit,
 ) {
     val startQuery = ""
     val viewModel: HomeScreenViewModel = koinViewModel(
@@ -28,6 +28,6 @@ fun HomeRoute(
         onSearch,
         { viewModel.onSuggestionClick(it, onSearch) },
         viewModel::onLocalhostToggled,
-        onPrivacyPolicyClick,
+        onSettingsClick,
     )
 }

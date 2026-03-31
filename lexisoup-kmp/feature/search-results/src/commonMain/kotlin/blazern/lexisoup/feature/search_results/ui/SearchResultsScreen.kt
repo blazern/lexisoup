@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 internal fun SearchResultsScreen(
     searchRequest: SearchRequest,
     state: SearchResultsState,
+    extraDetailsTypes: Set<LexicalItemDetail.Type>,
     backgroundErrors: Flow<Err>,
     onTextCopy: (String, Clipboard)->Unit,
     onLoadingDetailVisible: (LexicalItemDetailsGroupState.Loading) -> Unit,
@@ -125,6 +126,7 @@ internal fun SearchResultsScreen(
             FoundSearchResults(
                 state = state,
                 searchRequest = searchRequest,
+                extraDetailsTypes = extraDetailsTypes,
                 callbacks = callbacks,
             )
         }
@@ -215,6 +217,7 @@ private fun PreviewAllGood() {
         SearchResultsScreen(
             searchRequest = searchRequest,
             state = state,
+            extraDetailsTypes = emptySet(),
             backgroundErrors = emptyFlow(),
             onTextCopy = { _, _ -> },
             onLoadingDetailVisible = {},
@@ -266,6 +269,7 @@ private fun PreviewErrors() {
         SearchResultsScreen(
             searchRequest = searchRequest,
             state = state,
+            extraDetailsTypes = emptySet(),
             backgroundErrors = emptyFlow(),
             onTextCopy = { _, _ -> },
             onLoadingDetailVisible = {},

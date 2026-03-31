@@ -43,6 +43,7 @@ internal fun LexicalItemDetailsCardContent(
     searchRequest: SearchRequest,
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
+    extraDetailsTypes: Set<LexicalItemDetail.Type>,
     showExtraDetails: Boolean?,
     onExtraDetailsRequest: (Boolean) -> Unit,
 ) {
@@ -68,6 +69,7 @@ internal fun LexicalItemDetailsCardContent(
                 contentColor,
                 callbacks,
                 searchRequest,
+                extraDetailsTypes,
                 showExtraDetails,
                 onExtraDetailsRequest,
             )
@@ -86,88 +88,34 @@ private fun DetailsColumn(
     contentColor: Color,
     callbacks: LexicalItemDetailCallbacks,
     searchRequest: SearchRequest,
+    extraDetailsTypes: Set<LexicalItemDetail.Type>,
     showExtraDetails: Boolean?,
     onExtraDetailsRequest: (Boolean) -> Unit,
 ) {
     val itemPaddings = PaddingValues(vertical = 18.dp)
     val horizontalPadding = PaddingValues(horizontal = 28.dp)
+
+    val normalDetails = details.filter { !extraDetailsTypes.orEmpty().contains(it.type) }
+    val extraDetails = details.filter { extraDetailsTypes.orEmpty().contains(it.type) }
+
     Column {
-        details.compose<Audio> {
-            AudioUI(
-                it,
-                Modifier.padding(horizontal = 16.dp),
-            )
-        }
-        details.compose<Explanation> {
-            TranslationsSetUI(
-                it.translationsSet,
+        DetailsItems(
+            normalDetails,
+            contentColor,
+            callbacks,
+            itemPaddings,
+            horizontalPadding,
+            searchRequest,
+        )
+        if (showExtraDetails == true) {
+            DetailsItems(
+                extraDetails,
                 contentColor,
                 callbacks,
-                Modifier
-                    .padding(itemPaddings)
-                    .padding(horizontalPadding),
+                itemPaddings,
+                horizontalPadding,
+                searchRequest,
             )
-        }
-        // NOTE: this looks terrible, a table is rather needed, like the one that Wiktionary has
-//            detailsFiltered.compose<Forms> {
-//                Box(Modifier.fillMaxWidth()) {
-//                    LexicalItemDetailForms(
-//                        it,
-//                        contentColor,
-//                        callbacks,
-//                        Modifier.padding(itemPaddings),
-//                    )
-//                    Label(
-//                        stringResource(Res.string.general_lexical_item_detail_type_forms),
-//                        contentColor,
-//                    )
-//                }
-//            }
-        details.compose<WordTranslations> {
-            Box(Modifier
-                .fillMaxWidth()
-                .padding(horizontalPadding),
-            ) {
-                SentencesPart(
-                    stringResource(Res.string.general_lexical_item_detail_type_word_translations),
-                    it.translationsSet.translations,
-                    otherLang = searchRequest.langFrom,
-                    callbacks,
-                    contentColor,
-                    Modifier.padding(itemPaddings),
-                )
-            }
-        }
-        details.compose<Synonyms> {
-            Box(Modifier
-                .fillMaxWidth()
-                .padding(horizontalPadding),
-            ) {
-                SentencesPart(
-                    stringResource(Res.string.general_lexical_item_detail_type_synonyms),
-                    it.sentences,
-                    otherLang = searchRequest.langTo,
-                    callbacks,
-                    contentColor,
-                    Modifier.padding(itemPaddings),
-                )
-            }
-        }
-        if (showExtraDetails == true) {
-            details.compose<LexicalItemDetail.Etymology> {
-                Box(Modifier.padding(horizontalPadding)) {
-                    TranslationsSetUI(
-                        it.translationsSet,
-                        contentColor,
-                        callbacks,
-                        Modifier.padding(itemPaddings),
-                    )
-                    Label(
-                        stringResource(Res.string.general_lexical_item_detail_type_etymology),
-                        contentColor,
-                    )
-                }
-            }
         }
         if (showExtraDetails != null) {
             Box(Modifier
@@ -187,6 +135,94 @@ private fun DetailsColumn(
                     modifier = Modifier.align(Alignment.Center).padding(bottom = 8.dp),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun DetailsItems(
+    details: List<LexicalItemDetail>,
+    contentColor: Color,
+    callbacks: LexicalItemDetailCallbacks,
+    itemPaddings: PaddingValues,
+    horizontalPadding: PaddingValues,
+    searchRequest: SearchRequest
+) {
+    details.compose<Audio> {
+        AudioUI(
+            it,
+            Modifier.padding(horizontal = 16.dp),
+        )
+    }
+    details.compose<Explanation> {
+        TranslationsSetUI(
+            it.translationsSet,
+            contentColor,
+            callbacks,
+            Modifier
+                .padding(itemPaddings)
+                .padding(horizontalPadding),
+        )
+    }
+    // NOTE: this looks terrible, a table is rather needed, like the one that Wiktionary has
+//            detailsFiltered.compose<Forms> {
+//                Box(Modifier.fillMaxWidth()) {
+//                    LexicalItemDetailForms(
+//                        it,
+//                        contentColor,
+//                        callbacks,
+//                        Modifier.padding(itemPaddings),
+//                    )
+//                    Label(
+//                        stringResource(Res.string.general_lexical_item_detail_type_forms),
+//                        contentColor,
+//                    )
+//                }
+//            }
+    details.compose<WordTranslations> {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontalPadding),
+        ) {
+            SentencesPart(
+                stringResource(Res.string.general_lexical_item_detail_type_word_translations),
+                it.translationsSet.translations,
+                otherLang = searchRequest.langFrom,
+                callbacks,
+                contentColor,
+                Modifier.padding(itemPaddings),
+            )
+        }
+    }
+    details.compose<Synonyms> {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontalPadding),
+        ) {
+            SentencesPart(
+                stringResource(Res.string.general_lexical_item_detail_type_synonyms),
+                it.sentences,
+                otherLang = searchRequest.langTo,
+                callbacks,
+                contentColor,
+                Modifier.padding(itemPaddings),
+            )
+        }
+    }
+    details.compose<LexicalItemDetail.Etymology> {
+        Box(Modifier.padding(horizontalPadding)) {
+            TranslationsSetUI(
+                it.translationsSet,
+                contentColor,
+                callbacks,
+                Modifier.padding(itemPaddings),
+            )
+            Label(
+                stringResource(Res.string.general_lexical_item_detail_type_etymology),
+                contentColor,
+            )
         }
     }
 }

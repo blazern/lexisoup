@@ -15,6 +15,7 @@ kotlin {
             implementation(project(":data:translator:mlkit"))
             implementation(project(":data:lexisoup-graphql"))
             implementation(project(":domain:config:api"))
+            implementation(project(":domain:settings"))
         }
     }
 }

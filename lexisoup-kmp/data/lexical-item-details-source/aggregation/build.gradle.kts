@@ -11,6 +11,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":domain:model"))
             implementation(project(":domain:backend-address"))
+            implementation(project(":domain:settings"))
             implementation(project(":data:kaikki"))
             implementation(project(":core:ktor"))
             implementation(project(":data:lexisoup-graphql"))

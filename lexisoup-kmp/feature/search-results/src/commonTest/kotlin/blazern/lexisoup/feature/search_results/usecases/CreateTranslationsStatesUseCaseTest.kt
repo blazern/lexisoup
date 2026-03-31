@@ -196,9 +196,9 @@ class CreateTranslationsStatesUseCaseTest {
         dataSourcesOrder: List<DataSource>,
     ): TranslatorsAggregator =
         object : TranslatorsAggregator {
-            override val dataSources: List<DataSource> = dataSourcesOrder
+            override suspend fun dataSources(): List<DataSource> = dataSourcesOrder
 
-            override fun getTranslator(source: DataSource): Translator =
+            override suspend fun getTranslator(source: DataSource): Translator =
                 translatorsBySource.getValue(source)
         }
 }

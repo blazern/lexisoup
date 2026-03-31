@@ -5,15 +5,19 @@ import arrow.core.getOrElse
 import blazern.lexisoup.core.logging.Log
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
+import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsAccentsEnhancer
+import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsAccentsEnhancerProvider
 import blazern.lexisoup.domain.error.Err
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
 import blazern.lexisoup.domain.model.copy
-import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsAccentsEnhancer
-import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsAccentsEnhancerProvider
+import blazern.lexisoup.domain.settings.SettingsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -23,6 +27,7 @@ class LexicalItemDetailsSourceAggregatorForQuery internal constructor(
     private val langFrom: Lang,
     private val langTo: Lang,
     private val accentsEnhancerProvider: FormsAccentsEnhancerProvider,
+    private val settings: SettingsRepository,
     dataSources: List<LexicalItemDetailsSource>,
 ) {
     private val dataSources = dataSources.associateBy { it.source }
@@ -34,12 +39,18 @@ class LexicalItemDetailsSourceAggregatorForQuery internal constructor(
         dataSources[source]?.types.orEmpty()
 
     fun request(source: DataSource): Flow<Item> {
-        val flow = dataSources[source]?.request(query, langFrom, langTo) ?: emptyFlow()
-        return flow.map {
-            when (it) {
-                is Item.Page -> enhance(it)
-                else -> it
-            }
+        return flow {
+            val excludedDataSources = settings.getExcludedDataSourcesIDs().first()
+            val dataSources = dataSources.filterKeys { !excludedDataSources.contains(it.id) }
+            val dataFlow = dataSources[source]?.request(query, langFrom, langTo) ?: emptyFlow()
+            emitAll(
+                dataFlow.map {
+                    when (it) {
+                        is Item.Page -> enhance(it)
+                        else -> it
+                    }
+                }
+            )
         }
     }
 
