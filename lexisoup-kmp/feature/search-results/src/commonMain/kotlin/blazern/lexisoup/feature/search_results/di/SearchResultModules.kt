@@ -28,6 +28,7 @@ fun searchResultModules() = listOf(
                     query = query,
                     langFrom = langFrom,
                     langTo = langTo,
+                    analytics = get(),
                     dataSource = get(),
                     translators = get(),
                     translateDetails = get(),

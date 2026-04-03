@@ -7,6 +7,8 @@ import blazern.lexisoup.core.logging.Log
 import blazern.lexisoup.data.lexical_item_details_source.aggregation.LexicalItemDetailsSourceAggregator
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.translator.aggregation.TranslatorsAggregator
+import blazern.lexisoup.domain.analytics.Analytics
+import blazern.lexisoup.domain.analytics.Event
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
@@ -42,9 +44,10 @@ private typealias LexicalItemDetailFlow = FlowIterator<Item>
 @OptIn(KoinExperimentalAPI::class)
 @Suppress("LongParameterList")
 internal class SearchResultsViewModel(
-    query: String,
+    private val query: String,
     private val langFrom: Lang,
     private val langTo: Lang,
+    private val analytics: Analytics,
     dataSource: LexicalItemDetailsSourceAggregator,
     private val translators: TranslatorsAggregator,
     private val errorsRepo: BackgroundErrorsRepository,
@@ -66,11 +69,15 @@ internal class SearchResultsViewModel(
     init {
         viewModelScope.launch { search() }
         state
-            .onEach { Log.d(TAG) { "State:${it.toLogsString()}" } }
+            .onEach { Log.d(TAG) {
+                @Suppress("MagicNumber")
+                "State:${it.toLogsString().take(256)}" }
+            }
             .shareIn(viewModelScope, SharingStarted.Eagerly)
     }
 
     private suspend fun search() {
+        analytics.log(Event.Search(query, langFrom, langTo))
         _state.update { SearchResultsState() }
         for (source in DataSource.predefined) {
             sourceTypes[source] = dataSource.typesOf(source)

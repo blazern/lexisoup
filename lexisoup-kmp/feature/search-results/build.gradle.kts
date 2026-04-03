@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.project
 
 plugins {
     id("blazern.lexisoup.plugin.feature")
@@ -15,6 +16,7 @@ kotlin {
             implementation(project(":core:ui:theme"))
             implementation(project(":core:ui:components"))
             implementation(project(":core:utils"))
+            implementation(project(":domain:analytics"))
             implementation(project(":domain:model"))
             implementation(project(":domain:settings"))
             implementation(project(":data:lexical-item-details-source:aggregation"))

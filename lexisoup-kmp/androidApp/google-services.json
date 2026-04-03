@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "855011299942",
+    "project_id": "lexisoup-914f4",
+    "storage_bucket": "lexisoup-914f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855011299942:android:d7df25f2c0bb1d5734d3a7",
+        "android_client_info": {
+          "package_name": "blazern.lexisoup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGXth4Vs696njo5z0JlCeGU5rGtSLvl24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

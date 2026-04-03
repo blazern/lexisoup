@@ -50,6 +50,7 @@ kotlin {
             implementation(project(":core:ui:strings"))
             implementation(project(":core:ui:theme"))
             implementation(project(":core:ktor"))
+            implementation(project(":domain:analytics"))
             implementation(project(":domain:backend-address"))
             implementation(project(":domain:config:impl"))
             implementation(project(":domain:model"))
