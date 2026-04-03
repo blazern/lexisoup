@@ -5,28 +5,35 @@ This page is used to inform visitors regarding my policies with the collection, 
 If you choose to use my Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that I collect is used for providing and improving the Service. I will not use or share your information with anyone except as described in this Privacy Policy.
 
 **Information Collection and Use**
-Whenever you use my Service, I collect the following data to improve the Service:
+Whenever you use my Service, the following data may be collected by the Service and third-party tools such as Firebase Analytics and Firebase Crashlytics:
 - your device Internet Protocol (“IP”) address
-- your lexical queries (e.g. "cat", "book", etc)
+- your lexical search queries to improve search quality (e.g. "cat", "book", etc)
+- app usage events (e.g. screen views, interactions)
+- device information (e.g. device model, OS version)
+- crash logs and diagnostics information
 
-The purpose of collecting this data is to investigate software bugs and improve the Service.
+Data is processed solely for the purpose of improving the functionality, stability, and performance of the Service.
 
 No additional personal information beyond what is described above is collected by me.
-Most data is automatically deleted after a short retention period. Deletion requests apply to any remaining stored data.
+Some data may be retained for a limited period as required for analytics and crash reporting purposes.
 You can request me to delete any data received from you by contacting me through my email: danil.garmanov@protonmail.com.
 
 **Service Providers**
 My Service uses third-party services which also may receive certain data necessary for their functionality (for example, analytics or crash information).
 They process this data under their own privacy policies.
 
-Next third party services are directly incorporated into the `lexisoup` app and may collect data independently to facilitate software improvements (this may include basic device information, crash logs, and usage statistics):
+Next third party services are directly incorporated into the `lexisoup` app and collect data to facilitate software improvements (this may include basic device information, crash logs, and usage statistics):
 - Google Play Services: https://policies.google.com/privacy
+- Firebase Analytics: https://firebase.google.com/support/privacy
+- Firebase Crashlytics: https://firebase.google.com/support/privacy
+
+These services may automatically collect information such as device identifiers, IP address, app usage data, and crash diagnostics. This information is used for analytics and stability monitoring.
 
 Next third party services receive network requests from `lexisoup` and thus may receive your device’s IP address and lexical queries as part of standard network requests:
 - Tatoeba: https://tatoeba.org/en/terms_of_use
 - Kaikki: https://kaikki.org/
 - Wortschatz Leipzig: https://wortschatz-leipzig.de/en/privacy
-No personal identifiers are being sent to these services.
+No direct personal identifiers such as name or email address are sent to these services.
 
 The following services are queried indirectly (through the `lexisoup` server) and thus the only information they receive are the user's lexical queries (e.g. "cat", "book", etc):
 - ChatGPT: https://openai.com/policies/row-privacy-policy/

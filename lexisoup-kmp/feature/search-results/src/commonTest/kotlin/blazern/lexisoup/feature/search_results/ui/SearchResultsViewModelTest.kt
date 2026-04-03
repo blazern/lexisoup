@@ -6,6 +6,8 @@ import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsS
 import blazern.lexisoup.data.lexical_item_details_source.api.LexicalItemDetailsSource.Item
 import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsAccentsEnhancer
 import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.FormsAccentsEnhancerProvider
+import blazern.lexisoup.domain.analytics.Analytics
+import blazern.lexisoup.domain.analytics.Event
 import blazern.lexisoup.domain.model.DataSource
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
@@ -90,6 +92,7 @@ class SearchResultsViewModelTest {
             query = "query",
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            analytics = FakeAnalytics(),
             dataSource = sources.aggregate(),
             translators = FakeTranslatorsAggregator(listOf(FakeTranslator())),
             translateDetails = FakeTranslateDetailsUseCase { _, _, _, _ -> emptyFlow() },
@@ -129,6 +132,7 @@ class SearchResultsViewModelTest {
             query = "query",
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            analytics = FakeAnalytics(),
             dataSource = sources.aggregate(),
             translators = FakeTranslatorsAggregator(
                 listOf(
@@ -172,6 +176,7 @@ class SearchResultsViewModelTest {
             query = "query",
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            analytics = FakeAnalytics(),
             dataSource = sources.aggregate(),
             translators = FakeTranslatorsAggregator(
                 translators = listOf(
@@ -215,6 +220,7 @@ class SearchResultsViewModelTest {
             query = "query",
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            analytics = FakeAnalytics(),
             dataSource = allSources.aggregate(),
             translators = FakeTranslatorsAggregator(listOf(fakeTranslator)),
             translateDetails = FakeTranslateDetailsUseCase { details, _, _, _ ->
@@ -269,6 +275,7 @@ class SearchResultsViewModelTest {
             query = "query",
             langFrom = Lang.EN,
             langTo = Lang.DE,
+            analytics = FakeAnalytics(),
             dataSource = listOf(source).aggregate(),
             translators = FakeTranslatorsAggregator(
                 listOf(FakeTranslator(source = translationSource))
@@ -451,4 +458,8 @@ private class FakeSettingsRepository : SettingsRepository {
     override fun getExcludedDataSourcesIDs(): Flow<Set<String>> = flowOf(emptySet())
     override fun getExcludedLexicalItemsDetailsTypes(): Flow<Set<LexicalItemDetail.Type>> =
         flowOf(emptySet())
+}
+
+private class FakeAnalytics : Analytics {
+    override fun log(event: Event) = Unit
 }

@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.crashlytics)
 }
 
 val versionNameProvider = providers.gradleProperty("versionName").orElse("0.0.0-dev")
@@ -64,6 +66,7 @@ kotlin {
 
 dependencies {
     implementation(project(":composeApp"))
+    implementation(project(":domain:analytics"))
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.androidx.ui.tooling)
 }

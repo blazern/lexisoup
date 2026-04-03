@@ -1,6 +1,7 @@
 package blazern.lexisoup
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -11,12 +12,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.savedstate.read
 import blazern.lexisoup.core.ui.theme.LexisoupTheme
+import blazern.lexisoup.domain.analytics.Analytics
+import blazern.lexisoup.domain.analytics.Event
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.feature.home.HomeRoute
 import blazern.lexisoup.feature.search_results.SearchResultsRoute
 import blazern.lexisoup.feature.settings.SettingsRoute
 import blazern.lexisoup.privacy_policy.PrivacyPolicyRoute
 import io.ktor.http.encodeURLParameter
+import org.koin.compose.getKoin
 
 @Composable
 fun MainNavigation(
@@ -32,6 +36,7 @@ private fun MainNavigationImpl(
     onNavHostReady: suspend (NavController) -> Unit = {},
 ) {
     val navController = rememberNavController()
+    observe(navController)
     LaunchedEffect(navController) {
         onNavHostReady(navController)
     }
@@ -89,13 +94,13 @@ private fun startSearch(
     navController: NavHostController,
     query: String,
     langFrom: Lang,
-    langTo: Lang
+    langTo: Lang,
 ) {
     navController.navigate(
         "$ROUTE_SEARCH_RESULTS?" +
                 "$ARG_QUERY=${query.encodeURLParameter()}" +
                 "&$ARG_LANG_FROM=${langFrom.iso3}" +
-                "&$ARG_LANG_TO=${langTo.iso3}"
+                "&$ARG_LANG_TO=${langTo.iso3}",
     )
 }
 
@@ -107,3 +112,19 @@ private const val ROUTE_SETTINGS = "settings"
 private const val ARG_QUERY = "query"
 private const val ARG_LANG_FROM = "lang_from"
 private const val ARG_LANG_TO = "lang_to"
+
+@Suppress("ComposableNaming")
+@Composable
+private fun observe(navController: NavController) {
+    val analytics = getKoin().get<Analytics>()
+
+    DisposableEffect(navController, analytics) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            analytics.log(Event.ScreenOpened(destination.route.orEmpty().substringBefore("?")))
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
+}

@@ -12,7 +12,10 @@ apollo = "4.4.2"
 apolloKtor = "0.1.1"
 composeMultiplatform = "1.10.3"
 composeMaterial3 = "1.9.0"
+crashlyticsPlugin = "3.0.6"
 detekt = "1.23.8"
+firebase-bom = "34.11.0"
+googleService = "4.4.4"
 koin = "4.2.0"
 kotlin = "2.3.20"
 kotlinxCoroutines = "1.10.2"
@@ -38,6 +41,11 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+
+# Analytics
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 # Compose
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
@@ -105,6 +113,8 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin"}
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleService" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
