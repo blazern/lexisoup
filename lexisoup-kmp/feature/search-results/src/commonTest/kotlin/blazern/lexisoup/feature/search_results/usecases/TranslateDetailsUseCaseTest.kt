@@ -137,6 +137,7 @@ class TranslateDetailsUseCaseTest {
                 is LexicalItemDetail.Synonyms -> detail
                 is LexicalItemDetail.WordTranslations -> detail
                 is LexicalItemDetail.Pronunciation.Audio -> detail
+                is LexicalItemDetail.Pronunciation.HTML -> detail
             }
         }.map { Right(it) }
 

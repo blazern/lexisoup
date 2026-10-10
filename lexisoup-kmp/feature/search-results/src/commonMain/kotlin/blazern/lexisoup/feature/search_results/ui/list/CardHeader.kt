@@ -30,6 +30,7 @@ internal fun CardHeader(
     source: DataSource,
     callbacks: LexicalItemDetailCallbacks,
     modifier: Modifier = Modifier,
+    onExpandClick: (()->Unit)? = null,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
     translationsSource: DataSource? = null,
 ) {
@@ -65,7 +66,13 @@ internal fun CardHeader(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(start = 20.dp, end = 20.dp, top = 14.dp)
-                    .clickable { callbacks.onTextCopy(title) }
+                    .clickable {
+                        if (onExpandClick != null) {
+                            onExpandClick()
+                        } else {
+                            callbacks.onTextCopy(title)
+                        }
+                    }
             )
         }
         val translationsSourceText = translationsSource

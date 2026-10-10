@@ -14,6 +14,7 @@
     <string name="search_results_download_langs_dialog_text">This translation requires downloading the language package first (30–70 MB)</string>
     <string name="search_results_cd_play">Play the pronunciation audio</string>
     <string name="search_results_cd_pause">Pause the pronunciation audio</string>
+    <string name="search_results_pronounciation_title">pronunciation examples</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
@@ -38,6 +39,7 @@
     <string name="general_data_source_wortschatz_leipzig">Wortschatz Leipzig</string>
     <string name="general_data_source_deepl">DeepL</string>
     <string name="general_data_source_mlkit">Google ML Kit</string>
+    <string name="general_data_source_youglish">YouGlish</string>
 
     <string name="general_pos_noun">noun</string>
     <string name="general_pos_verb">verb</string>

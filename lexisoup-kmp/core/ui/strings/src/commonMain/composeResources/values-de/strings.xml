@@ -14,6 +14,7 @@
     <string name="search_results_download_langs_dialog_text">Für diese Übersetzung muss zuerst das Sprachpaket heruntergeladen werden (30–70 MB).</string>
     <string name="search_results_cd_play">Aussprache abspielen</string>
     <string name="search_results_cd_pause">Aussprache pausieren</string>
+    <string name="search_results_pronounciation_title">Aussprachebeispiele</string>
 
     <string name="settings_title">Einstellungen</string>
     <string name="settings_privacy_policy">Datenschutzerklärung</string>

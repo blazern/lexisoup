@@ -195,6 +195,7 @@ internal val DataSource.priority: Int
         return when (this) {
             DataSource.PanLex -> 0
             DataSource.Tatoeba -> 1
+            DataSource.YouGlish -> 1
             DataSource.ChatGPT -> 2
             DataSource.Kaikki -> 3
             DataSource.WortschatzLeipzig -> 4
@@ -205,5 +206,4 @@ internal val DataSource.priority: Int
         }
     }
 
-@OptIn(ExperimentalUuidApi::class)
 private fun randomId() = Uuid.random().toString()

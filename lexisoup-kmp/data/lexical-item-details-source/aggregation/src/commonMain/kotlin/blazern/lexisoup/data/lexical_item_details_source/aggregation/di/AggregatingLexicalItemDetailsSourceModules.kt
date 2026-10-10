@@ -10,6 +10,7 @@ import blazern.lexisoup.data.lexical_item_details_source.tatoeba.TatoebaLexicalI
 import blazern.lexisoup.data.lexical_item_details_source.utils.cache.LexicalItemDetailsSourceCacher
 import blazern.lexisoup.data.lexical_item_details_source.utils.examples_tools.di.examplesToolsModule
 import blazern.lexisoup.data.lexical_item_details_source.wortschatz_leipzig.WortschatzLeipzigLexicalItemDetailsSource
+import blazern.lexisoup.data.lexical_item_details_source.youglish.YouGlishLexicalItemDetailsSource
 import blazern.lexisoup.model.lexical_item_details_source.chatgpt.ChatGPTLexicalItemDetailsSource
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -61,6 +62,10 @@ fun aggregatingLexicalItemDetailsSourceModules() = listOf(
                 ktorClientHolder = get(),
                 formsForExamplesProvider = get(),
             )
+        }.bind(LexicalItemDetailsSource::class)
+
+        single {
+            YouGlishLexicalItemDetailsSource()
         }.bind(LexicalItemDetailsSource::class)
 
         single {

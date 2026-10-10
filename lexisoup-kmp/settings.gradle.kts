@@ -72,3 +72,7 @@ include(":feature:home")
 include(":feature:search-results")
 include(":feature:privacy-policy")
 include(":feature:settings")
+
+include(":data:lexical-item-details-source:youglish")
+
+include(":feature:webview")

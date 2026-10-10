@@ -5,12 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +35,7 @@ import blazern.lexisoup.feature.search_results.model.LexicalItemDetailsGroupStat
 import blazern.lexisoup.feature.search_results.model.SearchRequest
 import blazern.lexisoup.feature.search_results.ui.list.model.SelectedHeader
 import blazern.lexisoup.feature.search_results.ui.list.model.select
+import blazern.lexisoup.feature.webview.WebView
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_etymology
 import lexisoup.core.ui.strings.generated.resources.general_lexical_item_detail_type_synonyms
@@ -55,29 +61,43 @@ internal fun LexicalItemDetailsCardContent(
     } else {
         details
     }
+
+    val expandable = header?.expandable == true
+    var expanded by remember(expandable) { mutableStateOf(false) }
+    val onExpandClick = if (expandable) {
+        { expanded = !expanded }
+    } else {
+        null
+    }
+
     Column(Modifier.fillMaxWidth()) {
         CardHeader(
-            header?.title,
+            header?.title?.invoke(),
             header?.pos?.i18n(),
             source,
             callbacks,
+            onExpandClick = onExpandClick,
             translationsSource = extractTranslationsSource(detailsGroup),
         )
-        Box {
-            DetailsColumn(
-                detailsFiltered,
-                contentColor,
-                callbacks,
-                searchRequest,
-                extraDetailsTypes,
-                showExtraDetails,
-                onExtraDetailsRequest,
-            )
-            TranslateActions(
-                detailsGroup,
-                callbacks,
-                Modifier.align(Alignment.TopEnd),
-            )
+        if (!expandable || expanded) {
+            Box {
+                DetailsColumn(
+                    detailsFiltered,
+                    contentColor,
+                    callbacks,
+                    searchRequest,
+                    extraDetailsTypes,
+                    showExtraDetails,
+                    onExtraDetailsRequest,
+                )
+                TranslateActions(
+                    detailsGroup,
+                    callbacks,
+                    Modifier.align(Alignment.TopEnd),
+                )
+            }
+        } else {
+            Spacer(Modifier.padding(bottom = 14.dp))
         }
     }
 }
@@ -153,6 +173,9 @@ private fun DetailsItems(
             it,
             Modifier.padding(horizontal = 16.dp),
         )
+    }
+    details.compose<LexicalItemDetail.Pronunciation.HTML> {
+        WebView(it.value, Modifier.padding(horizontal = 16.dp))
     }
     details.compose<Explanation> {
         TranslationsSetUI(
@@ -285,6 +308,7 @@ private fun extractTranslationsSource(group: LexicalItemDetailsGroupState.Loaded
             is Synonyms -> continue // Shouldn't be translated
             is WordTranslations -> continue // Expected to always match original source
             is Audio -> continue // Audios are not translatable
+            is LexicalItemDetail.Pronunciation.HTML -> continue // Not translatable
         }
     }
     return null

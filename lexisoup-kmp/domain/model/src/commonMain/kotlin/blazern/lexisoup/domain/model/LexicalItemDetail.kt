@@ -85,7 +85,7 @@ sealed class LexicalItemDetail(
         override val meaningId: String? = null,
     ) : LexicalItemDetail(Type.ETYMOLOGY)
 
-    sealed class Pronunciation: LexicalItemDetail(Type.PRONUNCIATION) {
+    sealed class Pronunciation : LexicalItemDetail(Type.PRONUNCIATION) {
         data class Audio(
             val name: String?,
             val urls: List<String>,
@@ -94,6 +94,12 @@ sealed class LexicalItemDetail(
         ) : Pronunciation() {
             init { require(urls.isNotEmpty()) }
         }
+
+        data class HTML(
+            val value: String,
+            override val source: DataSource,
+            override val meaningId: String? = null,
+        ) : LexicalItemDetail(Type.PRONUNCIATION)
     }
 
     enum class Type {
