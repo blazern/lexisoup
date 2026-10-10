@@ -23,6 +23,7 @@ kotlin {
             implementation(project(":data:lexical-item-details-source:api"))
             implementation(project(":data:lexical-item-details-source:utils:examples-tools"))
             implementation(project(":data:translator:aggregation"))
+            implementation(project(":feature:webview"))
         }
     }
 }

@@ -9,7 +9,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":domain:model"))
+            api(project(":domain:model"))
         }
     }
 }

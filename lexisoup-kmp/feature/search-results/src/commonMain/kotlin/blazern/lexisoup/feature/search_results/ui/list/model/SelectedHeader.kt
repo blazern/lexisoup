@@ -1,5 +1,7 @@
 package blazern.lexisoup.feature.search_results.ui.list.model
 
+import androidx.compose.runtime.Composable
+import blazern.lexisoup.core.ui.strings.stringResource
 import blazern.lexisoup.domain.model.Gender
 import blazern.lexisoup.domain.model.Lang
 import blazern.lexisoup.domain.model.LexicalItemDetail
@@ -9,12 +11,16 @@ import blazern.lexisoup.domain.model.WordForm
 import blazern.lexisoup.feature.search_results.forms.extractGenderFrom
 import blazern.lexisoup.feature.search_results.forms.selectNounFormsForHeader
 import blazern.lexisoup.feature.search_results.forms.selectVerbFormsForHeader
+import lexisoup.core.ui.strings.generated.resources.Res
+import lexisoup.core.ui.strings.generated.resources.general_data_source_youglish
+import lexisoup.core.ui.strings.generated.resources.search_results_pronounciation_title
 
 internal data class SelectedHeader(
-    val title: String,
+    val title: @Composable ()->String,
     val sourceDetail: LexicalItemDetail,
     val detailConsumed: Boolean,
     val pos: PartOfSpeech? = null,
+    val expandable: Boolean = false,
 ) {
     companion object
 }
@@ -25,13 +31,26 @@ internal fun SelectedHeader.Companion.select(details: List<LexicalItemDetail>): 
         val value = forms.value
         return when (value) {
             is Forms.Value.Text -> SelectedHeader(
-                title = value.text,
+                title = { value.text },
                 pos = forms.pos,
                 sourceDetail = forms,
                 detailConsumed = true,
             )
             is Forms.Value.Detailed -> SelectedHeader.createFor(value, forms.lang, forms)
         }
+    }
+    val html = details.filterIsInstance<LexicalItemDetail.Pronunciation.HTML>().firstOrNull()
+    if (html != null) {
+        return SelectedHeader(
+            title = {
+                "${stringResource(Res.string.general_data_source_youglish)} " +
+                        stringResource(Res.string.search_results_pronounciation_title)
+            },
+            pos = null,
+            sourceDetail = html,
+            detailConsumed = false,
+            expandable = true,
+        )
     }
     return null
 }
@@ -82,7 +101,7 @@ private fun SelectedHeader.Companion.forNoun(
         Lang.FR -> ""
     }
     return SelectedHeader(
-        title = langSpecificPrefix + text,
+        title = { langSpecificPrefix + text },
         pos = source.pos,
         sourceDetail = source,
         detailConsumed = false,
@@ -96,7 +115,7 @@ private fun SelectedHeader.Companion.forVerb(
     val importantForms = selectVerbFormsForHeader(forms, source.lang)
     val text = importantForms.joinToString(", ") { it.text }
     return SelectedHeader(
-        title = text,
+        title = { text },
         pos = source.pos,
         sourceDetail = source,
         detailConsumed = false,
@@ -107,11 +126,11 @@ private fun SelectedHeader.Companion.forMostImportantOf(
     forms: List<WordForm>,
     source: Forms,
 ) = SelectedHeader(
-    title = forms
+    title = { forms
         .sortedBy { it.importance }
         .asReversed()
         .first()
-        .text,
+        .text },
     pos = source.pos,
     sourceDetail = source,
     detailConsumed = false,

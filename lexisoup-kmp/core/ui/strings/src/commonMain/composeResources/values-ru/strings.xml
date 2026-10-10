@@ -14,6 +14,7 @@
     <string name="search_results_download_langs_dialog_text">Для этого перевода сначала необходимо скачать языковой пакет (30–70 МБ).</string>
     <string name="search_results_cd_play">Проиграть аудио произношения</string>
     <string name="search_results_cd_pause">Остановить аудио произношения</string>
+    <string name="search_results_pronounciation_title">примеры произношения</string>
 
     <string name="settings_title">Настройки</string>
     <string name="settings_privacy_policy">Политика конфиденциальности</string>

@@ -8,6 +8,7 @@ import blazern.lexisoup.domain.model.DataSource.Kaikki
 import blazern.lexisoup.domain.model.DataSource.PanLex
 import blazern.lexisoup.domain.model.DataSource.Tatoeba
 import blazern.lexisoup.domain.model.DataSource.WortschatzLeipzig
+import blazern.lexisoup.domain.model.DataSource.YouGlish
 import lexisoup.core.ui.strings.generated.resources.Res
 import lexisoup.core.ui.strings.generated.resources.general_data_source_chatgpt
 import lexisoup.core.ui.strings.generated.resources.general_data_source_deepl
@@ -16,6 +17,7 @@ import lexisoup.core.ui.strings.generated.resources.general_data_source_mlkit
 import lexisoup.core.ui.strings.generated.resources.general_data_source_panlex
 import lexisoup.core.ui.strings.generated.resources.general_data_source_tatoeba
 import lexisoup.core.ui.strings.generated.resources.general_data_source_wortschatz_leipzig
+import lexisoup.core.ui.strings.generated.resources.general_data_source_youglish
 
 sealed class DataSource(open val id: String) {
     object Tatoeba : DataSource("tatoeba")
@@ -25,6 +27,7 @@ sealed class DataSource(open val id: String) {
     object WortschatzLeipzig : DataSource("wortschatz_leipzig")
     object DeepL : DataSource("deepl")
     object MlKit : DataSource("mlkit")
+    object YouGlish : DataSource("youglish")
 
     data class Other(override val id: String) : DataSource(id)
 
@@ -46,7 +49,8 @@ val DataSource.Companion.predefined: List<DataSource>
         PanLex,
         WortschatzLeipzig,
         DeepL,
-        DataSource.MlKit
+        DataSource.MlKit,
+        YouGlish,
     )
 
 @Composable
@@ -65,6 +69,8 @@ fun DataSource.i18n(): String = when (this) {
         stringResource(Res.string.general_data_source_deepl, preview = id)
     DataSource.MlKit ->
         stringResource(Res.string.general_data_source_mlkit, preview = id)
+    YouGlish ->
+        stringResource(Res.string.general_data_source_youglish, preview = id)
     is DataSource.Backend -> when {
         impl != null -> impl.i18n()
         else -> id
